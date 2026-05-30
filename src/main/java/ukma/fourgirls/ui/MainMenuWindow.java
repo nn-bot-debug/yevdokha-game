@@ -61,7 +61,7 @@ public class MainMenuWindow extends Application {
         SceneManager.getInstance().setMainMenuScene(mainMenuScene);
 
         Map<String, Runnable> buttonActions = new LinkedHashMap<>();
-        ///buttonActions.put("New Game", this::startNewGame);
+        buttonActions.put("New Game", () -> SceneManager.getInstance().switchToScene(new ChildRoom().getScene()));
         //buttonActions.put("Continue Game", this::continueGame);
         buttonActions.put("Instruction", () -> SceneManager.getInstance().switchToScene(new InstructionsScreen().getScene()));
         buttonActions.put("Settings", () -> SceneManager.getInstance().switchToScene(new SettingsScreen().getScene()));
