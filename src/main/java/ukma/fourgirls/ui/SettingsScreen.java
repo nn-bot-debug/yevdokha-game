@@ -1,25 +1,25 @@
 package ukma.fourgirls.ui;
 
-import javafx.scene.Scene;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import ukma.fourgirls.SceneManager;
 
 public class SettingsScreen {
-
-    private final Scene scene;
+    private final Parent root;
 
     public SettingsScreen() {
         VBox settingsRoot = new VBox(30);
+
         Button backButton = new Button("Back to Menu");
         backButton.setOnAction(e -> SceneManager.getInstance().switchToMainMenu());
+
         settingsRoot.getChildren().add(backButton);
-        double width = SceneManager.getInstance().getWidth();
-        double height = SceneManager.getInstance().getHeight();
-        this.scene = new Scene(settingsRoot, width, height);
+
+        this.root = settingsRoot;
     }
 
-    public Scene getScene() {
-        return scene;
+    public Parent getRoot() {
+        return root;
     }
 }
