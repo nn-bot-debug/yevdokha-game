@@ -1,6 +1,7 @@
-package ukma.fourgirls;
+package ukma.fourgirls.ui;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -9,6 +10,10 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import ukma.fourgirls.SceneManager;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class MainMenuWindow extends Application {
@@ -17,6 +22,8 @@ public class MainMenuWindow extends Application {
 
     @Override
     public void start(Stage primaryStage){
+        SceneManager.getInstance().init(primaryStage);
+
         try{
             font = Font.loadFont(getClass().getResourceAsStream("/Creepster-Regular.ttf"), 24);
         }
@@ -50,23 +57,25 @@ public class MainMenuWindow extends Application {
         button.setAlignment(Pos.CENTER_LEFT);
         button.setPadding(new Insets(0,0,0,290));
 
-        String [] buttonNames={
-                "New Game",
-                "Continue Game",
-                "Instruction",
-                "Settings",
-                "Quit"
-        };
+        Scene mainMenuScene = new Scene(root);
+        SceneManager.getInstance().setMainMenuScene(mainMenuScene);
 
-        for (String name : buttonNames){
-            Button buttonN = new Button(name);
+        Map<String, Runnable> buttonActions = new LinkedHashMap<>();
+        buttonActions.put("New Game", () -> SceneManager.getInstance().switchToScene(new ChildRoom().getScene()));
+        //buttonActions.put("Continue Game", this::continueGame);
+        buttonActions.put("Instruction", () -> SceneManager.getInstance().switchToScene(new InstructionsScreen().getScene()));
+        buttonActions.put("Settings", () -> SceneManager.getInstance().switchToScene(new SettingsScreen().getScene()));
+        buttonActions.put("Quit", Platform::exit);
+
+        for (Map.Entry<String, Runnable> entry : buttonActions.entrySet()) {
+            Button buttonN = new Button(entry.getKey());
             styleButton(buttonN);
+            buttonN.setOnAction(e -> entry.getValue().run());
             button.getChildren().add(buttonN);
-
         }
+
         root.getChildren().add(button);
-        Scene scene = new Scene(root);
-        primaryStage.setScene(scene);
+        primaryStage.setScene(mainMenuScene);
         primaryStage.show();
     }
 
