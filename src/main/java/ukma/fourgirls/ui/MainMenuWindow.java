@@ -11,6 +11,7 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import ukma.fourgirls.SceneManager;
+import ukma.fourgirls.ui.roots.ChildRoom;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -32,8 +33,7 @@ public class MainMenuWindow extends Application {
         }
 
         primaryStage.setTitle("YEVDOKHA-GAME");
-        primaryStage.setWidth(2048);
-        primaryStage.setHeight(1152);
+        primaryStage.setFullScreen(true);
         //primaryStage.setResizable(false);
         StackPane root = new StackPane();
 
@@ -57,14 +57,14 @@ public class MainMenuWindow extends Application {
         button.setAlignment(Pos.CENTER_LEFT);
         button.setPadding(new Insets(0,0,0,290));
 
-        Scene mainMenuScene = new Scene(root);
-        SceneManager.getInstance().setMainMenuScene(mainMenuScene);
+        Scene mainScene = new Scene(root);
+        SceneManager.getInstance().setMainMenuRoot(root);
 
         Map<String, Runnable> buttonActions = new LinkedHashMap<>();
-        buttonActions.put("New Game", () -> SceneManager.getInstance().switchToScene(new ChildRoom().getScene()));
+        buttonActions.put("New Game", () -> SceneManager.getInstance().switchToRoot(new ChildRoom().getRoot()));
         //buttonActions.put("Continue Game", this::continueGame);
-        buttonActions.put("Instruction", () -> SceneManager.getInstance().switchToScene(new InstructionsScreen().getScene()));
-        buttonActions.put("Settings", () -> SceneManager.getInstance().switchToScene(new SettingsScreen().getScene()));
+        buttonActions.put("Instruction", () -> SceneManager.getInstance().switchToRoot(new InstructionsScreen().getRoot()));
+        buttonActions.put("Settings", () -> SceneManager.getInstance().switchToRoot(new SettingsScreen().getRoot()));
         buttonActions.put("Quit", Platform::exit);
 
         for (Map.Entry<String, Runnable> entry : buttonActions.entrySet()) {
@@ -75,7 +75,7 @@ public class MainMenuWindow extends Application {
         }
 
         root.getChildren().add(button);
-        primaryStage.setScene(mainMenuScene);
+        primaryStage.setScene(mainScene);
         primaryStage.show();
     }
 

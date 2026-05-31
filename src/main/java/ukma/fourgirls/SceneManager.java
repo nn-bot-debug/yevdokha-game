@@ -1,6 +1,6 @@
 package ukma.fourgirls;
 
-import javafx.scene.Scene;
+import javafx.scene.Parent;
 import javafx.stage.Stage;
 
 public class SceneManager {
@@ -8,7 +8,7 @@ public class SceneManager {
     private static SceneManager instance;
 
     private Stage primaryStage;
-    private Scene mainMenuScene;
+    private Parent mainMenuRoot;
 
     private SceneManager() {}
 
@@ -23,21 +23,21 @@ public class SceneManager {
         this.primaryStage = stage;
     }
 
-    public void setMainMenuScene(Scene scene) {
-        this.mainMenuScene = scene;
+    public void setMainMenuRoot(Parent root) {
+        this.mainMenuRoot = root;
     }
 
-    // --- МЕТОДИ ПЕРЕМИКАННЯ СЦЕН ---
+    // --- МЕТОДИ ПЕРЕМИКАННЯ ЕКРАНІВ ---
 
     public void switchToMainMenu() {
-        if (primaryStage != null && mainMenuScene != null) {
-            primaryStage.setScene(mainMenuScene);
+        if (primaryStage != null && primaryStage.getScene() != null && mainMenuRoot != null) {
+            primaryStage.getScene().setRoot(mainMenuRoot);
         }
     }
 
-    public void switchToScene(Scene newScene) {
-        if (primaryStage != null) {
-            primaryStage.setScene(newScene);
+    public void switchToRoot(Parent newRoot) {
+        if (primaryStage != null && primaryStage.getScene() != null) {
+            primaryStage.getScene().setRoot(newRoot);
         }
     }
 
