@@ -1,24 +1,26 @@
 package ukma.fourgirls.ui;
 
-import javafx.scene.Scene;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import ukma.fourgirls.SceneManager;
 
 public class InstructionsScreen {
-    private final Scene scene;
+
+    private final Parent root;
 
     public InstructionsScreen() {
         VBox instructionsRoot = new VBox(30);
+
         Button backButton = new Button("Back to Menu");
         backButton.setOnAction(e -> SceneManager.getInstance().switchToMainMenu());
+
         instructionsRoot.getChildren().add(backButton);
-        double width = SceneManager.getInstance().getWidth();
-        double height = SceneManager.getInstance().getHeight();
-        this.scene = new Scene(instructionsRoot, width, height);
+
+        this.root = instructionsRoot;
     }
 
-    public Scene getScene() {
-        return scene;
+    public Parent getRoot() {
+        return root;
     }
 }
