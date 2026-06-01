@@ -5,13 +5,14 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 
 public class SettingsScreen {
     private final StackPane overlayRoot;
-    private final StackPane parentContainer; // Сховище для меню, щоб потім закрити вікно
+    private final StackPane parentContainer;
     private Font font;
 
     /**
@@ -55,25 +56,39 @@ public class SettingsScreen {
         // 3. Сітка з налаштуваннями (Опція -> Кнопка)
         GridPane settingsGrid = new GridPane();
         settingsGrid.setHgap(40);
-        settingsGrid.setVgap(20);
+        settingsGrid.setVgap(15);
         settingsGrid.setAlignment(Pos.CENTER);
 
         // --- Рядок 1: Музика ---
         Label musicLabel = new Label("MUSIC");
         styleLabel(musicLabel);
-        ToggleButton musicToggle = new ToggleButton("ON");
+
+        boolean mutedAtStart = AudioManager.getInstance().isMusicMuted();
+        ToggleButton musicToggle = new ToggleButton(mutedAtStart ? "OFF" : "ON");
+        musicToggle.setSelected(mutedAtStart);
         styleToggleButton(musicToggle);
-        musicToggle.setOnAction(e -> {
-            if (musicToggle.isSelected()) {
-                musicToggle.setText("OFF");
-                // Тут буде код вимкнення музики (наприклад: AudioManager.muteMusic();)
-            } else {
-                musicToggle.setText("ON");
-                // Код ввімкнення музики
-            }
-        });
+
         settingsGrid.add(musicLabel, 0, 0);
         settingsGrid.add(musicToggle, 1, 0);
+
+        // Параметри Slider(min, max, value)
+        double currentVolume = AudioManager.getInstance().getVolume();
+        Slider musicSlider = new Slider(0.0, 1.0, currentVolume);
+        styleSlider(musicSlider);
+        musicSlider.setDisable(mutedAtStart);
+
+        musicSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            AudioManager.getInstance().setVolume(newValue.doubleValue());
+        });
+
+        musicToggle.setOnAction(e -> {
+            boolean isMuted = AudioManager.getInstance().toggleMusic();
+            musicToggle.setText(isMuted ? "OFF" : "ON");
+            musicSlider.setDisable(isMuted); // Блокуємо повзунок, якщо музику вимкнено повністю
+        });
+
+        settingsGrid.add(musicSlider, 0, 1, 2, 1);
+        GridPane.setMargin(musicSlider, new Insets(0, 0, 10, 0));
 
 
         // --- Рядок 2: Звуки дій ---
@@ -90,8 +105,8 @@ public class SettingsScreen {
                 // Код ввімкнення звуків
             }
         });
-        settingsGrid.add(soundLabel, 0, 1);
-        settingsGrid.add(soundToggle, 1, 1);
+        settingsGrid.add(soundLabel, 0, 2);
+        settingsGrid.add(soundToggle, 1, 2);
 
         // --- Рядок 3: Мова ---
         Label langLabel = new Label("LANGUAGE");
@@ -107,8 +122,8 @@ public class SettingsScreen {
                 // Назад на українську
             }
         });
-        settingsGrid.add(langLabel, 0, 2);
-        settingsGrid.add(langButton, 1, 2);
+        settingsGrid.add(langLabel, 0, 3);
+        settingsGrid.add(langButton, 1, 3);
 
         dialogBox.getChildren().add(settingsGrid);
 
@@ -166,5 +181,29 @@ public class SettingsScreen {
                 toggle.setStyle(baseActive); // Стан ON
             }
         });
+    }
+
+
+    private void styleSlider(Slider slider) {
+        slider.setPrefWidth(240);
+
+        // За допомогою CSS міняємо колір доріжки (track) та бігунка (thumb)
+        slider.setStyle(
+                ".slider .track {" +
+                        "    -fx-background-color: #233232;" +
+                        "    -fx-background-insets: 0;" +
+                        "    -fx-background-radius: 2px;" +
+                        "    -fx-pref-height: 6px;" +
+                        "}" +
+                        ".slider .thumb {" +
+                        "    -fx-background-color: #9ba89e;" +
+                        "    -fx-background-radius: 2px;" +
+                        "    -fx-padding: 8px 5px;" +
+                        "    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 3, 0, 0, 1);" +
+                        "}" +
+                        ".slider:hover .thumb {" +
+                        "    -fx-background-color: #b28d94;" +
+                        "}"
+        );
     }
 }

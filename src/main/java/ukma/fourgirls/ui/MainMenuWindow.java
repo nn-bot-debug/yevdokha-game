@@ -83,6 +83,9 @@ public class MainMenuWindow extends Application {
 
         root.getChildren().add(button);
         primaryStage.setScene(mainScene);
+        // Запускаємо фонову хорор-музику
+        AudioManager.getInstance().playBackgroundMusic("/music/background.mp3");
+
         primaryStage.show();
     }
 
