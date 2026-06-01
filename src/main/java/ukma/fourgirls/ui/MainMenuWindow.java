@@ -68,7 +68,10 @@ public class MainMenuWindow extends Application {
         buttonActions.put("New Game", () -> SceneManager.getInstance().switchToRoot(new ChildRoom().getRoot()));
         //buttonActions.put("Continue Game", this::continueGame);
         buttonActions.put("Instruction", () -> SceneManager.getInstance().switchToRoot(new InstructionsScreen().getRoot()));
-        buttonActions.put("Settings", () -> SceneManager.getInstance().switchToRoot(new SettingsScreen().getRoot()));
+        buttonActions.put("Settings", () -> {
+            SettingsScreen settings = new SettingsScreen(root);
+            root.getChildren().add(settings.getRoot());
+        });
         buttonActions.put("Quit", Platform::exit);
 
         for (Map.Entry<String, Runnable> entry : buttonActions.entrySet()) {
@@ -80,6 +83,9 @@ public class MainMenuWindow extends Application {
 
         root.getChildren().add(button);
         primaryStage.setScene(mainScene);
+        // Запускаємо фонову хорор-музику
+        AudioManager.getInstance().playBackgroundMusic("/music/background.mp3");
+
         primaryStage.show();
     }
 
