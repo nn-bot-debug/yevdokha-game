@@ -10,6 +10,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import ukma.fourgirls.ui.animation.AnimationCanvas;
 import ukma.fourgirls.SceneManager;
 import ukma.fourgirls.ui.roots.ChildRoom;
 
@@ -52,6 +53,9 @@ public class MainMenuWindow extends Application {
         catch (Exception e) {
             throw new RuntimeException(e);
         }
+
+        AnimationCanvas animationCanvas = new AnimationCanvas();
+        root.getChildren().add(animationCanvas);
 
         VBox button = new VBox(20);
         button.setAlignment(Pos.CENTER_LEFT);
