@@ -94,7 +94,8 @@ public class MainMenuWindow extends Application {
                 "-fx-border-width: 1px;" +
                 "-fx-background-radius: 2px;" +
                 "-fx-border-radius: 2px;" +
-                "-fx-effect: dropshadow(three-pass-box, rgba(60, 80, 80, 0.8), 15, 0.0, 0,4);";
+                "-fx-effect: dropshadow(three-pass-box, rgba(60, 80, 80, 0.8), 15, 0.0, 0,4);" +
+                "-fx-cursor: hand;";
 
         button.setStyle(buttonStyle);
 
