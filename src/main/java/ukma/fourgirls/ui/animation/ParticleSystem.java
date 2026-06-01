@@ -10,12 +10,12 @@ public class ParticleSystem {
     private final List<Particle> smokeParticles = new ArrayList<>();
     private final Random random = new Random();
 
-    private static final double CANDLE_X_PCT = 0.68;
-    private static final double CANDLE_Y_PCT = 0.5;
+    private static final double CANDLE_X = 1510;
+    private static final double CANDLE_Y = 553;
 
     public void update(double width, double height) {
         // 1. Керування пилом
-        if (dustParticles.size() < 40) {
+        if (dustParticles.size() < 100) {
             // Пил з'являється у випадкових місцях
             generateDust(random.nextDouble() * width, random.nextDouble() * height);
         }
@@ -23,10 +23,7 @@ public class ParticleSystem {
 
         // 2. Керування димом від свічки
         if (random.nextDouble() < 0.25) {
-            // Вираховуємо поточні координати свічки відповідно до поточного розміру вікна
-            double currentCandleX = width * CANDLE_X_PCT;
-            double currentCandleY = height * CANDLE_Y_PCT;
-            generateSmoke(currentCandleX, currentCandleY);
+            generateSmoke(CANDLE_X, CANDLE_Y);
         }
         updateList(smokeParticles, width, height);
     }
@@ -34,7 +31,7 @@ public class ParticleSystem {
     private void generateDust(double x, double y) {
         double vx = (random.nextDouble() - 0.5) * 0.15;
         double vy = (random.nextDouble() - 0.4) * 0.1;
-        double size = random.nextDouble() * 2 + 1;
+        double size = random.nextDouble() * 5 + 5;
         dustParticles.add(new Particle(x, y, vx, vy, size, -1));
     }
 
