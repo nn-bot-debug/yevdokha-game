@@ -14,7 +14,7 @@ import ukma.fourgirls.ui.CameraController;
 import java.util.Objects;
 
 public abstract class Place {
-    private final Parent root;
+    protected final StackPane root;
 
     public Place(String imagePath) {
         StackPane rootPane = new StackPane();
@@ -29,7 +29,6 @@ public abstract class Place {
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
         Button backButton = createBackButton();
-
         StackPane.setAlignment(backButton, Pos.TOP_LEFT);
         StackPane.setMargin(backButton, new Insets(20));
 
