@@ -4,7 +4,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
@@ -22,7 +21,7 @@ public class InstructionsScreen {
         this.root = new StackPane();
 
         try {
-            font = Font.loadFont(getClass().getResourceAsStream("/Creepster-Regular.ttf"), 24);
+            font = Font.loadFont(getClass().getResourceAsStream("/Creepster-Regular.ttf"), 22);
         } catch (Exception e) {
             font = Font.font("Arial", 24);
         }
@@ -53,10 +52,42 @@ public class InstructionsScreen {
         uiLayer.getChildren().add(textContainer);
 
         VBox bottomContainer = new VBox();
-        bottomContainer.setAlignment(Pos.BOTTOM_LEFT);
-        bottomContainer.setPadding(new Insets(0, 0, 50, 100));
+        bottomContainer.setAlignment(Pos.TOP_LEFT);
+        bottomContainer.setPadding(new Insets(14, 0, 0, 14));
 
         Button backButton = new Button("Back to Menu");
+        backButton.setFont(font);
+
+        String BackBtnImage = String.valueOf(Objects.requireNonNull(getClass().getResource("/images/buttonBackground.jpeg")));
+        String btnStyle =
+                "-fx-background-image: url('" + BackBtnImage + "'); "+
+                "-fx-text-fill: #d4cbb8; " +
+                "-fx-border-color: #2e261b;" +
+                "-fx-border-width: 1px;" +
+                "-fx-background-size: cover;" +
+                "-fx-background-radius: 6px;" +
+                "-fx-border-radius: 6px;" +
+                "-fx-effect: dropshadow(three-pass-box, rgba(60, 80, 80, 0.8), 15, 0.0, 0,4);" +
+                "-fx-cursor: hand;" +
+                "-fx-padding: 10px 30px;";
+
+        backButton.setStyle(btnStyle);
+
+        backButton.setOnMouseEntered(e -> {
+            backButton.setStyle(
+                    btnStyle +
+                            "-fx-text-fill: #baaa88; " +
+                            "-fx-border-width: 3px;" +
+                            "-fx-opacity:0.95; "
+                    );
+            backButton.setFont(font);
+                });
+
+        backButton.setOnMouseExited(e->{
+            backButton.setStyle(btnStyle);
+            backButton.setFont(font);
+        });
+
         backButton.setOnAction(e -> SceneManager.getInstance().switchToMainMenu());
 
         bottomContainer.getChildren().add(backButton);
