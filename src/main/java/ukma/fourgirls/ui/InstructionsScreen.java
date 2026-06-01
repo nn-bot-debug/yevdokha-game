@@ -27,7 +27,6 @@ public class InstructionsScreen {
             font = Font.font("Arial", 24);
         }
 
-        // Встановлюємо фон із блокнотом
         try {
             Image bgImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/notebook.png")));
             BackgroundImage backgroundImage = new BackgroundImage(
@@ -49,22 +48,20 @@ public class InstructionsScreen {
 
         HBox textContainer = new HBox(150);
         textContainer.setAlignment(Pos.CENTER);
-        // Задали відступи, щоб текст красиво сідав саме на сторінки відкритої книги
+
         textContainer.setPadding(new Insets(100, 320, 200, 320));
         uiLayer.getChildren().add(textContainer);
 
-        // Кнопка "Back to Menu"
         VBox bottomContainer = new VBox();
         bottomContainer.setAlignment(Pos.BOTTOM_LEFT);
-        bottomContainer.setPadding(new Insets(0, 0, 50, 100)); // Відступ від краю екрана
+        bottomContainer.setPadding(new Insets(0, 0, 50, 100));
 
         Button backButton = new Button("Back to Menu");
         backButton.setOnAction(e -> SceneManager.getInstance().switchToMainMenu());
 
         bottomContainer.getChildren().add(backButton);
-        root.getChildren().add(bottomContainer);
-
         root.getChildren().add(uiLayer);
+        root.getChildren().add(bottomContainer);
     }
 
     public Parent getRoot() {
