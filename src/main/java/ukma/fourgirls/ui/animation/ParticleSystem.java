@@ -10,8 +10,13 @@ public class ParticleSystem {
     private final List<Particle> smokeParticles = new ArrayList<>();
     private final Random random = new Random();
 
-    private static final double CANDLE_X = 1510;
-    private static final double CANDLE_Y = 553;
+    private double CANDLE_X = 1510;
+    private double CANDLE_Y = 553;
+
+    public void setCandleLocation(double x, double y) {
+        this.CANDLE_X = x;
+        this.CANDLE_Y = y;
+    }
 
     public void update(double width, double height) {
         // 1. Керування пилом

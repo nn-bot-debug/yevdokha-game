@@ -39,7 +39,7 @@ public class AnimationCanvas extends Pane{
                 // Малюємо пил у промені світла
                 gc.setFill(Color.rgb(178, 141, 148, 0.4));
                 for (var p : particleSystem.getDustParticles()) {
-                    if (p.x > 1000 && p.x < 1750) {
+                    if (p.x > 100 && p.x < 1900) {
                         if (p.y > 100 && p.y < 1100) {
                             gc.fillOval(p.x, p.y, p.size, p.size);
                         }
@@ -55,6 +55,10 @@ public class AnimationCanvas extends Pane{
             }
         };
         timer.start();
+    }
+
+    public void setCandleLocation(double x, double y) {
+        particleSystem.setCandleLocation(x, y);
     }
 
     // Цей метод автоматично підлаштовує розмір Canvas під поточний розмір вікна
