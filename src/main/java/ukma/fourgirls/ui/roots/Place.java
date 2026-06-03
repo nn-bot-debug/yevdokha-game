@@ -16,6 +16,8 @@ import java.util.Objects;
 
 public abstract class Place {
     protected final StackPane root;
+    protected final StackPane roomContentLayer;     // Шари всередині скролу (Фон + предмети)
+    protected final ImageView roomView;
     private Font font;
 
     public Place(String imagePath) {
@@ -23,15 +25,18 @@ public abstract class Place {
 
         try {
             font = Font.loadFont(getClass().getResourceAsStream("/Creepster-Regular.ttf"), 22);
-            }
-        catch (Exception e) {
+        } catch (Exception e) {
             font = Font.font("Arial", 24);
         }
 
-        ImageView roomView = setupRoomImage(imagePath);
-        ScrollPane scrollPane = new ScrollPane(roomView);
+        this.roomView = setupRoomImage(imagePath);
 
+        this.roomContentLayer = new StackPane(roomView);
+        this.roomContentLayer.setAlignment(Pos.CENTER);
+
+        ScrollPane scrollPane = new ScrollPane(roomContentLayer);
         roomView.fitHeightProperty().bind(rootPane.heightProperty());
+        roomContentLayer.maxHeightProperty().bind(rootPane.heightProperty());
 
         scrollPane.setPannable(false);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
