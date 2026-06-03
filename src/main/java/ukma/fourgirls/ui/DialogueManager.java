@@ -42,12 +42,10 @@ public class DialogueManager {
     private void createDialogueUI() {
         // Створення плашки для тексту
         StackPane dialogueRootPane = new StackPane();
-
-        // ТЕПЕР НАЛАШТОВУЄМО ПРАВИЛЬНУ ЗМІННУ (dialogueRootPane)
         dialogueRootPane.setMaxWidth(1200);
         dialogueRootPane.setMinHeight(140);
         dialogueRootPane.setMaxHeight(140);
-        dialogBoxStyle(dialogueRootPane); // передаємо сюди новий StackPane
+        dialogBoxStyle(dialogueRootPane);
 
         StackPane.setAlignment(dialogueRootPane, Pos.BOTTOM_CENTER);
         StackPane.setMargin(dialogueRootPane, new Insets(0, 0, 50, 0));
@@ -65,12 +63,13 @@ public class DialogueManager {
         StackPane.setAlignment(textLabel, Pos.CENTER);
 
         // Підказка в лівому нижньому кутку
-        Label hintLabel = new Label("[ Клікніть, щоб продовжити... ]");
+        Label hintLabel = new Label("▶ Клікніть для продовження");
         hintLabel.setFont(Font.font("Arial", 12));
-        hintLabel.setStyle("-fx-text-fill: #5a665e;");
+        hintLabel.setStyle("-fx-text-fill: #4b544f;");
 
-        StackPane.setAlignment(hintLabel, Pos.BOTTOM_LEFT);
+        StackPane.setAlignment(hintLabel, Pos.BOTTOM_RIGHT);
 
+        StackPane.setMargin(hintLabel, new Insets(0, 10, 0, 0));
         dialogueRootPane.getChildren().addAll(textLabel, hintLabel);
 
         dialogueRootPane.setOnMouseClicked(e -> nextLine());

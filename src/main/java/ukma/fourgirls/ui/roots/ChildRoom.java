@@ -2,7 +2,7 @@ package ukma.fourgirls.ui.roots;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.geometry.Insets;
+import javafx.scene.layout.*;
 import ukma.fourgirls.NavigationPanel;
 import ukma.fourgirls.SceneManager;
 import ukma.fourgirls.ui.DialogueManager;
@@ -11,11 +11,12 @@ import java.util.Objects;
 
 
 public class ChildRoom extends Place {
-    private static final String IMAGE_PATH = "/images/Yevdokha_room.png";
+    private static final String INTRO_IMAGE_PATH = "/images/Yevdokha_drawing.png";
+    private static final String GAMEPLAY_IMAGE_PATH = "/images/Yevdokha_room.png";
     private ImageView interactiveDrawing;   // Малюнок на столі
 
     public ChildRoom() {
-        super(IMAGE_PATH);
+        super(INTRO_IMAGE_PATH);
 
         String[] introDialogue = {
                 "I've been working on this drawing for so long...",
@@ -30,17 +31,21 @@ public class ChildRoom extends Place {
      * Цей метод вмикає малюнок та панель навігації ПІСЛЯ діалогу
      */
     private void activateGameplay() {
+        changeRoomBackground(GAMEPLAY_IMAGE_PATH);
+
         NotificationManager.showNotification(this.root, "Завдання: Підніміть малюнок зі столу.");
 
         try {
-            Image drawingImg = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/малюнок.png")));
+            Image drawingImg = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/drawing.png")));
             interactiveDrawing = new ImageView(drawingImg);
 
-            interactiveDrawing.setFitWidth(120);
+            interactiveDrawing.setFitWidth(75);
             interactiveDrawing.setPreserveRatio(true);
 
-            interactiveDrawing.setTranslateX(400);
-            interactiveDrawing.setTranslateY(500);
+            interactiveDrawing.setRotate(-18);
+
+            interactiveDrawing.setTranslateX(-205);
+            interactiveDrawing.setTranslateY(175);
 
             interactiveDrawing.setPickOnBounds(true);
             interactiveDrawing.setStyle("-fx-cursor: hand;");
@@ -77,5 +82,22 @@ public class ChildRoom extends Place {
         );
         navPanel.addNavigationTarget("Вийти на вулицю", () -> {});
         navPanel.attachTo(this.root);
+    }
+
+
+    private void changeRoomBackground(String resourcePath) {
+        try {
+            Image backgroundImage =  new Image(Objects.requireNonNull(getClass().getResourceAsStream(resourcePath)));
+            BackgroundImage backgroundImage1 = new BackgroundImage(
+                    backgroundImage,
+                    BackgroundRepeat.NO_REPEAT,
+                    BackgroundRepeat.NO_REPEAT,
+                    BackgroundPosition.CENTER,
+                    new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, true)
+            );
+            this.root.setBackground(new Background(backgroundImage1));
+        } catch (Exception e) {
+            System.err.println("Помилка зміни фону кімнати: " + e.getMessage());
+        }
     }
 }
