@@ -2,20 +2,24 @@ package ukma.fourgirls.ui.roots;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.geometry.Insets;
+import javafx.scene.layout.*;
 import ukma.fourgirls.NavigationPanel;
 import ukma.fourgirls.SceneManager;
+import ukma.fourgirls.ui.CameraController;
 import ukma.fourgirls.ui.DialogueManager;
 import ukma.fourgirls.ui.NotificationManager;
 import java.util.Objects;
 
 
 public class ChildRoom extends Place {
-    private static final String IMAGE_PATH = "/images/Yevdokha_room.png";
-    private ImageView interactiveDrawing;   // Малюнок на столі
+    private static final String INTRO_IMAGE_PATH = "/images/Yevdokha_drawing.png";
+    private static final String GAMEPLAY_IMAGE_PATH = "/images/Yevdokha_room.png";
+    private ImageView interactiveDrawing;
 
     public ChildRoom() {
-        super(IMAGE_PATH);
+        super(INTRO_IMAGE_PATH);
+
+        CameraController.setPanningEnabled(false);
 
         String[] introDialogue = {
                 "I've been working on this drawing for so long...",
@@ -30,38 +34,45 @@ public class ChildRoom extends Place {
      * Цей метод вмикає малюнок та панель навігації ПІСЛЯ діалогу
      */
     private void activateGameplay() {
-        NotificationManager.showNotification(this.root, "Завдання: Підніміть малюнок зі столу.");
+        javafx.application.Platform.runLater(() -> {
+            try {
+                Image newBackground = new Image(Objects.requireNonNull(getClass().getResourceAsStream(GAMEPLAY_IMAGE_PATH)));
+                this.roomView.setImage(newBackground);
 
-        try {
-            Image drawingImg = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/малюнок.png")));
-            interactiveDrawing = new ImageView(drawingImg);
+                CameraController.setPanningEnabled(true);
 
-            interactiveDrawing.setFitWidth(120);
-            interactiveDrawing.setPreserveRatio(true);
+                NotificationManager.showNotification(this.root, "Завдання: Підніміть малюнок зі столу.");
 
-            interactiveDrawing.setTranslateX(400);
-            interactiveDrawing.setTranslateY(500);
+                Image drawingImg = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/drawing.png")));
+                interactiveDrawing = new ImageView(drawingImg);
 
-            interactiveDrawing.setPickOnBounds(true);
-            interactiveDrawing.setStyle("-fx-cursor: hand;");
+                interactiveDrawing.setFitWidth(70);
+                interactiveDrawing.setPreserveRatio(true);
+                interactiveDrawing.setRotate(-25);
 
-            // Наведення на малюнок
-            interactiveDrawing.setOnMouseEntered(e -> interactiveDrawing.setEffect(new javafx.scene.effect.Glow(0.5)));
-            interactiveDrawing.setOnMouseExited(e -> interactiveDrawing.setEffect(null));
+                interactiveDrawing.setTranslateX(-160);
+                interactiveDrawing.setTranslateY(195);
 
-            // Клік по малюнку
-            interactiveDrawing.setOnMouseClicked(e -> {
-                this.root.getChildren().remove(interactiveDrawing);
+                interactiveDrawing.setPickOnBounds(true);
+                interactiveDrawing.setStyle("-fx-cursor: hand;");
 
-                NotificationManager.showNotification(this.root, "Ви підняли малюнок! Тепер покажіть його матері.");
+                // Наведення на малюнок
+                interactiveDrawing.setOnMouseEntered(e -> interactiveDrawing.setEffect(new javafx.scene.effect.Glow(0.5)));
+                interactiveDrawing.setOnMouseExited(e -> interactiveDrawing.setEffect(null));
 
-                enableNavigation();
-            });
+                // Клік по малюнку
+                interactiveDrawing.setOnMouseClicked(e -> {
+                    this.root.getChildren().remove(interactiveDrawing);
 
-            this.root.getChildren().add(interactiveDrawing);
-        } catch (Exception e) {
-            System.err.println("Не вдалося завантажити малюнок: " + e.getMessage());
-        }
+                    NotificationManager.showNotification(this.root, "Ви підняли малюнок! Тепер покажіть його матері.");
+                    enableNavigation();
+                });
+                this.roomContentLayer.getChildren().add(interactiveDrawing);
+            } catch (Exception e) {
+                System.err.println("Помилка активація геймплею" + e.getMessage());
+                e.printStackTrace();
+            }
+        });
     }
 
     /**

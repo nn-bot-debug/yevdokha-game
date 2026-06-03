@@ -6,6 +6,8 @@ import ukma.fourgirls.SceneManager;
 
 public class CameraController {
 
+    private static boolean isPanningEnabled = true;
+
     /**
      * Додає ефект повороту голови (панорами) за курсором миші.
      *
@@ -14,6 +16,10 @@ public class CameraController {
      */
     public static void enableMousePanning(Parent interactiveNode, ScrollPane scrollPane) {
         interactiveNode.setOnMouseMoved(event -> {
+            if (!isPanningEnabled) {
+                return;
+            }
+
             double mouseX = event.getSceneX();
             double sceneWidth = SceneManager.getInstance().getWidth();
 
@@ -22,5 +28,12 @@ public class CameraController {
                 scrollPane.setHvalue(scrollValue);
             }
         });
+    }
+
+    /**
+     * Метод для блокування або розблокування руху камери
+     */
+    public static void setPanningEnabled(boolean enabled) {
+        isPanningEnabled = enabled;
     }
 }
