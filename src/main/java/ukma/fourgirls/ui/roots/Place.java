@@ -18,12 +18,14 @@ import java.util.Objects;
 
 public abstract class Place {
     protected final StackPane root;
-    protected final StackPane roomContentLayer;     // Шари всередині скролу (Фон + предмети)
+    protected final StackPane roomContentLayer;
     protected final ImageView roomView;
     private Font font;
 
     public Place(String imagePath) {
         StackPane rootPane = new StackPane();
+
+        rootPane.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/buttons.css")).toExternalForm());
 
         try {
             font = Font.loadFont(getClass().getResourceAsStream("/Creepster-Regular.ttf"), 22);
@@ -50,7 +52,6 @@ public abstract class Place {
 
         rootPane.getChildren().addAll(scrollPane, backButton);
 
-        // === ПІДКЛЮЧАЄМО МЕХАНІКУ З ОКРЕМОГО КЛАСУ ===
         CameraController.enableMousePanning(rootPane, scrollPane);
         javafx.application.Platform.runLater(() -> scrollPane.setHvalue(0.5));
 
@@ -65,35 +66,7 @@ public abstract class Place {
         Button backButton = new Button("Back to Menu");
         backButton.setFont(font);
 
-        String BackBtnImage = String.valueOf(Objects.requireNonNull(getClass().getResource("/images/buttonBackground.jpeg")));
-        String btnStyle =
-                "-fx-background-image: url('" + BackBtnImage + "'); "+
-                        "-fx-text-fill: #a4bfa7; " +
-                        "-fx-border-color: #2e261b;" +
-                        "-fx-border-width: 1px;" +
-                        "-fx-background-size: cover;" +
-                        "-fx-background-radius: 6px;" +
-                        "-fx-border-radius: 6px;" +
-                        "-fx-effect: dropshadow(three-pass-box, rgba(60, 80, 80, 0.8), 15, 0.0, 0,4);" +
-                        "-fx-cursor: hand;" +
-                        "-fx-padding: 10px 30px;";
-
-        backButton.setStyle(btnStyle);
-
-        backButton.setOnMouseEntered(e -> {
-            backButton.setStyle(
-                    btnStyle +
-                            "-fx-text-fill: #7b9c7b; " +
-                            "-fx-border-width: 3px;" +
-                            "-fx-opacity:0.95; "
-            );
-            backButton.setFont(font);
-        });
-
-        backButton.setOnMouseExited(e->{
-            backButton.setStyle(btnStyle);
-            backButton.setFont(font);
-        });
+        backButton.getStyleClass().add("back-button");
 
         backButton.setOnAction(e -> SceneManager.getInstance().switchToMainMenu());
         return backButton;
@@ -129,7 +102,7 @@ public abstract class Place {
 
         if (GameState.isUnlocked("Street")) {
             navPanel.addNavigationTarget("Вийти на вулицю", () -> {
-                // Логіка виходу на вулицю
+                //TODO: Логіка виходу на вулицю
             });
         }
 

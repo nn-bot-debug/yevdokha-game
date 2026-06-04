@@ -1,0 +1,40 @@
+/* BACK TO MENU */
+.back-button {
+    -fx-background-image: url('/images/buttonBackground.jpeg');
+    -fx-text-fill: #a4bfa7;
+    -fx-border-color: #2e261b;
+    -fx-border-width: 1px;
+    -fx-background-size: cover;
+    -fx-background-radius: 6px;
+    -fx-border-radius: 6px;
+    -fx-effect: dropshadow(three-pass-box, rgba(60, 80, 80, 0.8), 15, 0.0, 0, 4);
+    -fx-cursor: hand;
+    -fx-padding: 10px 30px;
+}
+
+/* BACK TO MENU при наведенні миші */
+.back-button:hover {
+    -fx-text-fill: #7b9c7b;
+    -fx-border-width: 3px;
+    -fx-opacity: 0.95;
+}
+
+/* --- КНОПКИ ГОЛОВНОГО МЕНЮ --- */
+.main-menu-button {
+    -fx-pref-width: 180px;
+    -fx-pref-height: 34px;
+    -fx-background-color: rgba(35, 50, 50, 0.85);
+    -fx-text-fill: #9ba89e;
+    -fx-border-color: #3c5050;
+    -fx-border-width: 1px;
+    -fx-background-radius: 2px;
+    -fx-border-radius: 2px;
+    -fx-effect: dropshadow(three-pass-box, rgba(60, 80, 80, 0.8), 15, 0.0, 0, 4);
+    -fx-cursor: hand;
+}
+
+/* Ефект при наведенні миші */
+.main-menu-button:hover {
+    -fx-background-color: rgba(50, 70, 70, 0.9);
+    -fx-border-width: 4px;
+}

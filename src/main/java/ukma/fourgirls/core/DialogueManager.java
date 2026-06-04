@@ -4,9 +4,10 @@ import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
+
+import java.util.Objects;
 
 public class DialogueManager {
 
@@ -53,14 +54,16 @@ public class DialogueManager {
         dialogueRootPane.setMaxWidth(1200);
         dialogueRootPane.setMinHeight(140);
         dialogueRootPane.setMaxHeight(140);
-        dialogBoxStyle(dialogueRootPane);
+
+        dialogueRootPane.getStyleClass().add("dialogue-box");
+        dialogueRootPane.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/dialogue.css")).toExternalForm());
 
         StackPane.setAlignment(dialogueRootPane, Pos.BOTTOM_CENTER);
         StackPane.setMargin(dialogueRootPane, new Insets(0, 0, 50, 0));
 
         textLabel = new Label();
         textLabel.setFont(font);
-        textLabel.setStyle("-fx-text-fill: #9ba89e;");
+        textLabel.getStyleClass().add("dialogue-text");
         textLabel.setWrapText(true);
         textLabel.setAlignment(Pos.CENTER);
         textLabel.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
@@ -68,8 +71,7 @@ public class DialogueManager {
         StackPane.setAlignment(textLabel, Pos.CENTER);
 
         Label hintLabel = new Label("▶ Клікніть для продовження");
-        hintLabel.setFont(Font.font("Arial", 12));
-        hintLabel.setStyle("-fx-text-fill: #4b544f;");
+        hintLabel.getStyleClass().add("dialogue-hint");
         StackPane.setAlignment(hintLabel, Pos.BOTTOM_RIGHT);
         StackPane.setMargin(hintLabel, new Insets(0, 10, 0, 0));
 
@@ -89,17 +91,5 @@ public class DialogueManager {
                 currentOnFinished.run();
             }
         }
-    }
-
-    private void dialogBoxStyle(Pane pane) {
-        pane.setPadding(new Insets(15, 40, 15, 40));
-        pane.setStyle(
-                "-fx-background-color: rgba(15, 22, 22, 0.75);" +
-                        "-fx-border-color: #3c5050;" +
-                        "-fx-border-width: 2px;" +
-                        "-fx-background-radius: 6px;" +
-                        "-fx-border-radius: 6px;" +
-                        "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 20, 0.0, 0, 10);"
-        );
     }
 }

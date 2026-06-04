@@ -14,7 +14,6 @@ import ukma.fourgirls.core.AudioManager;
 import ukma.fourgirls.logic.StoryController;
 import ukma.fourgirls.ui.animation.AnimationCanvas;
 import ukma.fourgirls.core.SceneManager;
-import ukma.fourgirls.ui.roots.ChildRoom;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -64,6 +63,9 @@ public class MainMenuWindow extends Application {
         button.setPadding(new Insets(0,0,0,290));
 
         Scene mainScene = new Scene(root);
+
+        mainScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/buttons.css")).toExternalForm());
+
         SceneManager.getInstance().setMainMenuRoot(root);
 
         Map<String, Runnable> buttonActions = new LinkedHashMap<>();
@@ -78,51 +80,17 @@ public class MainMenuWindow extends Application {
 
         for (Map.Entry<String, Runnable> entry : buttonActions.entrySet()) {
             Button buttonN = new Button(entry.getKey());
-            styleButton(buttonN);
+            buttonN.setFont(font);
+            buttonN.getStyleClass().add("main-menu-button");
             buttonN.setOnAction(e -> entry.getValue().run());
             button.getChildren().add(buttonN);
         }
 
         root.getChildren().add(button);
         primaryStage.setScene(mainScene);
-        // Запускаємо фонову хорор-музику
+
         AudioManager.getInstance().playBackgroundMusic("/music/background.mp3");
 
         primaryStage.show();
-    }
-
-    private void styleButton(Button button){
-        button.setPrefWidth(180);
-        button.setPrefHeight(34);
-
-        String buttonStyle =
-                "-fx-background-color: rgba(35, 50, 50, 0.85);" +
-                "-fx-text-fill: #9ba89e;" +
-                "-fx-border-color: #3c5050;" +
-                "-fx-border-width: 1px;" +
-                "-fx-background-radius: 2px;" +
-                "-fx-border-radius: 2px;" +
-                "-fx-effect: dropshadow(three-pass-box, rgba(60, 80, 80, 0.8), 15, 0.0, 0,4);" +
-                "-fx-cursor: hand;";
-
-        button.setStyle(buttonStyle);
-
-        button.setFont(font);
-
-        button.setOnMouseEntered(e-> {
-            button.setStyle(
-               buttonStyle +
-               "-fx-background-color: rgba(50, 70, 70, 0.9);" +
-               "-fx-text-fill: #9ba89e;" +
-               "-fx-border-color: #3c5050;" +
-               "-fx-border-width: 4px;"
-            );
-            button.setFont(font);
-        });
-
-        button.setOnMouseExited(e-> {
-            button.setStyle(buttonStyle);
-            button.setFont(font);
-        });
     }
 }

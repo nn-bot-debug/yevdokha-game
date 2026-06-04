@@ -1,0 +1,79 @@
+/* --- ЗАТЕМНЕННЯ ФОНУ --- */
+.settings-overlay {
+    -fx-background-color: rgba(0, 0, 0, 0.65);
+}
+
+/* --- ГОЛОВНЕ ВІКНО НАЛАШТУВАНЬ --- */
+.settings-dialog {
+    -fx-background-color: rgba(25, 35, 35, 0.95);
+    -fx-border-color: #3c5050;
+    -fx-border-width: 3px;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.9), 30, 0.0, 0, 0);
+}
+
+.settings-title {
+    -fx-text-fill: #9ba89e;
+    -fx-underline: true;
+}
+
+.settings-label {
+    -fx-text-fill: #9ba89e;
+}
+
+/* --- ЗВИЧАЙНІ КНОПКИ (Мова, Закрити) --- */
+.settings-button {
+    -fx-pref-width: 100px;
+    -fx-pref-height: 34px;
+    -fx-background-color: rgba(35, 50, 50, 0.85);
+    -fx-text-fill: #9ba89e;
+    -fx-border-color: #3c5050;
+    -fx-background-radius: 2px;
+    -fx-border-radius: 2px;
+}
+
+.settings-button:hover {
+    -fx-background-color: rgba(50, 70, 70, 0.9);
+}
+
+/* --- КНОПКИ-ПЕРЕМИКАЧІ (ON/OFF) --- */
+.settings-toggle {
+    -fx-pref-width: 100px;
+    -fx-pref-height: 34px;
+    -fx-background-color: rgba(45, 65, 65, 0.9);
+    -fx-text-fill: #9ba89e;
+    -fx-border-color: #4a6363;
+    -fx-border-width: 2px;
+}
+
+/* Стан кнопки, коли вона натиснута (OFF) */
+.settings-toggle:selected {
+    -fx-background-color: rgba(20, 25, 25, 0.6);
+    -fx-text-fill: #5a665e;
+    -fx-border-color: #253333;
+    -fx-border-width: 1px;
+}
+
+/* --- ПОВЗУНОК (SLIDER) --- */
+.settings-slider {
+    -fx-pref-width: 240px;
+}
+
+.settings-slider .track {
+    -fx-background-color: #233232;
+    -fx-background-insets: 0;
+    -fx-background-radius: 2px;
+    -fx-pref-height: 6px;
+}
+
+.settings-slider .thumb {
+    -fx-background-color: #9ba89e;
+    -fx-background-radius: 2px;
+    -fx-padding: 8px 5px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 3, 0, 0, 1);
+}
+
+.settings-slider:hover .thumb {
+    -fx-background-color: #b28d94;
+}

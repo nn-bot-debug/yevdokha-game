@@ -1,0 +1,29 @@
+/* --- МЕНЮ ВИБОРУ --- */
+.choice-box {
+    -fx-background-color: rgba(20, 20, 20, 0.85);
+    -fx-padding: 30px;
+    -fx-border-color: #4a5c4d;
+    -fx-border-width: 2px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+}
+
+.choice-prompt {
+    -fx-text-fill: #d1d1d1;
+    -fx-font-family: "Arial";
+    -fx-font-size: 22px;
+}
+
+.choice-button {
+    -fx-background-color: #2e261b;
+    -fx-text-fill: #a4bfa7;
+    -fx-font-size: 16px;
+    -fx-cursor: hand;
+    -fx-padding: 10px 20px;
+    -fx-border-color: transparent;
+}
+
+/* Автоматичний ефект наведення миші */
+.choice-button:hover {
+    -fx-border-color: #a4bfa7;
+}

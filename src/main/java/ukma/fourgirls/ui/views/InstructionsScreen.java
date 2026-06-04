@@ -20,6 +20,8 @@ public class InstructionsScreen {
     public InstructionsScreen() {
         this.root = new StackPane();
 
+        this.root.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/buttons.css")).toExternalForm());
+
         try {
             font = Font.loadFont(getClass().getResourceAsStream("/Creepster-Regular.ttf"), 22);
         } catch (Exception e) {
@@ -47,7 +49,6 @@ public class InstructionsScreen {
 
         HBox textContainer = new HBox(150);
         textContainer.setAlignment(Pos.CENTER);
-
         textContainer.setPadding(new Insets(100, 320, 200, 320));
         uiLayer.getChildren().add(textContainer);
 
@@ -57,37 +58,7 @@ public class InstructionsScreen {
 
         Button backButton = new Button("Back to Menu");
         backButton.setFont(font);
-
-        String BackBtnImage = String.valueOf(Objects.requireNonNull(getClass().getResource("/images/buttonBackground.jpeg")));
-        String btnStyle =
-                "-fx-background-image: url('" + BackBtnImage + "'); "+
-                "-fx-text-fill: #d4cbb8; " +
-                "-fx-border-color: #2e261b;" +
-                "-fx-border-width: 1px;" +
-                "-fx-background-size: cover;" +
-                "-fx-background-radius: 6px;" +
-                "-fx-border-radius: 6px;" +
-                "-fx-effect: dropshadow(three-pass-box, rgba(60, 80, 80, 0.8), 15, 0.0, 0,4);" +
-                "-fx-cursor: hand;" +
-                "-fx-padding: 10px 30px;";
-
-        backButton.setStyle(btnStyle);
-
-        backButton.setOnMouseEntered(e -> {
-            backButton.setStyle(
-                    btnStyle +
-                            "-fx-text-fill: #baaa88; " +
-                            "-fx-border-width: 3px;" +
-                            "-fx-opacity:0.95; "
-                    );
-            backButton.setFont(font);
-                });
-
-        backButton.setOnMouseExited(e->{
-            backButton.setStyle(btnStyle);
-            backButton.setFont(font);
-        });
-
+        backButton.getStyleClass().add("back-button");
         backButton.setOnAction(e -> SceneManager.getInstance().switchToMainMenu());
 
         bottomContainer.getChildren().add(backButton);
