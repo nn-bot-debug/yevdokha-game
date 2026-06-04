@@ -5,6 +5,16 @@ import java.util.Set;
 
 public class GameState {
     private static final Set<String> unlockedLocations = new HashSet<>();
+    private static int karmaBalance = 0;
+
+    public static void changeKarma(int points) {
+        karmaBalance += points;
+        System.out.println("Баланс: " + karmaBalance);
+    }
+
+    public static int getKarmaBalance() {
+        return karmaBalance;
+    }
 
     public static void unlockLocation(String locationId) {
         unlockedLocations.add(locationId);

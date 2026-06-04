@@ -10,7 +10,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
+import ukma.fourgirls.core.ChoiceManager;
 import ukma.fourgirls.logic.StorySequence;
+import ukma.fourgirls.state.GameState;
 import ukma.fourgirls.state.InventoryState;
 import ukma.fourgirls.ui.CameraController;
 
@@ -24,8 +26,6 @@ public class MomRoom extends Place {
 
     public MomRoom() {
         super(IMAGE_PATH);
-
-        this.root.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/choices.css")).toExternalForm());
 
         blackOverlay = new Rectangle();
         blackOverlay.widthProperty().bind(this.root.widthProperty());
@@ -60,12 +60,30 @@ public class MomRoom extends Place {
                 .addAnimation(createPart2Animation(drawingView)) // Анімація малюнка (рух + проявлення)
                 .execute(() -> {
                     this.root.getChildren().remove(blackOverlay);
-                    showChoices(drawingView);
+
+                    ChoiceManager.Option[] options = {
+                            new ChoiceManager.Option("Покласти біля мами", () -> {
+                                InventoryState.removeItem("Малюнок");
+                                GameState.changeKarma(-1);
+                                finalizeCutscene(drawingView);
+                            }),
+                            new ChoiceManager.Option("Заховати в кишеню", () -> {
+                                GameState.changeKarma(1);
+                                finalizeCutscene(drawingView);
+                            })
+                    };
+                    ChoiceManager.show(this.root, "Що робити із малюнком?", options);
                 })
                 .play();
     }
 
     // --- ДОПОМІЖНІ МЕТОДИ СТВОРЕННЯ АНІМАЦІЙ ---
+
+    private void finalizeCutscene(ImageView cinematicView) {
+        this.root.getChildren().remove(cinematicView);
+        CameraController.setPanningEnabled(true);
+        setupNavigation("MomRoom");
+    }
 
     private ImageView createCinematicView(String path, double scale) {
         ImageView view = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream(path))));
@@ -105,38 +123,5 @@ public class MomRoom extends Place {
         pan.setToX(0);
 
         return new ParallelTransition(reveal, pan);
-    }
-
-    // --- ЛОГІКА ВИБОРУ ---
-
-    private void showChoices(ImageView secondImage) {
-        VBox choiceBox = new VBox(20);
-        choiceBox.setAlignment(Pos.CENTER);
-        choiceBox.setMaxSize(400, 250);
-        choiceBox.getStyleClass().add("choice-box");
-
-        Label promptText = new Label("Що робити із малюнком?");
-        promptText.getStyleClass().add("choice-prompt");
-
-        Button btnPutNearMom = new Button("Покласти біля мами");
-        btnPutNearMom.getStyleClass().add("choice-button");
-        btnPutNearMom.setOnAction(e -> {
-            InventoryState.removeItem("Малюнок");
-            closeCutscene(secondImage, choiceBox);
-        });
-
-        Button btnHideInPocket = new Button("Заховати в кишеню");
-        btnHideInPocket.getStyleClass().add("choice-button");
-        btnHideInPocket.setOnAction(e -> closeCutscene(secondImage, choiceBox));
-
-        choiceBox.getChildren().addAll(promptText, btnPutNearMom, btnHideInPocket);
-        this.root.getChildren().add(choiceBox);
-    }
-
-    private void closeCutscene(ImageView cinematicImage, VBox menu) {
-        this.root.getChildren().remove(cinematicImage);
-        this.root.getChildren().remove(menu);
-        CameraController.setPanningEnabled(true);
-        setupNavigation("MomRoom");
     }
 }
