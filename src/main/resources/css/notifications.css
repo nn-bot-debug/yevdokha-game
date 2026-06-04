@@ -1,0 +1,13 @@
+/* --- ПЛАШКА СПОВІЩЕННЯ --- */
+.notification-pane {
+    -fx-background-color: rgba(25, 35, 35, 0.9);
+    -fx-border-color: #3c5050;
+    -fx-border-width: 2px;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.7), 10, 0.0, 0, 4);
+}
+
+.notification-text {
+    -fx-text-fill: #9ba89e;
+}

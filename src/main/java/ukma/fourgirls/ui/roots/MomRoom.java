@@ -13,7 +13,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
 import javafx.util.Duration;
 import ukma.fourgirls.core.DialogueManager;
 import ukma.fourgirls.state.InventoryState;
@@ -29,6 +28,8 @@ public class MomRoom extends Place {
 
     public MomRoom() {
         super(IMAGE_PATH);
+
+        this.root.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/choices.css")).toExternalForm());
 
         blackOverlay = new Rectangle();
         blackOverlay.widthProperty().bind(this.root.widthProperty());
@@ -110,43 +111,21 @@ public class MomRoom extends Place {
     }
 
     private void showChoices(ImageView secondImage) {
-
         VBox choiceBox = new VBox(20);
         choiceBox.setAlignment(Pos.CENTER);
         choiceBox.setMaxSize(400, 250);
-
-        choiceBox.setStyle(
-                "-fx-background-color: rgba(20, 20, 20, 0.85);" +
-                        "-fx-padding: 30px;" +
-                        "-fx-border-color: #4a5c4d;" +
-                        "-fx-border-width: 2px;" +
-                        "-fx-border-radius: 8px;" +
-                        "-fx-background-radius: 8px;"
-        );
+        choiceBox.getStyleClass().add("choice-box"); // Додаємо стиль
 
         Label promptText = new Label("Що робити із малюнком?");
-        promptText.setTextFill(Color.web("#d1d1d1"));
-        promptText.setFont(Font.font("Arial", 22));
+        promptText.getStyleClass().add("choice-prompt"); // Додаємо стиль
 
         Button btnPutNearMom = new Button("Покласти біля мами");
+        btnPutNearMom.getStyleClass().add("choice-button"); // Додаємо стиль
+
         Button btnHideInPocket = new Button("Заховати в кишеню");
+        btnHideInPocket.getStyleClass().add("choice-button"); // Додаємо стиль
 
-        String btnStyle =
-                "-fx-background-color: #2e261b; " +
-                        "-fx-text-fill: #a4bfa7; " +
-                        "-fx-font-size: 16px; " +
-                        "-fx-cursor: hand; " +
-                        "-fx-padding: 10px 20px;";
-
-        btnPutNearMom.setStyle(btnStyle);
-        btnHideInPocket.setStyle(btnStyle);
-
-        btnPutNearMom.setOnMouseEntered(e -> btnPutNearMom.setStyle(btnStyle + "-fx-border-color: #a4bfa7;"));
-        btnPutNearMom.setOnMouseExited(e -> btnPutNearMom.setStyle(btnStyle));
-        btnHideInPocket.setOnMouseEntered(e -> btnHideInPocket.setStyle(btnStyle + "-fx-border-color: #a4bfa7;"));
-        btnHideInPocket.setOnMouseExited(e -> btnHideInPocket.setStyle(btnStyle));
-
-        // 4. Логіка для першого вибору (-1 подих лісу)
+        // Логіка для першого вибору (-1 подих лісу)
         btnPutNearMom.setOnAction(e -> {
             // TODO: Додати в GameState метод зміни карми
             // GameState.modifyForestBreath(-1);
@@ -157,7 +136,7 @@ public class MomRoom extends Place {
             closeCutscene(secondImage, choiceBox);
         });
 
-        // 5. Логіка для другого вибору (+1 подих лісу)
+        // Логіка для другого вибору (+1 подих лісу)
         btnHideInPocket.setOnAction(e -> {
             // TODO: Додати в GameState метод зміни карми
             // GameState.modifyForestBreath(1);
