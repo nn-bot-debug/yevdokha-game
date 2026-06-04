@@ -9,8 +9,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
-import ukma.fourgirls.SceneManager;
+import ukma.fourgirls.core.SceneManager;
+import ukma.fourgirls.state.GameState;
 import ukma.fourgirls.ui.CameraController;
+import ukma.fourgirls.ui.NavigationPanel;
 
 import java.util.Objects;
 
@@ -102,5 +104,35 @@ public abstract class Place {
         ImageView imageView = new ImageView(roomImage);
         imageView.setPreserveRatio(true);
         return imageView;
+    }
+
+    protected void setupNavigation(String currentRoomName) {
+        NavigationPanel navPanel = new NavigationPanel();
+
+        if (!"MomRoom".equals(currentRoomName) && GameState.isUnlocked("MomRoom")) {
+            navPanel.addNavigationTarget("Кімната матері", () ->
+                    SceneManager.getInstance().switchToCachedRoom("MomRoom", () -> new MomRoom().getRoot())
+            );
+        }
+
+        if (!"Kitchen".equals(currentRoomName) && GameState.isUnlocked("Kitchen")) {
+            navPanel.addNavigationTarget("Кухня", () ->
+                    SceneManager.getInstance().switchToCachedRoom("Kitchen", () -> new Kitchen().getRoot())
+            );
+        }
+
+        if (!"ChildRoom".equals(currentRoomName) && GameState.isUnlocked("ChildRoom")) {
+            navPanel.addNavigationTarget("Дитяча кімната", () ->
+                    SceneManager.getInstance().switchToCachedRoom("ChildRoom", () -> new ChildRoom().getRoot())
+            );
+        }
+
+        if (GameState.isUnlocked("Street")) {
+            navPanel.addNavigationTarget("Вийти на вулицю", () -> {
+                // Логіка виходу на вулицю
+            });
+        }
+
+        navPanel.attachTo(this.root);
     }
 }

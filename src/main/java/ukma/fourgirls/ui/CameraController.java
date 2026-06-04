@@ -2,7 +2,7 @@ package ukma.fourgirls.ui;
 
 import javafx.scene.Parent;
 import javafx.scene.control.ScrollPane;
-import ukma.fourgirls.SceneManager;
+import ukma.fourgirls.core.SceneManager;
 
 public class CameraController {
 
@@ -29,10 +29,6 @@ public class CameraController {
             }
         });
     }
-
-    /**
-     * Метод для блокування або розблокування руху камери
-     */
     public static void setPanningEnabled(boolean enabled) {
         isPanningEnabled = enabled;
     }
