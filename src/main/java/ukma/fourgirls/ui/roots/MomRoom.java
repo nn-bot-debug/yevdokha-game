@@ -1,10 +1,6 @@
 package ukma.fourgirls.ui.roots;
 
-import javafx.animation.FadeTransition;
-import javafx.animation.ParallelTransition;
-import javafx.animation.PauseTransition;
-import javafx.animation.SequentialTransition;
-import javafx.animation.TranslateTransition;
+import javafx.animation.*;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -14,7 +10,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
-import ukma.fourgirls.core.DialogueManager;
+import ukma.fourgirls.logic.StorySequence;
 import ukma.fourgirls.state.InventoryState;
 import ukma.fourgirls.ui.CameraController;
 
@@ -24,7 +20,7 @@ public class MomRoom extends Place {
     private static final String IMAGE_PATH = "/images/mother_room.png";
     private static final String SECOND_IMAGE_PATH = "/images/drawing.png";
 
-    private Rectangle blackOverlay;
+    private final Rectangle blackOverlay;
 
     public MomRoom() {
         super(IMAGE_PATH);
@@ -35,116 +31,103 @@ public class MomRoom extends Place {
         blackOverlay.widthProperty().bind(this.root.widthProperty());
         blackOverlay.heightProperty().bind(this.root.heightProperty());
         blackOverlay.setFill(Color.BLACK);
-
         blackOverlay.setMouseTransparent(true);
 
         this.root.getChildren().add(blackOverlay);
         CameraController.setPanningEnabled(false);
 
-        String[] momRoomDialogue = {
-                "Побачене ніяк не засмутило дівчинку, навпаки, ніби вона все життя тільки цього і чекала, і от нарешті це сталося."
-        };
-
-        DialogueManager.getInstance().play(this.root, momRoomDialogue, () -> {
-            playCutscene();
-        });
+        // Запускаємо наш сценарій замість старих колбеків!
+        startCutscene();
     }
 
-    private void playCutscene() {
-        ImageView cinematicView = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream(IMAGE_PATH))));
-        cinematicView.fitHeightProperty().bind(this.root.heightProperty());
-        cinematicView.setPreserveRatio(true);
-        cinematicView.setScaleX(1.5);
-        cinematicView.setScaleY(1.5);
+    private void startCutscene() {
+        ImageView momView = createCinematicView(IMAGE_PATH, 1.5);
+        ImageView drawingView = createCinematicView(SECOND_IMAGE_PATH, 1.3);
 
-        this.root.getChildren().add(cinematicView);
-        blackOverlay.toFront();
+        // 🎬 СЦЕНАРІЙ КІМНАТИ 🎬
+        StorySequence.create(this.root)
+                .addDialogue("Побачене ніяк не засмутило дівчинку, навпаки, ніби вона все життя тільки цього і чекала, і от нарешті це сталося.")
+                .execute(() -> {
+                    this.root.getChildren().add(momView);
+                    blackOverlay.toFront();
+                })
+                .addAnimation(createPart1Animation(momView)) // Анімація мами (рух + затемнення)
+                .execute(() -> {
+                    this.root.getChildren().remove(momView);
+                    this.root.getChildren().add(drawingView);
+                    blackOverlay.toFront();
+                })
+                .addAnimation(createPart2Animation(drawingView)) // Анімація малюнка (рух + проявлення)
+                .execute(() -> {
+                    this.root.getChildren().remove(blackOverlay);
+                    showChoices(drawingView);
+                })
+                .play();
+    }
 
-        TranslateTransition panImage = new TranslateTransition(Duration.seconds(5), cinematicView);
-        panImage.setFromX(-200);
-        panImage.setToX(-100);
+    // --- ДОПОМІЖНІ МЕТОДИ СТВОРЕННЯ АНІМАЦІЙ ---
 
-        FadeTransition showCutscene = new FadeTransition(Duration.seconds(1.5), blackOverlay);
-        showCutscene.setFromValue(1.0);
-        showCutscene.setToValue(0.0);
+    private ImageView createCinematicView(String path, double scale) {
+        ImageView view = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream(path))));
+        view.fitHeightProperty().bind(this.root.heightProperty());
+        view.setPreserveRatio(true);
+        view.setScaleX(scale);
+        view.setScaleY(scale);
+        return view;
+    }
+
+    private Animation createPart1Animation(ImageView target) {
+        TranslateTransition pan = new TranslateTransition(Duration.seconds(5), target);
+        pan.setFromX(-200);
+        pan.setToX(-100);
+
+        FadeTransition show = new FadeTransition(Duration.seconds(1.5), blackOverlay);
+        show.setFromValue(1.0);
+        show.setToValue(0.0);
 
         PauseTransition hold = new PauseTransition(Duration.seconds(2));
 
-        FadeTransition hideCutscene = new FadeTransition(Duration.seconds(1.5), blackOverlay);
-        hideCutscene.setFromValue(0.0);
-        hideCutscene.setToValue(1.0);
+        FadeTransition hide = new FadeTransition(Duration.seconds(1.5), blackOverlay);
+        hide.setFromValue(0.0);
+        hide.setToValue(1.0);
 
-        SequentialTransition fadeSeq = new SequentialTransition(showCutscene, hold, hideCutscene);
-        ParallelTransition fullCutscene = new ParallelTransition(panImage, fadeSeq);
-
-        fullCutscene.setOnFinished(e -> {
-            this.root.getChildren().remove(cinematicView);
-
-            ImageView cinematicView2 = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream(SECOND_IMAGE_PATH))));
-            cinematicView2.fitHeightProperty().bind(this.root.heightProperty());
-            cinematicView2.setPreserveRatio(true);
-            cinematicView2.setScaleX(1.3);
-            cinematicView2.setScaleY(1.3);
-
-            this.root.getChildren().add(cinematicView2);
-            blackOverlay.toFront();
-
-            FadeTransition revealSecondImage = new FadeTransition(Duration.seconds(1.5), blackOverlay);
-            revealSecondImage.setFromValue(1.0);
-            revealSecondImage.setToValue(0.0);
-
-            TranslateTransition panImage2 = new TranslateTransition(Duration.seconds(4), cinematicView2);
-            panImage2.setFromX(-100);
-            panImage2.setToX(0);
-
-            ParallelTransition part2Cutscene = new ParallelTransition(revealSecondImage, panImage2);
-
-            part2Cutscene.setOnFinished(e2 -> {
-                this.root.getChildren().remove(blackOverlay);
-                showChoices(cinematicView2);
-            });
-
-            part2Cutscene.play();
-        });
-
-        fullCutscene.play();
+        SequentialTransition fadeSeq = new SequentialTransition(show, hold, hide);
+        return new ParallelTransition(pan, fadeSeq);
     }
+
+    private Animation createPart2Animation(ImageView target) {
+        FadeTransition reveal = new FadeTransition(Duration.seconds(1.5), blackOverlay);
+        reveal.setFromValue(1.0);
+        reveal.setToValue(0.0);
+
+        TranslateTransition pan = new TranslateTransition(Duration.seconds(4), target);
+        pan.setFromX(-100);
+        pan.setToX(0);
+
+        return new ParallelTransition(reveal, pan);
+    }
+
+    // --- ЛОГІКА ВИБОРУ ---
 
     private void showChoices(ImageView secondImage) {
         VBox choiceBox = new VBox(20);
         choiceBox.setAlignment(Pos.CENTER);
         choiceBox.setMaxSize(400, 250);
-        choiceBox.getStyleClass().add("choice-box"); // Додаємо стиль
+        choiceBox.getStyleClass().add("choice-box");
 
         Label promptText = new Label("Що робити із малюнком?");
-        promptText.getStyleClass().add("choice-prompt"); // Додаємо стиль
+        promptText.getStyleClass().add("choice-prompt");
 
         Button btnPutNearMom = new Button("Покласти біля мами");
-        btnPutNearMom.getStyleClass().add("choice-button"); // Додаємо стиль
+        btnPutNearMom.getStyleClass().add("choice-button");
+        btnPutNearMom.setOnAction(e -> {
+            InventoryState.removeItem("Малюнок");
+            closeCutscene(secondImage, choiceBox);
+        });
 
         Button btnHideInPocket = new Button("Заховати в кишеню");
-        btnHideInPocket.getStyleClass().add("choice-button"); // Додаємо стиль
-
-        // Логіка для першого вибору (-1 подих лісу)
-        btnPutNearMom.setOnAction(e -> {
-            // TODO: Додати в GameState метод зміни карми
-            // GameState.modifyForestBreath(-1);
-
-            // Забираємо малюнок з інвентарю, бо ми його віддали
-            InventoryState.removeItem("Малюнок");
-
-            closeCutscene(secondImage, choiceBox);
-        });
-
-        // Логіка для другого вибору (+1 подих лісу)
-        btnHideInPocket.setOnAction(e -> {
-            // TODO: Додати в GameState метод зміни карми
-            // GameState.modifyForestBreath(1);
-
-            // Малюнок НЕ видаляємо з InventoryState, він залишається в кишені
-
-            closeCutscene(secondImage, choiceBox);
-        });
+        btnHideInPocket.getStyleClass().add("choice-button");
+        btnHideInPocket.setOnAction(e -> closeCutscene(secondImage, choiceBox));
 
         choiceBox.getChildren().addAll(promptText, btnPutNearMom, btnHideInPocket);
         this.root.getChildren().add(choiceBox);
@@ -153,10 +136,6 @@ public class MomRoom extends Place {
     private void closeCutscene(ImageView cinematicImage, VBox menu) {
         this.root.getChildren().remove(cinematicImage);
         this.root.getChildren().remove(menu);
-        activateGameplay();
-    }
-
-    private void activateGameplay() {
         CameraController.setPanningEnabled(true);
         setupNavigation("MomRoom");
     }

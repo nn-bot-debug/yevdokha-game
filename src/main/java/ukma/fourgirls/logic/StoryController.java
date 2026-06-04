@@ -1,11 +1,8 @@
 package ukma.fourgirls.logic;
 
-import javafx.animation.PauseTransition;
 import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
-import javafx.util.Duration;
-import ukma.fourgirls.core.DialogueManager;
-import ukma.fourgirls.core.InventoryManager; // Додали імпорт
+import ukma.fourgirls.core.InventoryManager;
 import ukma.fourgirls.core.NotificationManager;
 import ukma.fourgirls.core.SceneManager;
 import ukma.fourgirls.domain.Item;
@@ -24,33 +21,38 @@ public class StoryController {
         StackPane roomRoot = (StackPane) childRoom.getRoot();
         SceneManager.getInstance().switchToRoot(roomRoot);
 
-        String[] introDialogue = {
-                "Дівчинка очей не зімкнула, все малювала аж до поки світати не почало.",
-                "Коли закінчила у неї було одне бажання - показати матері, щоб хоч трошки її підбадьорити."
-        };
+        StorySequence.create(roomRoot)
+                .addDialogue(
+                        "Дівчинка очей не зімкнула, все малювала аж до поки світати не почало.",
+                        "Коли закінчила у неї було одне бажання - показати матері, щоб хоч трошки її підбадьорити."
+                )
+                .execute(() -> startChildRoomGameplay(childRoom, roomRoot))
+                .play();
+    }
 
-        DialogueManager.getInstance().play(roomRoot, introDialogue, () -> {
-            childRoom.activateGameplay();
-            NotificationManager.showNotification(roomRoot, "Завдання: Підніміть малюнок зі столу.");
-            Item yevdokhaDrawing = new Item("Малюнок", "/images/drawing_icon.png");
+    private static void startChildRoomGameplay(ChildRoom childRoom, StackPane roomRoot) {
+        childRoom.activateGameplay();
+        NotificationManager.showNotification(roomRoot, "Завдання: Підніміть малюнок зі столу.");
 
-            Node drawing = childRoom.getInteractiveDrawing();
+        Item yevdokhaDrawing = new Item("Малюнок", "/images/drawing_icon.png");
+        Node drawing = childRoom.getInteractiveDrawing();
 
-            InventoryManager.setupPickupAction(
-                    drawing,
-                    yevdokhaDrawing,
-                    roomRoot,
-                    "Ви підняли малюнок! Тепер покажіть його матері.",
-                    () -> {
-                        GameState.unlockLocation("MomRoom");
-                        childRoom.enableNavigation();
-                        PauseTransition pause = new PauseTransition(Duration.seconds(5));
-                        pause.setOnFinished(event -> {
-                            NotificationManager.showNotification(roomRoot, "Підказка: Використайте панель навігації праворуч, щоб вийти з кімнати.");
-                        });
-                        pause.play();
-                    }
-            );
-        });
+        InventoryManager.setupPickupAction(
+                drawing,
+                yevdokhaDrawing,
+                roomRoot,
+                "Ви підняли малюнок! Тепер покажіть його матері.",
+                () -> onDrawingPickedUp(childRoom, roomRoot)
+        );
+    }
+
+    private static void onDrawingPickedUp(ChildRoom childRoom, StackPane roomRoot) {
+        GameState.unlockLocation("MomRoom");
+        childRoom.enableNavigation();
+
+        StorySequence.create(roomRoot)
+                .addPause(5.0)
+                .execute(() -> NotificationManager.showNotification(roomRoot, "Підказка: Використайте панель навігації праворуч, щоб вийти з кімнати."))
+                .play();
     }
 }
