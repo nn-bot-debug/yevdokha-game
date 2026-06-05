@@ -2,11 +2,17 @@ package ukma.fourgirls.ui.roots;
 
 import javafx.animation.PauseTransition;
 import javafx.animation.TranslateTransition;
+import javafx.collections.ListChangeListener;
 import javafx.geometry.Pos;
+import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
+import ukma.fourgirls.domain.Item;
+import ukma.fourgirls.state.InventoryState;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class Inventory {
@@ -14,6 +20,8 @@ public class Inventory {
     private final HBox inventoryBoard;
     private final StackPane window;
     private static final double BOARD_HEIGHT = 100;
+
+    private final List<StackPane> cells = new ArrayList<>();
 
     public Inventory() {
         this.inventoryBoard = createBoard();
@@ -27,6 +35,42 @@ public class Inventory {
         this.container.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/inventory.css")).toExternalForm());
 
         animation();
+
+        setupStateListener();
+    }
+
+    private void setupStateListener() {
+        InventoryState.getItems().addListener((ListChangeListener<Item>) change -> {
+            updateUI();
+        });
+
+        updateUI();
+    }
+
+    private void updateUI() {
+        List<Item> currentItems = InventoryState.getItems();
+
+        for (int i = 0; i < cells.size(); i++) {
+            StackPane cell = cells.get(i);
+            cell.getChildren().clear();
+
+            if (i < currentItems.size()) {
+                Item item = currentItems.get(i);
+
+                //TODO: ТУТ ВАМ ТРЕБА НАЛАШТУВАТИ ВІДОБРАЖЕННЯ (іконку)
+                // тимчасово текст
+                Label itemLabel = new Label(item.getName());
+                itemLabel.setStyle("-fx-text-fill: white; -fx-font-size: 14px;");
+                cell.getChildren().add(itemLabel);
+
+                /*
+                 * ImageView icon = new ImageView(new Image(item.getImagePath()));
+                 * icon.setFitWidth(70);
+                 * icon.setFitHeight(70);
+                 * cell.getChildren().add(icon);
+                 */
+            }
+        }
     }
 
     private StackPane createWindow() {
@@ -48,6 +92,9 @@ public class Inventory {
             StackPane cell = new StackPane();
             cell.setPrefSize(90, 90);
             cell.getStyleClass().add("inventory-cell");
+
+            cells.add(cell);
+
             inventoryBoard.getChildren().add(cell);
         }
 
