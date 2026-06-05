@@ -2,10 +2,18 @@ package ukma.fourgirls.ui.roots;
 
 import javafx.animation.PauseTransition;
 import javafx.animation.TranslateTransition;
+import javafx.collections.ListChangeListener;
 import javafx.geometry.Pos;
+import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
+import ukma.fourgirls.domain.Item;
+import ukma.fourgirls.state.InventoryState;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class Inventory {
     private final StackPane container;
@@ -13,9 +21,10 @@ public class Inventory {
     private final StackPane window;
     private static final double BOARD_HEIGHT = 100;
 
+    private final List<StackPane> cells = new ArrayList<>();
+
     public Inventory() {
         this.inventoryBoard = createBoard();
-
         this.window = createWindow();
 
         this.container = new StackPane(inventoryBoard, window);
@@ -23,17 +32,51 @@ public class Inventory {
         StackPane.setAlignment(inventoryBoard, Pos.BOTTOM_CENTER);
         StackPane.setAlignment(window, Pos.BOTTOM_CENTER);
 
+        this.container.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/inventory.css")).toExternalForm());
+
         animation();
+
+        setupStateListener();
+    }
+
+    private void setupStateListener() {
+        InventoryState.getItems().addListener((ListChangeListener<Item>) change -> {
+            updateUI();
+        });
+
+        updateUI();
+    }
+
+    private void updateUI() {
+        List<Item> currentItems = InventoryState.getItems();
+
+        for (int i = 0; i < cells.size(); i++) {
+            StackPane cell = cells.get(i);
+            cell.getChildren().clear();
+
+            if (i < currentItems.size()) {
+                Item item = currentItems.get(i);
+
+                //TODO: ТУТ ВАМ ТРЕБА НАЛАШТУВАТИ ВІДОБРАЖЕННЯ (іконку)
+                // тимчасово текст
+                Label itemLabel = new Label(item.getName());
+                itemLabel.setStyle("-fx-text-fill: white; -fx-font-size: 14px;");
+                cell.getChildren().add(itemLabel);
+
+                /*
+                 * ImageView icon = new ImageView(new Image(item.getImagePath()));
+                 * icon.setFitWidth(70);
+                 * icon.setFitHeight(70);
+                 * cell.getChildren().add(icon);
+                 */
+            }
+        }
     }
 
     private StackPane createWindow() {
         StackPane window = new StackPane();
-        window.setStyle(
-                "-fx-background-color: #3d2b22; " +
-                "-fx-background-radius: 4 4 0 0; " +
-                "-fx-border-color: #4a3b32; " +
-                "-fx-border-width: 2 2 0 2;"
-        );
+        window.getStyleClass().add("inventory-window");
+
         window.setPrefSize(100, 30);
         window.setMaxWidth(100);
         window.setMaxHeight(30);
@@ -43,21 +86,15 @@ public class Inventory {
     private HBox createBoard() {
         HBox inventoryBoard = new HBox();
         inventoryBoard.setAlignment(Pos.CENTER);
-        inventoryBoard.setStyle(
-                "-fx-background-color: #2a1f1a; " +
-                "-fx-border-color: #4a3b32; " +
-                "-fx-border-width: 5; " +
-                "-fx-background-radius: 4 4 0 0; " +
-                "-fx-border-radius: 4 4 0 0;"
-        );
+        inventoryBoard.getStyleClass().add("inventory-board");
 
         for (int i = 0; i < 5; i++) {
             StackPane cell = new StackPane();
             cell.setPrefSize(90, 90);
-            cell.setStyle(
-                "-fx-border-color: #4a3b32; " +
-                "-fx-border-width: 2;"
-            );
+            cell.getStyleClass().add("inventory-cell");
+
+            cells.add(cell);
+
             inventoryBoard.getChildren().add(cell);
         }
 
@@ -87,6 +124,10 @@ public class Inventory {
             delay.setOnFinished(ev -> window.setVisible(true));
             delay.play();
         });
+    }
+
+    public void setVisible(boolean isVisible) {
+        this.container.setVisible(isVisible);
     }
 
     public void attachTo(StackPane root) {

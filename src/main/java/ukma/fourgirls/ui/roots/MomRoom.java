@@ -1,19 +1,12 @@
 package ukma.fourgirls.ui.roots;
 
 import javafx.animation.*;
-import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
-import ukma.fourgirls.core.ChoiceManager;
-import ukma.fourgirls.logic.StorySequence;
-import ukma.fourgirls.state.GameState;
-import ukma.fourgirls.state.InventoryState;
+import ukma.fourgirls.logic.StoryController;
 import ukma.fourgirls.ui.CameraController;
 
 import java.util.Objects;
@@ -21,8 +14,12 @@ import java.util.Objects;
 public class MomRoom extends Place {
     private static final String IMAGE_PATH = "/images/mother_room.png";
     private static final String SECOND_IMAGE_PATH = "/images/drawing.png";
+    private static final String SCARY_MOM_PATH = "/images/scary_mom_screamer.jpeg";
 
     private final Rectangle blackOverlay;
+    private final ImageView momView;
+    private final ImageView drawingView;
+    private final ImageView scaryMomView;
 
     public MomRoom() {
         super(IMAGE_PATH);
@@ -36,66 +33,50 @@ public class MomRoom extends Place {
         this.root.getChildren().add(blackOverlay);
         CameraController.setPanningEnabled(false);
 
-        // Запускаємо наш сценарій замість старих колбеків!
-        startCutscene();
+        momView = createCinematicView(IMAGE_PATH, 1.5);
+        drawingView = createCinematicView(SECOND_IMAGE_PATH, 1.3);
+        scaryMomView = createCinematicView(SCARY_MOM_PATH, 1.5);
+
+        // Передаємо управління контролеру сюжету!
+        StoryController.startMomRoomCutscene(this, this.root);
     }
 
-    private void startCutscene() {
-        ImageView momView = createCinematicView(IMAGE_PATH, 1.5);
-        ImageView drawingView = createCinematicView(SECOND_IMAGE_PATH, 1.3);
+    // --- МЕТОДИ ДЛЯ КЕРУВАННЯ СЦЕНОЮ З КОНТРОЛЕРА ---
 
-        // 🎬 СЦЕНАРІЙ КІМНАТИ 🎬
-        StorySequence.create(this.root)
-                .addDialogue("Побачене ніяк не засмутило дівчинку, навпаки, ніби вона все життя тільки цього і чекала, і от нарешті це сталося.")
-                .execute(() -> {
-                    this.root.getChildren().add(momView);
-                    blackOverlay.toFront();
-                })
-                .addAnimation(createPart1Animation(momView)) // Анімація мами (рух + затемнення)
-                .execute(() -> {
-                    this.root.getChildren().remove(momView);
-                    this.root.getChildren().add(drawingView);
-                    blackOverlay.toFront();
-                })
-                .addAnimation(createPart2Animation(drawingView)) // Анімація малюнка (рух + проявлення)
-                .execute(() -> {
-                    this.root.getChildren().remove(blackOverlay);
-
-                    ChoiceManager.Option[] options = {
-                            new ChoiceManager.Option("Покласти біля мами", () -> {
-                                InventoryState.removeItem("Малюнок");
-                                GameState.changeKarma(-1);
-                                finalizeCutscene(drawingView);
-                            }),
-                            new ChoiceManager.Option("Заховати в кишеню", () -> {
-                                GameState.changeKarma(1);
-                                finalizeCutscene(drawingView);
-                            })
-                    };
-                    ChoiceManager.show(this.root, "Що робити із малюнком?", options);
-                })
-                .play();
+    public void showMomView() {
+        this.root.getChildren().add(momView);
+        blackOverlay.toFront();
     }
 
-    // --- ДОПОМІЖНІ МЕТОДИ СТВОРЕННЯ АНІМАЦІЙ ---
+    public void showDrawingView() {
+        this.root.getChildren().remove(momView);
+        this.root.getChildren().add(drawingView);
+        blackOverlay.toFront();
+    }
 
-    private void finalizeCutscene(ImageView cinematicView) {
-        this.root.getChildren().remove(cinematicView);
+    public void showScaryMom() {
+        if (!this.root.getChildren().contains(scaryMomView)) {
+            this.root.getChildren().add(scaryMomView);
+        }
+        scaryMomView.toFront();
+    }
+
+    public void hideScaryMom() {
+        this.root.getChildren().remove(scaryMomView);
+    }
+
+    public void removeBlackOverlay() {
+        this.root.getChildren().remove(blackOverlay);
+    }
+
+    // Відновлює звичайний режим гри
+    public void finalizeCutscene() {
         CameraController.setPanningEnabled(true);
         setupNavigation("MomRoom");
     }
 
-    private ImageView createCinematicView(String path, double scale) {
-        ImageView view = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream(path))));
-        view.fitHeightProperty().bind(this.root.heightProperty());
-        view.setPreserveRatio(true);
-        view.setScaleX(scale);
-        view.setScaleY(scale);
-        return view;
-    }
-
-    private Animation createPart1Animation(ImageView target) {
-        TranslateTransition pan = new TranslateTransition(Duration.seconds(5), target);
+    public Animation getPart1Animation() {
+        TranslateTransition pan = new TranslateTransition(Duration.seconds(5), momView);
         pan.setFromX(-200);
         pan.setToX(-100);
 
@@ -113,15 +94,28 @@ public class MomRoom extends Place {
         return new ParallelTransition(pan, fadeSeq);
     }
 
-    private Animation createPart2Animation(ImageView target) {
+    public Animation getPart2Animation() {
         FadeTransition reveal = new FadeTransition(Duration.seconds(1.5), blackOverlay);
         reveal.setFromValue(1.0);
         reveal.setToValue(0.0);
 
-        TranslateTransition pan = new TranslateTransition(Duration.seconds(4), target);
+        TranslateTransition pan = new TranslateTransition(Duration.seconds(4), drawingView);
         pan.setFromX(-100);
         pan.setToX(0);
 
         return new ParallelTransition(reveal, pan);
+    }
+
+    private ImageView createCinematicView(String path, double scale) {
+        ImageView view = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream(path))));
+        view.fitHeightProperty().bind(this.root.heightProperty());
+        view.setPreserveRatio(true);
+        view.setScaleX(scale);
+        view.setScaleY(scale);
+        return view;
+    }
+
+    public void hideDrawingView() {
+        this.root.getChildren().remove(drawingView);
     }
 }

@@ -21,6 +21,7 @@ public abstract class Place {
     protected final StackPane roomContentLayer;
     protected final ImageView roomView;
     private Font font;
+    protected final Inventory inventory;
 
     public Place(String imagePath) {
         StackPane rootPane = new StackPane();
@@ -52,8 +53,9 @@ public abstract class Place {
 
         rootPane.getChildren().addAll(scrollPane, backButton);
 
-        Inventory inventory = new Inventory();
-        inventory.attachTo(rootPane);
+        this.inventory = new Inventory();
+        this.inventory.attachTo(rootPane);
+        this.inventory.setVisible(GameState.isInventoryUnlocked());
 
         CameraController.enableMousePanning(rootPane, scrollPane);
         javafx.application.Platform.runLater(() -> scrollPane.setHvalue(0.5));
@@ -110,5 +112,10 @@ public abstract class Place {
         }
 
         navPanel.attachTo(this.root);
+    }
+
+    public void showInventoryUI() {
+        GameState.unlockInventory();
+        this.inventory.setVisible(true);
     }
 }

@@ -1,0 +1,25 @@
+.inventory-window {
+    -fx-background-color: #3d2b22;
+    -fx-background-radius: 4 4 0 0;
+    -fx-border-color: #4a3b32;
+    -fx-border-width: 2 2 0 2;
+}
+
+.inventory-board {
+    -fx-background-color: #2a1f1a;
+    -fx-border-color: #4a3b32;
+    -fx-border-width: 5;
+    -fx-background-radius: 4 4 0 0;
+    -fx-border-radius: 4 4 0 0;
+}
+
+.inventory-cell {
+    -fx-border-color: #4a3b32;
+    -fx-border-width: 2;
+}
+
+.dialogue-name {
+    -fx-text-fill: #a3c2a4;
+    -fx-font-style: italic;
+    -fx-underline: true;
+}
