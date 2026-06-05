@@ -52,6 +52,9 @@ public abstract class Place {
 
         rootPane.getChildren().addAll(scrollPane, backButton);
 
+        Inventory inventory = new Inventory();
+        inventory.attachTo(rootPane);
+
         CameraController.enableMousePanning(rootPane, scrollPane);
         javafx.application.Platform.runLater(() -> scrollPane.setHvalue(0.5));
 
