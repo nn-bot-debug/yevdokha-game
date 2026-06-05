@@ -126,6 +126,10 @@ public class Inventory {
         });
     }
 
+    public void setVisible(boolean isVisible) {
+        this.container.setVisible(isVisible);
+    }
+
     public void attachTo(StackPane root) {
         root.getChildren().add(this.container);
     }

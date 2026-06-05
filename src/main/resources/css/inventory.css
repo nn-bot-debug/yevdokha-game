@@ -17,3 +17,9 @@
     -fx-border-color: #4a3b32;
     -fx-border-width: 2;
 }
+
+.dialogue-name {
+    -fx-text-fill: #a3c2a4;
+    -fx-font-style: italic;
+    -fx-underline: true;
+}
