@@ -1,5 +1,6 @@
 package ukma.fourgirls.core;
 
+import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import java.util.Objects;
@@ -89,5 +90,19 @@ public class AudioManager {
      */
     public double getVolume() {
         return currentVolume;
+    }
+
+    public void buttonSound(String resourcePath) {
+        try {
+            var resource = Objects.requireNonNull(getClass().getResource(resourcePath));
+            AudioClip audioClip = new AudioClip(resource.toExternalForm());
+
+            audioClip.setVolume(currentVolume);
+
+            audioClip.play();
+        }
+        catch (Exception e) {
+            System.err.println("Не вдалося запустити аудіо: " + e.getMessage());
+        }
     }
 }

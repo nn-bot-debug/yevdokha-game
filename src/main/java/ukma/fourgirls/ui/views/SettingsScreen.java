@@ -77,6 +77,8 @@ public class SettingsScreen {
             boolean isMuted = AudioManager.getInstance().toggleMusic();
             musicToggle.setText(isMuted ? "OFF" : "ON");
             musicSlider.setDisable(isMuted);
+            AudioManager.getInstance().setVolume(musicSlider.getValue());
+            AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
         });
 
         settingsGrid.add(musicSlider, 0, 1, 2, 1);
@@ -99,6 +101,7 @@ public class SettingsScreen {
                 soundToggle.setText("ON");
                 // TODO: Код ввімкнення звуків
             }
+            AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
         });
         settingsGrid.add(soundLabel, 0, 2);
         settingsGrid.add(soundToggle, 1, 2);
@@ -118,6 +121,7 @@ public class SettingsScreen {
             } else {
                 langButton.setText("UA");
             }
+            AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
         });
         settingsGrid.add(langLabel, 0, 3);
         settingsGrid.add(langButton, 1, 3);
@@ -127,7 +131,10 @@ public class SettingsScreen {
         Button closeButton = new Button("CLOSE");
         closeButton.setFont(font);
         closeButton.getStyleClass().add("settings-button");
-        closeButton.setOnAction(e -> parentContainer.getChildren().remove(overlayRoot));
+        closeButton.setOnAction(e -> {
+            AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
+            parentContainer.getChildren().remove(overlayRoot);
+        });
 
         dialogBox.getChildren().add(closeButton);
         overlayRoot.getChildren().add(dialogBox);

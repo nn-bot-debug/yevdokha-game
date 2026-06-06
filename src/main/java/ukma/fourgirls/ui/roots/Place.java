@@ -9,6 +9,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
+import ukma.fourgirls.core.AudioManager;
 import ukma.fourgirls.core.SceneManager;
 import ukma.fourgirls.state.GameState;
 import ukma.fourgirls.ui.CameraController;
@@ -73,7 +74,10 @@ public abstract class Place {
 
         backButton.getStyleClass().add("back-button");
 
-        backButton.setOnAction(e -> SceneManager.getInstance().switchToMainMenu());
+        backButton.setOnAction(e -> {
+            AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
+            SceneManager.getInstance().switchToMainMenu();
+        });
         return backButton;
     }
 
