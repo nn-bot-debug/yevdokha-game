@@ -6,6 +6,7 @@ import javafx.scene.layout.StackPane;
 import ukma.fourgirls.core.InventoryManager;
 import ukma.fourgirls.core.NotificationManager;
 import ukma.fourgirls.core.SceneManager;
+import ukma.fourgirls.core.StatNotification;
 import ukma.fourgirls.domain.Item;
 import ukma.fourgirls.state.GameState;
 import ukma.fourgirls.state.InventoryState;
@@ -78,6 +79,10 @@ public class StoryController {
                 .addAnimation(momRoom.getPart2Animation())
                 .execute(() -> {
                     momRoom.removeBlackOverlay();
+
+                    GameState.setKarmaListener((currentKarma, addedPoints) -> {
+                        StatNotification.show(roomRoot, currentKarma, addedPoints);
+                    });
 
                     ukma.fourgirls.core.ChoiceManager.Option[] options = {
                             new ukma.fourgirls.core.ChoiceManager.Option("Покласти біля мами", () -> {
