@@ -7,6 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
+import ukma.fourgirls.core.AudioManager;
 import ukma.fourgirls.core.SceneManager;
 import ukma.fourgirls.ui.animation.AnimationCanvas;
 
@@ -59,7 +60,11 @@ public class InstructionsScreen {
         Button backButton = new Button("Back to Menu");
         backButton.setFont(font);
         backButton.getStyleClass().add("back-button");
-        backButton.setOnAction(e -> SceneManager.getInstance().switchToMainMenu());
+        backButton.setOnAction(e -> {
+            AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
+            SceneManager.getInstance().switchToMainMenu();
+        });
+
 
         bottomContainer.getChildren().add(backButton);
         root.getChildren().add(uiLayer);
