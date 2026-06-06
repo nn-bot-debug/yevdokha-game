@@ -41,7 +41,7 @@ public class StoryController {
         childRoom.activateGameplay();
         NotificationManager.showNotification(roomRoot, "Завдання: Підніміть малюнок зі столу\nПідказка: щоб підняти річ, натисніть на неї ЛКМ)");
 
-        Item yevdokhaDrawing = new Item("Малюнок", "/images/drawing_icon.png");
+        Item yevdokhaDrawing = new Item("Малюнок", "/images/drawing.png");
         Node drawing = childRoom.getInteractiveDrawing();
 
         InventoryManager.setupPickupAction(

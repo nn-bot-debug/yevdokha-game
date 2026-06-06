@@ -4,6 +4,8 @@ import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.transform.Rotate;
+import ukma.fourgirls.domain.Item;
+import ukma.fourgirls.state.InventoryState;
 import ukma.fourgirls.ui.CameraController;
 import java.util.Objects;
 

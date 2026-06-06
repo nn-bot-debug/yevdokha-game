@@ -57,18 +57,34 @@ public class Inventory {
             if (i < currentItems.size()) {
                 Item item = currentItems.get(i);
 
-                //TODO: ТУТ ВАМ ТРЕБА НАЛАШТУВАТИ ВІДОБРАЖЕННЯ (іконку)
-                // тимчасово текст
-                Label itemLabel = new Label(item.getName());
-                itemLabel.setStyle("-fx-text-fill: white; -fx-font-size: 14px;");
-                cell.getChildren().add(itemLabel);
+                try {
+                    String path = item.getImagePath();
+                    if (path.startsWith("/")) {
+                        path = path.substring(1);
+                    }
 
-                /*
-                 * ImageView icon = new ImageView(new Image(item.getImagePath()));
-                 * icon.setFitWidth(70);
-                 * icon.setFitHeight(70);
-                 * cell.getChildren().add(icon);
-                 */
+                    java.io.InputStream imgStream = getClass().getClassLoader().getResourceAsStream(path);
+
+                    if (imgStream == null) {
+                        throw new java.io.FileNotFoundException("Файл не знайдено в resources: " + path);
+                    }
+
+                    javafx.scene.image.Image img = new javafx.scene.image.Image(imgStream);
+                    javafx.scene.image.ImageView icon = new javafx.scene.image.ImageView(img);
+
+                    icon.setFitWidth(70);
+                    icon.setFitHeight(65);
+                    icon.setPreserveRatio(true);
+
+                    cell.getChildren().add(icon);
+                } catch (Exception e) {
+                    System.err.println("Помилка завантаження іконки (" + item.getName() + "): " + e.getMessage());
+
+                    Label fallbackLabel = new Label(item.getName());
+                    fallbackLabel.setStyle("-fx-text-fill: white; -fx-font-size: 12px; -fx-text-alignment: center;");
+                    fallbackLabel.setWrapText(true);
+                    cell.getChildren().add(fallbackLabel);
+                }
             }
         }
     }
