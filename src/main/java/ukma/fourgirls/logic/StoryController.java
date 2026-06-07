@@ -10,7 +10,9 @@ import ukma.fourgirls.core.StatNotification;
 import ukma.fourgirls.domain.Item;
 import ukma.fourgirls.state.GameState;
 import ukma.fourgirls.state.InventoryState;
+import ukma.fourgirls.ui.CharacterView;
 import ukma.fourgirls.ui.roots.ChildRoom;
+import ukma.fourgirls.ui.roots.Kitchen;
 import ukma.fourgirls.ui.roots.MomRoom;
 
 import java.util.Objects;
@@ -148,6 +150,47 @@ public class StoryController {
                     GameState.unlockLocation("Kitchen");
                     momRoom.finalizeCutscene();
                     NotificationManager.showNotification(roomRoot, "Нове завдання: Знайдіть їжу на кухні");
+                })
+                .play();
+    }
+
+    public static void openKitchen() {
+        Kitchen kitchen = new Kitchen();
+        StackPane roomRoot = (StackPane) kitchen.getRoot();
+
+        SceneManager.getInstance().switchToRoot(roomRoot);
+        startKitchenGameplay(kitchen, roomRoot);
+    }
+
+    public static void startKitchenGameplay(Kitchen kitchen, StackPane roomRoot) {
+        NotificationManager.showNotification(roomRoot, "Завдання: Знайдіть щось поїсти на кухні.");
+
+        Item bread = new Item("Зацвілий хліб", "/images/bread.png");
+        Node breadNode = kitchen.getInteractiveBread();
+
+        InventoryManager.setupPickupAction(
+                breadNode,
+                bread,
+                roomRoot,
+                "Ви знайшли зацвілий хліб.",
+                () -> onBreadPickedUp(kitchen, roomRoot)
+        );
+    }
+
+    private static void onBreadPickedUp(Kitchen kitchen, StackPane roomRoot) {
+        CharacterView actorView = new CharacterView(roomRoot);
+
+        StorySequence.create(roomRoot)
+                .execute(() -> InventoryState.removeItem("Зацвілий хліб"))
+                .execute(() -> actorView.setCharacterSprite("/images/Yevdokha_eating.png"))
+                .addDialogue("Це був не найсмачніший сніданок в її житті, та він взагалі смачним і не був.",
+                        "Дівчинка вчепилася в цю хлібину ніби це було її спасіння.",
+                        "Насправді так і було."
+                )
+                .execute(() -> {
+                    actorView.hide();
+                    //TODO
+                    //Продовження після слів автора
                 })
                 .play();
     }

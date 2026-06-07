@@ -102,11 +102,10 @@ public abstract class Place {
 
         if (!"Kitchen".equals(currentRoomName) && GameState.isUnlocked("Kitchen")) {
             navPanel.addNavigationTarget("Кухня", () ->
-            {
+{
                 AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
-                SceneManager.getInstance().switchToCachedRoom("Kitchen", () -> new Kitchen().getRoot());
-            }
-            );
+                ukma.fourgirls.logic.StoryController.openKitchen();
+            });
         }
 
         if (!"ChildRoom".equals(currentRoomName) && GameState.isUnlocked("ChildRoom")) {
