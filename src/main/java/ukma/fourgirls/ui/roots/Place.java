@@ -93,24 +93,34 @@ public abstract class Place {
 
         if (!"MomRoom".equals(currentRoomName) && GameState.isUnlocked("MomRoom")) {
             navPanel.addNavigationTarget("Кімната матері", () ->
-                    SceneManager.getInstance().switchToCachedRoom("MomRoom", () -> new MomRoom().getRoot())
+            {
+                AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
+                SceneManager.getInstance().switchToCachedRoom("MomRoom", () -> new MomRoom().getRoot());
+            }
             );
         }
 
         if (!"Kitchen".equals(currentRoomName) && GameState.isUnlocked("Kitchen")) {
             navPanel.addNavigationTarget("Кухня", () ->
-                    SceneManager.getInstance().switchToCachedRoom("Kitchen", () -> new Kitchen().getRoot())
+            {
+                AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
+                SceneManager.getInstance().switchToCachedRoom("Kitchen", () -> new Kitchen().getRoot());
+            }
             );
         }
 
         if (!"ChildRoom".equals(currentRoomName) && GameState.isUnlocked("ChildRoom")) {
             navPanel.addNavigationTarget("Дитяча кімната", () ->
-                    SceneManager.getInstance().switchToCachedRoom("ChildRoom", () -> new ChildRoom().getRoot())
+            {
+                AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
+                SceneManager.getInstance().switchToCachedRoom("ChildRoom", () -> new ChildRoom().getRoot());
+            }
             );
         }
 
         if (GameState.isUnlocked("Street")) {
             navPanel.addNavigationTarget("Вийти на вулицю", () -> {
+                AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
                 //TODO: Логіка виходу на вулицю
             });
         }

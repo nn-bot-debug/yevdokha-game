@@ -40,7 +40,7 @@ public class MainMenuWindow extends Application {
         StackPane root = new StackPane();
 
         try{
-            Image backgroundImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/MainMenuBackground.jpg")));
+            Image backgroundImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/MainMenuBackground.jpg")));
             BackgroundImage backgroundImageB = new BackgroundImage(
                     backgroundImage,
                     BackgroundRepeat.NO_REPEAT,
