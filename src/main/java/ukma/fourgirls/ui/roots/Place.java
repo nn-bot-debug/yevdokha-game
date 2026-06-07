@@ -99,7 +99,7 @@ public abstract class Place {
 
         if (!"Kitchen".equals(currentRoomName) && GameState.isUnlocked("Kitchen")) {
             navPanel.addNavigationTarget("Кухня", () ->
-                    SceneManager.getInstance().switchToCachedRoom("Kitchen", () -> new Kitchen().getRoot())
+                    ukma.fourgirls.logic.StoryController.openKitchen()
             );
         }
 

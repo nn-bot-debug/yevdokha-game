@@ -11,6 +11,7 @@ import ukma.fourgirls.domain.Item;
 import ukma.fourgirls.state.GameState;
 import ukma.fourgirls.state.InventoryState;
 import ukma.fourgirls.ui.roots.ChildRoom;
+import ukma.fourgirls.ui.roots.Kitchen;
 import ukma.fourgirls.ui.roots.MomRoom;
 
 import java.util.Objects;
@@ -148,6 +149,41 @@ public class StoryController {
                     GameState.unlockLocation("Kitchen");
                     momRoom.finalizeCutscene();
                     NotificationManager.showNotification(roomRoot, "Нове завдання: Знайдіть їжу на кухні");
+                })
+                .play();
+    }
+
+    public static void openKitchen() {
+        Kitchen kitchen = new Kitchen();
+        StackPane roomRoot = (StackPane) kitchen.getRoot();
+
+        SceneManager.getInstance().switchToRoot(roomRoot);
+        startKitchenGameplay(kitchen, roomRoot);
+    }
+
+    public static void startKitchenGameplay(Kitchen kitchen, StackPane roomRoot) {
+        NotificationManager.showNotification(roomRoot, "Завдання: Знайдіть щось поїсти на кухні.");
+
+        Item bread = new Item("Зацвілий хліб", "/images/bread.png");
+        Node breadNode = kitchen.getInteractiveBread();
+
+        InventoryManager.setupPickupAction(
+                breadNode,
+                bread,
+                roomRoot,
+                "Ви знайшли зацвілий хліб.",
+                () -> onBreadPickedUp(kitchen, roomRoot)
+        );
+    }
+
+    private static void onBreadPickedUp(Kitchen kitchen, StackPane roomRoot) {
+        StorySequence.create(roomRoot)
+                .addDialogue("Це був не найсмачніший сніданок в її житті, да він взагалі смачним і не був.",
+                        "Дівчинка вчепилася в цю хлібину ніби це було її спасіння.",
+                        "Насправді так і було."
+                )
+                .execute(() -> {
+
                 })
                 .play();
     }
