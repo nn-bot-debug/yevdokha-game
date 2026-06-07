@@ -24,27 +24,23 @@ public class Kitchen extends Place {
         Image breadImg = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/bread.png")));
         ImageView breadView = new ImageView(breadImg);
 
-        breadView.setFitWidth(220);
+        breadView.setFitWidth(180);
         breadView.setPreserveRatio(true);
 
-        Rotate tiltX = new Rotate(-10, Rotate.X_AXIS);
-        Rotate rotateY = new Rotate(-35, Rotate.Y_AXIS);
-        Rotate rotateZ = new Rotate(-10, Rotate.Z_AXIS);
-        breadView.getTransforms().addAll(tiltX, rotateY, rotateZ);
 
-        breadView.setTranslateX(-1250);
-        breadView.setTranslateY(290);
+        breadView.setTranslateX(540);
+        breadView.setTranslateY(170);
 
-        ColorAdjust brightEffect = new ColorAdjust();
-        brightEffect.setBrightness(0.08);
-        brightEffect.setContrast(0.1);
-        brightEffect.setSaturation(0.05);
-        breadView.setEffect(brightEffect);
+        ColorAdjust darkenEffect = new ColorAdjust();
+        darkenEffect.setBrightness(-0.25);
+        darkenEffect.setContrast(0.05);
+        darkenEffect.setSaturation(-0.1);
+        breadView.setEffect(darkenEffect);
 
         breadView.setOnMouseEntered(e -> {
             breadView.setEffect(null);
         });
-        breadView.setOnMouseExited(e -> breadView.setEffect(brightEffect));
+        breadView.setOnMouseExited(e -> breadView.setEffect(darkenEffect));
 
         breadView.setPickOnBounds(true);
         breadView.setStyle("-fx-cursor: hand;");

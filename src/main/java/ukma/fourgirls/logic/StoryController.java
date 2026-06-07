@@ -10,6 +10,7 @@ import ukma.fourgirls.core.StatNotification;
 import ukma.fourgirls.domain.Item;
 import ukma.fourgirls.state.GameState;
 import ukma.fourgirls.state.InventoryState;
+import ukma.fourgirls.ui.CharacterView;
 import ukma.fourgirls.ui.roots.ChildRoom;
 import ukma.fourgirls.ui.roots.Kitchen;
 import ukma.fourgirls.ui.roots.MomRoom;
@@ -177,13 +178,19 @@ public class StoryController {
     }
 
     private static void onBreadPickedUp(Kitchen kitchen, StackPane roomRoot) {
+        CharacterView actorView = new CharacterView(roomRoot);
+
         StorySequence.create(roomRoot)
-                .addDialogue("Це був не найсмачніший сніданок в її житті, да він взагалі смачним і не був.",
+                .execute(() -> InventoryState.removeItem("Зацвілий хліб"))
+                .execute(() -> actorView.setCharacterSprite("/images/Yevdokha_eating.png"))
+                .addDialogue("Це був не найсмачніший сніданок в її житті, та він взагалі смачним і не був.",
                         "Дівчинка вчепилася в цю хлібину ніби це було її спасіння.",
                         "Насправді так і було."
                 )
                 .execute(() -> {
-
+                    actorView.hide();
+                    //TODO
+                    //Продовження після слів автора
                 })
                 .play();
     }
