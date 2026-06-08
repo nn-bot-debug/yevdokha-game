@@ -12,7 +12,7 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import ukma.fourgirls.core.AudioManager;
 import ukma.fourgirls.logic.StoryController;
-import ukma.fourgirls.ui.animation.AnimationCanvas;
+import ukma.fourgirls.ui.animation.MenuAnimationCanvas;
 import ukma.fourgirls.core.SceneManager;
 
 import java.util.LinkedHashMap;
@@ -55,7 +55,7 @@ public class MainMenuWindow extends Application {
             throw new RuntimeException(e);
         }
 
-        AnimationCanvas animationCanvas = new AnimationCanvas();
+        MenuAnimationCanvas animationCanvas = new MenuAnimationCanvas();
         root.getChildren().add(animationCanvas);
 
         VBox button = new VBox(20);

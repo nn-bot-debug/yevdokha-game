@@ -3,10 +3,7 @@ package ukma.fourgirls.logic;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
-import ukma.fourgirls.core.InventoryManager;
-import ukma.fourgirls.core.NotificationManager;
-import ukma.fourgirls.core.SceneManager;
-import ukma.fourgirls.core.StatNotification;
+import ukma.fourgirls.core.*;
 import ukma.fourgirls.domain.Item;
 import ukma.fourgirls.state.GameState;
 import ukma.fourgirls.state.InventoryState;
@@ -189,8 +186,25 @@ public class StoryController {
                 )
                 .execute(() -> {
                     actorView.hide();
-                    //TODO
-                    //Продовження після слів автора
+                    AudioManager.getInstance().playBackgroundMusic("/music/Злива.mp3");
+                    kitchen.startStormEffects();
+                })
+                .addDialogue(
+                        "Раптом розпочалася злива.",
+                                "З вікон задував вітер, деякі краплі вже розбилися об тарілки та відкриті дверцята шухляд."
+                )
+                .execute(() -> actorView.setCharacterSprite("/images/scaredYevdokha.png"))
+                .execute(() -> {
+                    kitchen.triggerLightningFlash(() -> {
+                        System.out.println("Спалах грози відбувся!");
+                    });
+                })
+                .addDialogue("Блискавка на мить осліпила дівчинку.")
+                .execute(() -> {
+                    kitchen.fadeToBlackout(() -> {
+                        actorView.hide();
+                        System.out.println("Дівчинка знепритомніла. Екран чорний.");
+                    });
                 })
                 .play();
     }
