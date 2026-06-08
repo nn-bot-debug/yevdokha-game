@@ -2,9 +2,11 @@ package ukma.fourgirls.ui.roots;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.SequentialTransition;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
@@ -14,20 +16,34 @@ import java.util.Objects;
 
 public class Kitchen extends Place {
     private static final String IMAGE_PATH = "/images/kitchen.png";
-    private final ImageView backgroundView;
-    private ImageView interactiveBread;
+    private ImageView backgroundView;
+    private final ImageView interactiveBread;
     private final AnimationCanvas animationCanvas;
     private final Rectangle flashOverlay;
 
     public Kitchen() {
         super(IMAGE_PATH);
-        this.backgroundView = (ImageView) this.root.getChildren().get(0);
+
+        for (javafx.scene.Node topNode : this.root.getChildren()) {
+            if (topNode instanceof ScrollPane sp) {
+                if (sp.getContent() instanceof Pane container) {
+                    for (javafx.scene.Node innerNode : container.getChildren()) {
+                        if (innerNode instanceof ImageView iv) {
+                            this.backgroundView = iv;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
         this.animationCanvas = new AnimationCanvas();
         this.roomContentLayer.getChildren().add(animationCanvas);
 
         this.interactiveBread = createInteractiveBread();
         this.roomContentLayer.getChildren().add(interactiveBread);
 
+        // Спалах блискавки
         this.flashOverlay = new Rectangle();
         this.flashOverlay.widthProperty().bind(this.root.widthProperty());
         this.flashOverlay.heightProperty().bind(this.root.heightProperty());
@@ -45,9 +61,13 @@ public class Kitchen extends Place {
         animationCanvas.setRainActive(true);
         try {
             Image rainBg = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/rain_in_kitchen.png")));
-            backgroundView.setImage(rainBg);
+
+            if (this.backgroundView != null) {
+                // Якщо знайшли ImageView всередині ScrollPane — просто оновлюємо картинку
+                this.backgroundView.setImage(rainBg);
+            }
         } catch (Exception e) {
-            System.err.println("Не вдалося завантажити /images/rain_in_kitchen.png");
+            System.err.println("Не вдалося оновити фон кухні: " + e.getMessage());
         }
     }
 
@@ -69,7 +89,7 @@ public class Kitchen extends Place {
     public void fadeToBlackout(Runnable onBlackoutComplete) {
         flashOverlay.setFill(Color.BLACK);
 
-        FadeTransition fade = new FadeTransition(Duration.seconds(1.0), flashOverlay);
+        FadeTransition fade = new FadeTransition(Duration.millis(300), flashOverlay);
         fade.setFromValue(0.0);
         fade.setToValue(1.0);
         fade.setOnFinished(e -> onBlackoutComplete.run());
