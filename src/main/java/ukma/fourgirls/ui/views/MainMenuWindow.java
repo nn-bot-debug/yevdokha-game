@@ -70,7 +70,7 @@ public class MainMenuWindow extends Application {
 
         Map<String, Runnable> buttonActions = new LinkedHashMap<>();
         buttonActions.put("Play", StoryController::startStory);
-        //buttonActions.put("Continue Game", this::continueGame);
+        buttonActions.put("Continue Game", this::continueGame);
         buttonActions.put("Instruction", () -> SceneManager.getInstance().switchToRoot(new InstructionsScreen().getRoot()));
         buttonActions.put("Settings", () -> {
             SettingsScreen settings = new SettingsScreen(root);
@@ -96,5 +96,8 @@ public class MainMenuWindow extends Application {
         AudioManager.getInstance().playBackgroundMusic("/music/background.mp3");
 
         primaryStage.show();
+    }
+
+    private void continueGame() {
     }
 }
