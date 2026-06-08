@@ -9,6 +9,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
+import ukma.fourgirls.core.AudioManager;
 import ukma.fourgirls.core.SceneManager;
 import ukma.fourgirls.state.GameState;
 import ukma.fourgirls.ui.CameraController;
@@ -21,6 +22,7 @@ public abstract class Place {
     protected final StackPane roomContentLayer;
     protected final ImageView roomView;
     private Font font;
+    protected final Inventory inventory;
 
     public Place(String imagePath) {
         StackPane rootPane = new StackPane();
@@ -52,8 +54,9 @@ public abstract class Place {
 
         rootPane.getChildren().addAll(scrollPane, backButton);
 
-        Inventory inventory = new Inventory();
-        inventory.attachTo(rootPane);
+        this.inventory = new Inventory();
+        this.inventory.attachTo(rootPane);
+        this.inventory.setVisible(GameState.isInventoryUnlocked());
 
         CameraController.enableMousePanning(rootPane, scrollPane);
         javafx.application.Platform.runLater(() -> scrollPane.setHvalue(0.5));
@@ -71,7 +74,10 @@ public abstract class Place {
 
         backButton.getStyleClass().add("back-button");
 
-        backButton.setOnAction(e -> SceneManager.getInstance().switchToMainMenu());
+        backButton.setOnAction(e -> {
+            AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
+            SceneManager.getInstance().switchToMainMenu();
+        });
         return backButton;
     }
 
@@ -87,28 +93,42 @@ public abstract class Place {
 
         if (!"MomRoom".equals(currentRoomName) && GameState.isUnlocked("MomRoom")) {
             navPanel.addNavigationTarget("Кімната матері", () ->
-                    SceneManager.getInstance().switchToCachedRoom("MomRoom", () -> new MomRoom().getRoot())
+            {
+                AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
+                SceneManager.getInstance().switchToCachedRoom("MomRoom", () -> new MomRoom().getRoot());
+            }
             );
         }
 
         if (!"Kitchen".equals(currentRoomName) && GameState.isUnlocked("Kitchen")) {
             navPanel.addNavigationTarget("Кухня", () ->
-                    SceneManager.getInstance().switchToCachedRoom("Kitchen", () -> new Kitchen().getRoot())
-            );
+{
+                AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
+                ukma.fourgirls.logic.StoryController.openKitchen();
+            });
         }
 
         if (!"ChildRoom".equals(currentRoomName) && GameState.isUnlocked("ChildRoom")) {
             navPanel.addNavigationTarget("Дитяча кімната", () ->
-                    SceneManager.getInstance().switchToCachedRoom("ChildRoom", () -> new ChildRoom().getRoot())
+            {
+                AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
+                SceneManager.getInstance().switchToCachedRoom("ChildRoom", () -> new ChildRoom().getRoot());
+            }
             );
         }
 
         if (GameState.isUnlocked("Street")) {
             navPanel.addNavigationTarget("Вийти на вулицю", () -> {
+                AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
                 //TODO: Логіка виходу на вулицю
             });
         }
 
         navPanel.attachTo(this.root);
+    }
+
+    public void showInventoryUI() {
+        GameState.unlockInventory();
+        this.inventory.setVisible(true);
     }
 }

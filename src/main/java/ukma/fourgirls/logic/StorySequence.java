@@ -2,6 +2,7 @@ package ukma.fourgirls.logic;
 
 import javafx.animation.Animation;
 import javafx.animation.PauseTransition;
+import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 import ukma.fourgirls.core.DialogueManager;
@@ -24,6 +25,11 @@ public class StorySequence {
 
     public StorySequence addDialogue(String... lines) {
         actions.add(() -> DialogueManager.getInstance().play(root, lines, this::next));
+        return this;
+    }
+
+    public StorySequence addDialogue(String characterName, Image portrait, String... lines) {
+        actions.add(() -> DialogueManager.getInstance().play(root, characterName, portrait, lines, this::next));
         return this;
     }
 

@@ -22,6 +22,8 @@ public class Inventory {
     private final StackPane window;
     private static final double BOARD_HEIGHT = 170;
 
+    private final List<StackPane> cells = new ArrayList<>();
+
     public Inventory() {
         this.inventoryBoard = createBoard();
         this.window = createWindow();

@@ -40,7 +40,7 @@ public class MainMenuWindow extends Application {
         StackPane root = new StackPane();
 
         try{
-            Image backgroundImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/MainMenuBackground.jpg")));
+            Image backgroundImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/MainMenuBackground.jpg")));
             BackgroundImage backgroundImageB = new BackgroundImage(
                     backgroundImage,
                     BackgroundRepeat.NO_REPEAT,
@@ -82,7 +82,11 @@ public class MainMenuWindow extends Application {
             Button buttonN = new Button(entry.getKey());
             buttonN.setFont(font);
             buttonN.getStyleClass().add("main-menu-button");
-            buttonN.setOnAction(e -> entry.getValue().run());
+            buttonN.setOnAction(e -> {
+                AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
+                entry.getValue().run();
+            });
+
             button.getChildren().add(buttonN);
         }
 
