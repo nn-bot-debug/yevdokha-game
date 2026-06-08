@@ -62,7 +62,7 @@ public class MainMenuWindow extends Application {
 
         Map<String, Runnable> buttonActions = new LinkedHashMap<>();
         buttonActions.put("New Game", () -> SceneManager.getInstance().switchToRoot(new ChildRoom().getRoot()));
-        //buttonActions.put("Continue Game", this::continueGame);
+        buttonActions.put("Continue Game", this::continueGame);
         buttonActions.put("Instruction", () -> SceneManager.getInstance().switchToRoot(new InstructionsScreen().getRoot()));
         buttonActions.put("Settings", () -> SceneManager.getInstance().switchToRoot(new SettingsScreen().getRoot()));
         buttonActions.put("Quit", Platform::exit);
@@ -77,6 +77,9 @@ public class MainMenuWindow extends Application {
         root.getChildren().add(button);
         primaryStage.setScene(mainScene);
         primaryStage.show();
+    }
+
+    private void continueGame() {
     }
 
     private void styleButton(Button button){
