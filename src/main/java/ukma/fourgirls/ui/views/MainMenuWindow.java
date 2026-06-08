@@ -11,6 +11,7 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import ukma.fourgirls.core.AudioManager;
+import ukma.fourgirls.core.LanguageManager;
 import ukma.fourgirls.logic.StoryController;
 import ukma.fourgirls.ui.animation.MenuAnimationCanvas;
 import ukma.fourgirls.core.SceneManager;
@@ -26,13 +27,6 @@ public class MainMenuWindow extends Application {
     @Override
     public void start(Stage primaryStage){
         SceneManager.getInstance().init(primaryStage);
-
-        try{
-            font = Font.loadFont(getClass().getResourceAsStream("/Creepster-Regular.ttf"), 24);
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
 
         primaryStage.setTitle("YEVDOKHA-GAME");
         primaryStage.setFullScreen(true);
@@ -69,18 +63,21 @@ public class MainMenuWindow extends Application {
         SceneManager.getInstance().setMainMenuRoot(root);
 
         Map<String, Runnable> buttonActions = new LinkedHashMap<>();
-        buttonActions.put("Play", StoryController::startStory);
-        buttonActions.put("Continue Game", this::continueGame);
-        buttonActions.put("Instruction", () -> SceneManager.getInstance().switchToRoot(new InstructionsScreen().getRoot()));
-        buttonActions.put("Settings", () -> {
+        buttonActions.put("menu.new", StoryController::startStory);
+        buttonActions.put("menu.continue", this::continueGame);
+        buttonActions.put("menu.instruction", () -> SceneManager.getInstance().switchToRoot(new InstructionsScreen().getRoot()));
+        buttonActions.put("menu.settings", () -> {
             SettingsScreen settings = new SettingsScreen(root);
             root.getChildren().add(settings.getRoot());
         });
-        buttonActions.put("Quit", Platform::exit);
+        buttonActions.put("menu.quit", Platform::exit);
+
+        Map<String, Button> menuButtons = new LinkedHashMap<>();
 
         for (Map.Entry<String, Runnable> entry : buttonActions.entrySet()) {
-            Button buttonN = new Button(entry.getKey());
-            buttonN.setFont(font);
+            String langKey = entry.getKey();
+            Button buttonN = new Button(LanguageManager.getString(langKey));
+            //buttonN.setFont(font);
             buttonN.getStyleClass().add("main-menu-button");
             buttonN.setOnAction(e -> {
                 AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
@@ -88,7 +85,14 @@ public class MainMenuWindow extends Application {
             });
 
             button.getChildren().add(buttonN);
+            menuButtons.put(langKey, buttonN);
         }
+
+        LanguageManager.addLanguageChangeListener(() -> {
+            for (Map.Entry<String, Button> entry : menuButtons.entrySet()) {
+                entry.getValue().setText(LanguageManager.getString(entry.getKey()));
+            }
+        });
 
         root.getChildren().add(button);
         primaryStage.setScene(mainScene);
