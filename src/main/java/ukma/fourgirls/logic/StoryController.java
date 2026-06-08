@@ -3,13 +3,13 @@ package ukma.fourgirls.logic;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
-import ukma.fourgirls.core.InventoryManager;
-import ukma.fourgirls.core.NotificationManager;
-import ukma.fourgirls.core.SceneManager;
+import ukma.fourgirls.core.*;
 import ukma.fourgirls.domain.Item;
 import ukma.fourgirls.state.GameState;
 import ukma.fourgirls.state.InventoryState;
+import ukma.fourgirls.ui.CharacterView;
 import ukma.fourgirls.ui.roots.ChildRoom;
+import ukma.fourgirls.ui.roots.Kitchen;
 import ukma.fourgirls.ui.roots.MomRoom;
 
 import java.util.Objects;
@@ -41,7 +41,7 @@ public class StoryController {
         childRoom.activateGameplay();
         NotificationManager.showNotification(roomRoot, "Завдання: Підніміть малюнок зі столу\nПідказка: щоб підняти річ, натисніть на неї ЛКМ)");
 
-        Item yevdokhaDrawing = new Item("Малюнок", "/images/drawing_icon.png");
+        Item yevdokhaDrawing = new Item("Малюнок", "/images/drawing.png");
         Node drawing = childRoom.getInteractiveDrawing();
 
         InventoryManager.setupPickupAction(
@@ -78,6 +78,10 @@ public class StoryController {
                 .addAnimation(momRoom.getPart2Animation())
                 .execute(() -> {
                     momRoom.removeBlackOverlay();
+
+                    GameState.setKarmaListener((currentKarma, addedPoints) -> {
+                        StatNotification.show(roomRoot, currentKarma, addedPoints);
+                    });
 
                     ukma.fourgirls.core.ChoiceManager.Option[] options = {
                             new ukma.fourgirls.core.ChoiceManager.Option("Покласти біля мами", () -> {
@@ -143,6 +147,64 @@ public class StoryController {
                     GameState.unlockLocation("Kitchen");
                     momRoom.finalizeCutscene();
                     NotificationManager.showNotification(roomRoot, "Нове завдання: Знайдіть їжу на кухні");
+                })
+                .play();
+    }
+
+    public static void openKitchen() {
+        Kitchen kitchen = new Kitchen();
+        StackPane roomRoot = (StackPane) kitchen.getRoot();
+
+        SceneManager.getInstance().switchToRoot(roomRoot);
+        startKitchenGameplay(kitchen, roomRoot);
+    }
+
+    public static void startKitchenGameplay(Kitchen kitchen, StackPane roomRoot) {
+        NotificationManager.showNotification(roomRoot, "Завдання: Знайдіть щось поїсти на кухні.");
+
+        Item bread = new Item("Зацвілий хліб", "/images/bread.png");
+        Node breadNode = kitchen.getInteractiveBread();
+
+        InventoryManager.setupPickupAction(
+                breadNode,
+                bread,
+                roomRoot,
+                "Ви знайшли зацвілий хліб.",
+                () -> onBreadPickedUp(kitchen, roomRoot)
+        );
+    }
+
+    private static void onBreadPickedUp(Kitchen kitchen, StackPane roomRoot) {
+        CharacterView actorView = new CharacterView(roomRoot);
+
+        StorySequence.create(roomRoot)
+                .execute(() -> InventoryState.removeItem("Зацвілий хліб"))
+                .execute(() -> actorView.setCharacterSprite("/images/Yevdokha_eating.png"))
+                .addDialogue("Це був не найсмачніший сніданок в її житті, та він взагалі смачним і не був.",
+                        "Дівчинка вчепилася в цю хлібину ніби це було її спасіння.",
+                        "Насправді так і було."
+                )
+                .execute(() -> {
+                    actorView.hide();
+                    AudioManager.getInstance().playBackgroundMusic("/music/Злива.mp3");
+                    kitchen.startStormEffects();
+                })
+                .addDialogue(
+                        "Раптом розпочалася злива.",
+                                "З вікон задував вітер, деякі краплі вже розбилися об тарілки та відкриті дверцята шухляд."
+                )
+                .execute(() -> actorView.setCharacterSprite("/images/scaredYevdokha.png"))
+                .execute(() -> {
+                    kitchen.triggerLightningFlash(() -> {
+                        System.out.println("Спалах грози відбувся!");
+                    });
+                })
+                .addDialogue("Блискавка на мить осліпила дівчинку.")
+                .execute(() -> {
+                    kitchen.fadeToBlackout(() -> {
+                        actorView.hide();
+                        System.out.println("Дівчинка знепритомніла. Екран чорний.");
+                    });
                 })
                 .play();
     }

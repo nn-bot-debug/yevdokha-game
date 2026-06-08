@@ -1,10 +1,12 @@
 package ukma.fourgirls.ui.roots;
 
-import javafx.animation.PauseTransition;
 import javafx.animation.TranslateTransition;
 import javafx.collections.ListChangeListener;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
@@ -19,7 +21,7 @@ public class Inventory {
     private final StackPane container;
     private final HBox inventoryBoard;
     private final StackPane window;
-    private static final double BOARD_HEIGHT = 100;
+    private static final double BOARD_HEIGHT = 170;
 
     private final List<StackPane> cells = new ArrayList<>();
 
@@ -48,27 +50,39 @@ public class Inventory {
     }
 
     private void updateUI() {
+
+        inventoryBoard.getChildren().clear();
         List<Item> currentItems = InventoryState.getItems();
 
-        for (int i = 0; i < cells.size(); i++) {
-            StackPane cell = cells.get(i);
-            cell.getChildren().clear();
+        for(Item item : currentItems){
+            try {
+                String path = item.getImagePath();
+                if (path.startsWith("/")) {
+                    path = path.substring(1);
+                }
 
-            if (i < currentItems.size()) {
-                Item item = currentItems.get(i);
+                java.io.InputStream imgStream = getClass().getClassLoader().getResourceAsStream(path);
 
-                //TODO: ТУТ ВАМ ТРЕБА НАЛАШТУВАТИ ВІДОБРАЖЕННЯ (іконку)
-                // тимчасово текст
-                Label itemLabel = new Label(item.getName());
-                itemLabel.setStyle("-fx-text-fill: white; -fx-font-size: 14px;");
-                cell.getChildren().add(itemLabel);
+                if (imgStream == null) {
+                    throw new java.io.FileNotFoundException("Файл не знайдено в resources: " + path);
+                }
 
-                /*
-                 * ImageView icon = new ImageView(new Image(item.getImagePath()));
-                 * icon.setFitWidth(70);
-                 * icon.setFitHeight(70);
-                 * cell.getChildren().add(icon);
-                 */
+                Image image = new Image(imgStream);
+                ImageView icon = new ImageView(image);
+
+                icon.setFitWidth(70);
+                icon.setFitHeight(65);
+                icon.setPreserveRatio(true);
+
+                inventoryBoard.getChildren().add(icon);
+            }
+            catch (Exception e) {
+                System.err.println("Помилка завантаження іконки (" + item.getName() + "): " + e.getMessage());
+
+                Label fallbackLabel = new Label(item.getName());
+                fallbackLabel.setStyle("-fx-text-fill: white; -fx-font-size: 12px; -fx-text-alignment: center;");
+                fallbackLabel.setWrapText(true);
+                inventoryBoard.getChildren().add(fallbackLabel);
             }
         }
     }
@@ -77,52 +91,56 @@ public class Inventory {
         StackPane window = new StackPane();
         window.getStyleClass().add("inventory-window");
 
-        window.setPrefSize(100, 30);
-        window.setMaxWidth(100);
-        window.setMaxHeight(30);
+        window.setPrefSize(340, 120);
+        window.setMaxWidth(340);
+        window.setMaxHeight(120);
+
+        window.setTranslateY(50);
         return window;
     }
 
     private HBox createBoard() {
         HBox inventoryBoard = new HBox();
-        inventoryBoard.setAlignment(Pos.CENTER);
+        inventoryBoard.setAlignment(Pos.CENTER_LEFT);
         inventoryBoard.getStyleClass().add("inventory-board");
 
-        for (int i = 0; i < 5; i++) {
-            StackPane cell = new StackPane();
-            cell.setPrefSize(90, 90);
-            cell.getStyleClass().add("inventory-cell");
+// inventoryBoard.setSpacing(0);
+        inventoryBoard.setPadding(new Insets(4, 0, 0, 57));
 
-            cells.add(cell);
-
-            inventoryBoard.getChildren().add(cell);
-        }
-
-        inventoryBoard.setMaxWidth(460);
+        inventoryBoard.setMaxWidth(480);
         inventoryBoard.setMaxHeight(BOARD_HEIGHT);
         inventoryBoard.setTranslateY(BOARD_HEIGHT);
         return inventoryBoard;
     }
 
     private void animation() {
-        TranslateTransition show = new TranslateTransition(Duration.millis(300), inventoryBoard);
-        TranslateTransition hide = new TranslateTransition(Duration.millis(300), inventoryBoard);
+        TranslateTransition showBoard = new TranslateTransition(Duration.millis(300), inventoryBoard);
+        TranslateTransition hideBoard = new TranslateTransition(Duration.millis(300), inventoryBoard);
+
+        TranslateTransition showWindow = new TranslateTransition(Duration.millis(300), window);
+        TranslateTransition hideWindow = new TranslateTransition(Duration.millis(300), window);
 
         window.setOnMouseEntered(e -> {
-            hide.stop();
-            show.setToY(0);
-            show.play();
-            window.setVisible(false);
+            hideBoard.stop();
+            hideWindow.stop();
+
+            showBoard.setToY(32);
+            showWindow.setToY(-92);
+
+            showBoard.play();
+            showWindow.play();
         });
 
-        inventoryBoard.setOnMouseExited(e -> {
-            show.stop();
-            hide.setToY(BOARD_HEIGHT);
-            hide.play();
+        container.setOnMouseExited(e -> {
 
-            PauseTransition delay = new PauseTransition(Duration.millis(250));
-            delay.setOnFinished(ev -> window.setVisible(true));
-            delay.play();
+            showBoard.stop();
+            showWindow.stop();
+
+            hideBoard.setToY(BOARD_HEIGHT);
+            hideWindow.setToY(50);
+
+            hideBoard.play();
+            hideWindow.play();
         });
     }
 

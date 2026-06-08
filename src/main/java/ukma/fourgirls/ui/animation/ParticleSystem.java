@@ -19,14 +19,14 @@ public class ParticleSystem {
     }
 
     public void update(double width, double height) {
-        // 1. Керування пилом
+        // Керування пилом
         if (dustParticles.size() < 100) {
             // Пил з'являється у випадкових місцях
             generateDust(random.nextDouble() * width, random.nextDouble() * height);
         }
         updateList(dustParticles, width, height);
 
-        // 2. Керування димом від свічки
+        // Керування димом від свічки
         if (random.nextDouble() < 0.25) {
             generateSmoke(CANDLE_X, CANDLE_Y);
         }

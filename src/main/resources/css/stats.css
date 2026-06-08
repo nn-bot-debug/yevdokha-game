@@ -1,0 +1,25 @@
+/* Загальний контейнер сповіщення */
+.stat-notification-pane {
+    -fx-background-color: rgba(19, 26, 26, 0.9);
+    -fx-background-radius: 4px;
+    -fx-border-color: #3a4d40;
+    -fx-border-width: 1px;
+    -fx-max-width: 280px;
+    -fx-max-height: 50px;
+}
+
+/* Стиль для позитивної карми */
+.stat-text-plus {
+    -fx-text-fill: #81a387;
+    -fx-font-size: 14px;
+    -fx-font-family: 'Georgia', 'Times New Roman', serif;
+    -fx-font-weight: bold;
+}
+
+/* Стиль для негативної карми */
+.stat-text-minus {
+    -fx-text-fill: #bfa0a4;
+    -fx-font-size: 14px;
+    -fx-font-family: 'Georgia', 'Times New Roman', serif;
+    -fx-font-weight: bold;
+}

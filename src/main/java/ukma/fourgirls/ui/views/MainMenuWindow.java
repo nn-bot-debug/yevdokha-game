@@ -12,7 +12,7 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import ukma.fourgirls.core.AudioManager;
 import ukma.fourgirls.logic.StoryController;
-import ukma.fourgirls.ui.animation.AnimationCanvas;
+import ukma.fourgirls.ui.animation.MenuAnimationCanvas;
 import ukma.fourgirls.core.SceneManager;
 
 import java.util.LinkedHashMap;
@@ -40,7 +40,7 @@ public class MainMenuWindow extends Application {
         StackPane root = new StackPane();
 
         try{
-            Image backgroundImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/MainMenuBackground.jpg")));
+            Image backgroundImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/MainMenuBackground.jpg")));
             BackgroundImage backgroundImageB = new BackgroundImage(
                     backgroundImage,
                     BackgroundRepeat.NO_REPEAT,
@@ -55,7 +55,7 @@ public class MainMenuWindow extends Application {
             throw new RuntimeException(e);
         }
 
-        AnimationCanvas animationCanvas = new AnimationCanvas();
+        MenuAnimationCanvas animationCanvas = new MenuAnimationCanvas();
         root.getChildren().add(animationCanvas);
 
         VBox button = new VBox(20);
@@ -70,7 +70,7 @@ public class MainMenuWindow extends Application {
 
         Map<String, Runnable> buttonActions = new LinkedHashMap<>();
         buttonActions.put("Play", StoryController::startStory);
-        //buttonActions.put("Continue Game", this::continueGame);
+        buttonActions.put("Continue Game", this::continueGame);
         buttonActions.put("Instruction", () -> SceneManager.getInstance().switchToRoot(new InstructionsScreen().getRoot()));
         buttonActions.put("Settings", () -> {
             SettingsScreen settings = new SettingsScreen(root);
@@ -96,5 +96,8 @@ public class MainMenuWindow extends Application {
         AudioManager.getInstance().playBackgroundMusic("/music/background.mp3");
 
         primaryStage.show();
+    }
+
+    private void continueGame() {
     }
 }
