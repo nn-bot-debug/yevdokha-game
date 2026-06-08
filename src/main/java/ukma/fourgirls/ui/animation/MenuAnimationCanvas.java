@@ -7,20 +7,19 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Scale;
 
-public class AnimationCanvas extends Pane{
-
+public class MenuAnimationCanvas extends  Pane{
     private static final double VIRTUAL_WIDTH = 2048;
     private static final double VIRTUAL_HEIGHT = 1152;
 
     private final Canvas canvas;
     private final GraphicsContext gc;
-    private final RainSystem rainSystem;
+    private final ParticleSystem particleSystem;
     private final Scale scaleTransform;
 
-    public AnimationCanvas() {
+    public MenuAnimationCanvas() {
         canvas = new Canvas(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
         gc = canvas.getGraphicsContext2D();
-        this.rainSystem = new RainSystem();
+        this.particleSystem = new ParticleSystem();
 
         scaleTransform = new Scale(1, 1, 0, 0);
         canvas.getTransforms().add(scaleTransform);
@@ -29,34 +28,32 @@ public class AnimationCanvas extends Pane{
         AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                rainSystem.update(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
+                particleSystem.update(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
 
-                // Очищаємо Canvas
                 gc.clearRect(0, 0, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
 
-                // Малюємо дощ
-                gc.setStroke(Color.rgb(150, 175, 190, 0.35));
-                for (var p : rainSystem.getRainParticles()) {
-                    gc.setLineWidth(p.size);
-                    gc.strokeLine(p.x, p.y, p.x + p.vx * 0.7, p.y + p.vy * 0.7);
+                // Пил
+                gc.setFill(Color.rgb(178, 141, 148, 0.4));
+                for (var p : particleSystem.getDustParticles()) {
+                    gc.fillOval(p.x, p.y, p.size, p.size);
+                }
+
+                // Дим іфд свічки
+                for (var p : particleSystem.getSmokeParticles()) {
+                    gc.setFill(Color.rgb(155, 168, 158, p.opacity * 0.2));
+                    double currentSize = p.size * (2.5 - p.opacity);
+                    gc.fillOval(p.x, p.y, currentSize, currentSize);
                 }
             }
         };
         timer.start();
     }
 
-    public void setRainActive(boolean active) {
-        rainSystem.setRainActive(active);
-    }
-
-    // Цей метод автоматично підлаштовує розмір Canvas під поточний розмір вікна
     @Override
     protected void layoutChildren() {
         super.layoutChildren();
-
         double currentWidth = getWidth();
         double currentHeight = getHeight();
-
         if (currentWidth <= 0 || currentHeight <= 0) return;
 
         double scaleX = currentWidth / VIRTUAL_WIDTH;
