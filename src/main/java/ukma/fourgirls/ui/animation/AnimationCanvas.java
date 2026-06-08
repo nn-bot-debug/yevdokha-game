@@ -17,6 +17,8 @@ public class AnimationCanvas extends Pane{
     private final ParticleSystem particleSystem;
     private final Scale scaleTransform;
 
+    private boolean isRainActive = false;
+
     public AnimationCanvas() {
         canvas = new Canvas(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
         gc = canvas.getGraphicsContext2D();
@@ -31,7 +33,7 @@ public class AnimationCanvas extends Pane{
         AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                particleSystem.update(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
+                particleSystem.update(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, isRainActive);
 
                 // Очищаємо Canvas
                 gc.clearRect(0, 0, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
@@ -46,11 +48,19 @@ public class AnimationCanvas extends Pane{
                     }
                 }
 
-                // 4. Малюємо дим від свічки
+                // Малюємо дим від свічки
                 for (var p : particleSystem.getSmokeParticles()) {
                     gc.setFill(Color.rgb(155, 168, 158, p.opacity * 0.2));
                     double currentSize = p.size * (2.5 - p.opacity); // дим розширюється
                     gc.fillOval(p.x, p.y, currentSize, currentSize);
+                }
+
+                if (isRainActive) {
+                    gc.setStroke(Color.rgb(150, 175, 190, 0.35));
+                    for (var p : particleSystem.getRainParticles()) {
+                        gc.setLineWidth(p.size);
+                        gc.strokeLine(p.x, p.y, p.x + p.vx * 0.7, p.y + p.vy * 0.7);
+                    }
                 }
             }
         };
@@ -59,6 +69,9 @@ public class AnimationCanvas extends Pane{
 
     public void setCandleLocation(double x, double y) {
         particleSystem.setCandleLocation(x, y);
+    }
+    public void setRainActive(boolean active) {
+        this.isRainActive = active;
     }
 
     // Цей метод автоматично підлаштовує розмір Canvas під поточний розмір вікна

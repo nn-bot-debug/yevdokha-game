@@ -8,6 +8,7 @@ import java.util.Random;
 public class ParticleSystem {
     private final List<Particle> dustParticles = new ArrayList<>();
     private final List<Particle> smokeParticles = new ArrayList<>();
+    private final List<Particle> rainParticles = new ArrayList<>();
     private final Random random = new Random();
 
     private double CANDLE_X = 1510;
@@ -18,7 +19,7 @@ public class ParticleSystem {
         this.CANDLE_Y = y;
     }
 
-    public void update(double width, double height) {
+    public void update(double width, double height, boolean isRainActive) {
         // 1. Керування пилом
         if (dustParticles.size() < 100) {
             // Пил з'являється у випадкових місцях
@@ -31,6 +32,22 @@ public class ParticleSystem {
             generateSmoke(CANDLE_X, CANDLE_Y);
         }
         updateList(smokeParticles, width, height);
+
+        if (isRainActive) {
+            for (int i = 0; i < 6; i++) {
+                generateRain(width);
+            }
+        }
+        updateList(rainParticles, width, height);
+    }
+
+    private void generateRain(double width) {
+        double x = random.nextDouble() * (width + 300) - 300;
+        double y = -10;
+        double vx = 6 + random.nextDouble() * 4;
+        double vy = 22 +  random.nextDouble() * 8;
+        double size = random.nextDouble() * 1.5 + 1;
+        rainParticles.add(new Particle(x, y, vx, vy, size, -1));
     }
 
     private void generateDust(double x, double y) {
@@ -59,6 +76,7 @@ public class ParticleSystem {
         }
     }
 
+    public List<Particle> getRainParticles() { return rainParticles; }
     public List<Particle> getDustParticles() { return dustParticles; }
     public List<Particle> getSmokeParticles() { return smokeParticles; }
 }
