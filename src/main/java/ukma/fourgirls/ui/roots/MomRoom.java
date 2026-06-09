@@ -3,12 +3,19 @@ package ukma.fourgirls.ui.roots;
 import javafx.animation.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
-import ukma.fourgirls.logic.StoryController;
+import ukma.fourgirls.core.NotificationManager;
+import ukma.fourgirls.core.StatNotification;
+import ukma.fourgirls.logic.StoryRunner;
+import ukma.fourgirls.state.GameState;
+import ukma.fourgirls.state.InventoryState;
 import ukma.fourgirls.ui.CameraController;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class MomRoom extends Place {
@@ -37,8 +44,49 @@ public class MomRoom extends Place {
         drawingView = createCinematicView(SECOND_IMAGE_PATH, 1.3);
         scaryMomView = createCinematicView(SCARY_MOM_PATH, 1.5);
 
-        // Передаємо управління контролеру сюжету!
-        StoryController.startMomRoomCutscene(this, this.root);
+        this.startCutscene();
+    }
+
+    public void startCutscene() {
+        Map<String, Runnable> actions = new HashMap<>();
+        Map<String, Animation> animations = new HashMap<>();
+
+        animations.put("part1Animation", this.getPart1Animation());
+        animations.put("part2Animation", this.getPart2Animation());
+
+        actions.put("showMomView", this::showMomView);
+        actions.put("showDrawingView", this::showDrawingView);
+        actions.put("showScaryMom", this::showScaryMom);
+        actions.put("hideScaryMom", () -> {
+            this.hideScaryMom();
+            this.finalizeCutscene();
+        });
+
+        actions.put("setupKarmaAndOverlay", () -> {
+            this.removeBlackOverlay();
+            GameState.setKarmaListener((currentKarma, addedPoints) -> StatNotification.show((StackPane) this.getRoot(), currentKarma, addedPoints));
+        });
+
+        actions.put("choice_put_near_mom", () -> {
+            InventoryState.removeItem("Малюнок");
+            GameState.changeKarma(-1);
+            this.hideDrawingView();
+            StoryRunner.playScene("/story/chapter1.json", "mom_room_scary_sequence", (StackPane) this.getRoot(), actions, animations);
+        });
+
+        actions.put("choice_hide_in_pocket", () -> {
+            GameState.changeKarma(1);
+            this.hideDrawingView();
+            StoryRunner.playScene("/story/chapter1.json", "mom_room_hide_sequence", (StackPane) this.getRoot(), actions, animations);
+        });
+
+        actions.put("goToKitchenHint", () -> {
+            GameState.unlockLocation("Kitchen");
+            this.finalizeCutscene();
+            NotificationManager.showNotification(this.root, "Нове завдання: Знайдіть їжу на кухні");
+        });
+
+        StoryRunner.playScene("/story/chapter1.json", "mom_room_first_visit", (StackPane) this.getRoot(), actions, animations);
     }
 
     // --- МЕТОДИ ДЛЯ КЕРУВАННЯ СЦЕНОЮ З КОНТРОЛЕРА ---

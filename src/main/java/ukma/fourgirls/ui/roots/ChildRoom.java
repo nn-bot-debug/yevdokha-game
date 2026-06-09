@@ -3,10 +3,17 @@ package ukma.fourgirls.ui.roots;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
 import javafx.scene.transform.Rotate;
+import ukma.fourgirls.core.InventoryManager;
+import ukma.fourgirls.core.NotificationManager;
 import ukma.fourgirls.domain.Item;
-import ukma.fourgirls.state.InventoryState;
+import ukma.fourgirls.logic.StoryRunner;
+import ukma.fourgirls.state.GameState;
 import ukma.fourgirls.ui.CameraController;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class ChildRoom extends Place {
@@ -17,11 +24,49 @@ public class ChildRoom extends Place {
     public ChildRoom() {
         super(INTRO_IMAGE_PATH);
         CameraController.setPanningEnabled(false);
+
+        this.startIntroCutscene();
     }
 
-    /**
-     * Головний метод активації гри.
-     */
+    public void startIntroCutscene() {
+        Map<String, Runnable> actions = new HashMap<>();
+
+        actions.put("startGameplay", () -> {
+            this.activateGameplay();
+            NotificationManager.showNotification((StackPane) this.getRoot(),
+                    "Завдання: Підніміть малюнок зі столу\nПідказка: щоб підняти річ, натисніть на неї ЛКМ)");
+
+            Item yevdokhaDrawing = new Item("Малюнок", "/images/drawing.png");
+
+            InventoryManager.setupPickupAction(
+                    this.getInteractiveDrawing(),
+                    yevdokhaDrawing,
+                    (StackPane) this.getRoot(),
+                    "Ви підняли малюнок! Підібрані речі ви можете побачити в інвентарі.",
+                    this::onDrawingPickedUp
+            );
+        });
+
+        StoryRunner.playScene("/story/chapter1.json", "child_room_intro", (StackPane) this.getRoot(), actions, null);
+    }
+
+    private void onDrawingPickedUp() {
+        Map<String, Runnable> actions = new HashMap<>();
+
+        actions.put("showInventory", () -> {
+            this.showInventoryUI();
+            GameState.unlockLocation("MomRoom");
+            this.enableNavigation();
+        });
+
+        actions.put("showNavigationHint", () -> {
+            NotificationManager.showNotification((StackPane) this.getRoot(),
+                    "Підказка: Використайте панель навігації праворуч, щоб вийти з кімнати.");
+        });
+
+        StoryRunner.playScene("/story/chapter1.json", "child_room_after_pickup", (StackPane) this.getRoot(), actions, null);
+    }
+
     public void activateGameplay() {
         Image newBackground = new Image(Objects.requireNonNull(getClass().getResourceAsStream(GAMEPLAY_IMAGE_PATH)));
         this.roomView.setImage(newBackground);
@@ -32,9 +77,6 @@ public class ChildRoom extends Place {
         this.roomContentLayer.getChildren().add(interactiveDrawing);
     }
 
-    /**
-     * Окремий метод, який займається виключно геометрією та стилізацією малюнка
-     */
     private ImageView createInteractiveDrawing() {
         Image drawingImg = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/drawing.png")));
         ImageView drawingView = new ImageView(drawingImg);

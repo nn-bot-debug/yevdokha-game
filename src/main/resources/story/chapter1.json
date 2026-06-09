@@ -1,0 +1,130 @@
+{
+  "scenes": {
+    "child_room_intro": [
+      {
+        "type": "dialogue",
+        "text": [
+          "Дівчинка очей не зімкнула, все малювала аж до поки світати не почало.",
+          "Коли закінчила у неї було одне бажання - показати матері, щоб хоч трошки її підбадьорити."
+        ]
+      },
+      {
+        "type": "dialogue",
+        "character": "Євдоха",
+        "portrait": "/images/sadyevdokha.png",
+        "text": ["Останнім часом мама зовсім засмучена, сподіваюсь мій малюнок підійме їй настрій."]
+      },
+      { "type": "action", "actionId": "startGameplay" }
+    ],
+
+    "child_room_after_pickup": [
+      { "type": "action", "actionId": "showInventory" },
+      {
+        "type": "dialogue",
+        "character": "Євдоха",
+        "portrait": "/images/sadyevdokha.png",
+        "text": ["Зазвичай мама в такий час вже прокинулась. Піду до неї в кімнату. "]
+      },
+      { "type": "action", "actionId": "showNavigationHint" }
+    ],
+
+    "mom_room_first_visit": [
+      {
+        "type": "dialogue",
+        "text": ["Побачене ніяк не засмутило дівчинку, навпаки, ніби вона все життя тільки цього і чекала, і от нарешті це сталося."]
+      },
+      { "type": "action", "actionId": "showMomView" },
+      { "type": "animation", "actionId": "part1Animation" },
+      { "type": "action", "actionId": "showDrawingView" },
+      {
+        "type": "dialogue",
+        "character": "Євдоха",
+        "portrait": "/images/sadyevdokha.png",
+        "text": [
+          "Мабуть мама перебрала із чарами. Вона сама казала, це може бути шкідливо... ",
+          "І кому ж мені тепер показати малюнок... "
+        ]
+      },
+      { "type": "animation", "actionId": "part2Animation" },
+      { "type": "action", "actionId": "setupKarmaAndOverlay" },
+      {
+        "type": "choice",
+        "prompt": "Що робити із малюнком?",
+        "options": [
+          { "text": "Покласти біля мами", "actionId": "choice_put_near_mom" },
+          { "text": "Заховати в кишеню", "actionId": "choice_hide_in_pocket" }
+        ]
+      }
+    ],
+
+    "mom_room_scary_sequence": [
+      {
+        "type": "dialogue",
+        "text": [
+          "Дівчинка підійшла до ліжка, де лежала мати. Навіть після смерті виглядала вона сумною та нещасною.",
+          "Намагаючись підійняти її черстві та холодні руки, дівчинка відчула ніби серце в матері ще й досі б'ється."
+        ]
+      },
+      { "type": "action", "actionId": "showScaryMom" },
+      {
+        "type": "dialogue",
+        "character": "Мати",
+        "portrait": "/images/cat.jpg",
+        "text": ["НЕ ЙДИ ДО ЛІСУ!"]
+      },
+      {
+        "type": "dialogue",
+        "character": "Євдоха",
+        "portrait": "/images/sadyevdokha.png",
+        "text": ["Ах!"]
+      },
+      { "type": "action", "actionId": "hideScaryMom" },
+      {
+        "type": "dialogue",
+        "text": [
+          "Це було останнє попередження.",
+          "Євдоха затримала подих, немов боялася, що мати знову прокинеться. Але цього не сталося.",
+          "Тож маленька просто поклала малюнок біля матері."
+        ]
+      },
+      { "type": "action", "actionId": "goToKitchenHint" }
+    ],
+
+    "mom_room_hide_sequence": [
+      {
+        "type": "dialogue",
+        "text": [
+          "Дівчинка згорнула папірець і сховала його глибоко в кишеню.",
+          "Ні... Вона все одно не подивиться. Немає сенсу."
+        ]
+      },
+      { "type": "action", "actionId": "goToKitchenHint" }
+    ],
+    "kitchen_storm_sequence": [
+      { "type": "action", "actionId": "showEatingSprite" },
+      {
+        "type": "dialogue",
+        "text": [
+          "Це був не найсмачніший сніданок в її житті, та він взагалі смачним і не був.",
+          "Дівчинка вчепилася в цю хлібину ніби це було її спасіння.",
+          "Насправді так і було."
+        ]
+      },
+      { "type": "action", "actionId": "startStorm" },
+      {
+        "type": "dialogue",
+        "text": [
+          "Раптом розпочалася злива.",
+          "З вікон задував вітер, деякі краплі вже розбилися об тарілки та відкриті дверцята шухляд."
+        ]
+      },
+      { "type": "action", "actionId": "showScaredSprite" },
+      { "type": "action", "actionId": "triggerLightning" },
+      {
+        "type": "dialogue",
+        "text": ["Блискавка на мить осліпила дівчинку."]
+      },
+      { "type": "action", "actionId": "triggerBlackout" }
+    ]
+  }
+}

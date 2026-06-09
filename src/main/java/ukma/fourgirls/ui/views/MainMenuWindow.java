@@ -12,7 +12,6 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import ukma.fourgirls.core.AudioManager;
 import ukma.fourgirls.core.LanguageManager;
-import ukma.fourgirls.logic.StoryController;
 import ukma.fourgirls.ui.animation.MenuAnimationCanvas;
 import ukma.fourgirls.core.SceneManager;
 
@@ -63,7 +62,11 @@ public class MainMenuWindow extends Application {
         SceneManager.getInstance().setMainMenuRoot(root);
 
         Map<String, Runnable> buttonActions = new LinkedHashMap<>();
-        buttonActions.put("menu.new", StoryController::startStory);
+        buttonActions.put("menu.new", () -> {
+            ukma.fourgirls.ui.roots.ChildRoom childRoom = new ukma.fourgirls.ui.roots.ChildRoom();
+            ukma.fourgirls.state.GameState.unlockLocation("ChildRoom");
+            ukma.fourgirls.core.SceneManager.getInstance().switchToRoot((javafx.scene.layout.StackPane) childRoom.getRoot());
+        });
         buttonActions.put("menu.continue", this::continueGame);
         buttonActions.put("menu.instruction", () -> SceneManager.getInstance().switchToRoot(new InstructionsScreen().getRoot()));
         buttonActions.put("menu.settings", () -> {

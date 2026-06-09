@@ -2,16 +2,28 @@ package ukma.fourgirls.ui.roots;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.SequentialTransition;
+import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
+
+import ukma.fourgirls.core.AudioManager;
+import ukma.fourgirls.core.InventoryManager;
+import ukma.fourgirls.core.NotificationManager;
+import ukma.fourgirls.domain.Item;
+import ukma.fourgirls.logic.StoryRunner;
+import ukma.fourgirls.state.InventoryState;
+import ukma.fourgirls.ui.CharacterView;
 import ukma.fourgirls.ui.animation.AnimationCanvas;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class Kitchen extends Place {
@@ -21,13 +33,15 @@ public class Kitchen extends Place {
     private final AnimationCanvas animationCanvas;
     private final Rectangle flashOverlay;
 
+    private CharacterView actorView;
+
     public Kitchen() {
         super(IMAGE_PATH);
 
-        for (javafx.scene.Node topNode : this.root.getChildren()) {
+        for (Node topNode : this.root.getChildren()) {
             if (topNode instanceof ScrollPane sp) {
                 if (sp.getContent() instanceof Pane container) {
-                    for (javafx.scene.Node innerNode : container.getChildren()) {
+                    for (Node innerNode : container.getChildren()) {
                         if (innerNode instanceof ImageView iv) {
                             this.backgroundView = iv;
                             break;
@@ -52,6 +66,59 @@ public class Kitchen extends Place {
         this.root.getChildren().add(flashOverlay);
 
         setupNavigation("Kitchen");
+
+        this.startKitchenGameplay();
+    }
+
+    public void startKitchenGameplay() {
+        NotificationManager.showNotification((StackPane) this.getRoot(), "Завдання: Знайдіть щось поїсти на кухні.");
+
+        Item bread = new Item("Зацвілий хліб", "/images/bread.png");
+        Node breadNode = this.getInteractiveBread();
+
+        InventoryManager.setupPickupAction(
+                breadNode,
+                bread,
+                (StackPane) this.getRoot(),
+                "Ви знайшли зацвілий хліб.",
+                this::onBreadPickedUp
+        );
+    }
+
+    private void onBreadPickedUp() {
+        actorView = new CharacterView((StackPane) this.getRoot());
+        Map<String, Runnable> actions = new HashMap<>();
+
+        actions.put("showEatingSprite", () -> {
+            InventoryState.removeItem("Зацвілий хліб");
+            actorView.setCharacterSprite("/images/Yevdokha_eating.png");
+        });
+
+        actions.put("startStorm", () -> {
+            actorView.hide();
+            AudioManager.getInstance().playBackgroundMusic("/music/Злива.mp3");
+            this.startStormEffects();
+        });
+
+        actions.put("showScaredSprite", () -> {
+            actorView.setCharacterSprite("/images/scaredYevdokha.png");
+        });
+
+        actions.put("triggerLightning", () -> {
+            this.triggerLightningFlash(() -> {
+                System.out.println("Спалах грози відбувся!");
+            });
+        });
+
+        actions.put("triggerBlackout", () -> {
+            this.fadeToBlackout(() -> {
+                actorView.hide();
+                System.out.println("Дівчинка знепритомніла. Екран чорний.");
+            });
+        });
+
+        // Запускаємо сцену з нашого JSON!
+        StoryRunner.playScene("/story/chapter1.json", "kitchen_storm_sequence", (StackPane) this.getRoot(), actions, null);
     }
 
     /**
@@ -63,7 +130,6 @@ public class Kitchen extends Place {
             Image rainBg = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/rain_in_kitchen.png")));
 
             if (this.backgroundView != null) {
-                // Якщо знайшли ImageView всередині ScrollPane — просто оновлюємо картинку
                 this.backgroundView.setImage(rainBg);
             }
         } catch (Exception e) {
@@ -105,7 +171,6 @@ public class Kitchen extends Place {
 
         breadView.setFitWidth(180);
         breadView.setPreserveRatio(true);
-
 
         breadView.setTranslateX(540);
         breadView.setTranslateY(170);
