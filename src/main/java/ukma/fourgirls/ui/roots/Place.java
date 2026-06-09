@@ -104,7 +104,8 @@ public abstract class Place {
             navPanel.addNavigationTarget("Кухня", () ->
 {
                 AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
-                ukma.fourgirls.logic.StoryController.openKitchen();
+    ukma.fourgirls.ui.roots.Kitchen kitchen = new ukma.fourgirls.ui.roots.Kitchen();
+    ukma.fourgirls.core.SceneManager.getInstance().switchToRoot(kitchen.getRoot());
             });
         }
 
