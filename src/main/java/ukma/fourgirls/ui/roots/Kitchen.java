@@ -120,23 +120,22 @@ public class Kitchen extends Place {
             });
         });
 
-        actions.put("showWindowCloseUp", () -> {
-            if (actorView != null) actorView.hide();
-            Image windowCloseUp = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/kitchen.png")));
+        actions.put("triggerScreamerSequence", () -> {
+            Image windowCloseUp = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/rain_in_kitchen.png")));
             this.backgroundView.setImage(windowCloseUp);
-        });
-
-        actions.put("fadeFromBlackout", () -> {
-            FadeTransition fade = new FadeTransition(Duration.millis(800), flashOverlay);
+            AudioManager.getInstance().buttonSound("/music/window.wav");
+            FadeTransition fade = new FadeTransition(Duration.millis(60), flashOverlay);
             fade.setFromValue(1.0);
-            fade.setToValue(0.4);
-            fade.play();
-        });
+            fade.setToValue(0.0);
 
-        actions.put("showMonsterInWindow", () -> {
-            Image windowMonster = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/window_monster.png")));
-            this.backgroundView.setImage(windowMonster);
-            // AudioManager.getInstance().playSFX("/music/screamer.mp3");
+            fade.setOnFinished(event -> {
+                this.triggerLightningFlash(() -> {
+                    Image windowMonster = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/window_monster.png")));
+                    this.backgroundView.setImage(windowMonster);
+                });
+            });
+
+            fade.play();
         });
 
         actions.put("showFloorView", () -> {
@@ -149,22 +148,32 @@ public class Kitchen extends Place {
                     sp.setFitToWidth(true);
                     sp.setFitToHeight(true);
 
-                    ukma.fourgirls.ui.CameraController.setPanningEnabled(false);
+                    if (sp.getContent() instanceof javafx.scene.layout.Region contentRegion) {
+                        contentRegion.setPrefWidth(this.root.getWidth());
+                        contentRegion.setPrefHeight(this.root.getHeight());
+                    }
                 }
             }
+            this.animationCanvas.setRainActive(false);
+            ukma.fourgirls.ui.CameraController.setPanningEnabled(false);
             actorView.setCharacterSprite("/images/scaredYevdokha.png");
         });
 
         actions.put("spawnRatNearBread", () -> {
-            ratView.setCharacterSprite("/images/rat_near_bread.png");
+            Image ratNearBread = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/kitchen_with_rat.png")));
+            this.backgroundView.setImage(ratNearBread);
         });
 
         actions.put("moveRatToDoor", () -> {
-            ratView.setCharacterSprite("/images/rat_near_door.png");
+            Image ratNearDoor = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/rat_near_door.png")));
+            this.backgroundView.setImage(ratNearDoor);
         });
 
         actions.put("playRatSqueak", () -> {
-            AudioManager.getInstance().buttonSound("/music/button-click-sound.wav"); // Сюди потім твій rat_squeak.wav
+            Image cleanFloor = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/kitchen_floor.png")));
+            this.backgroundView.setImage(cleanFloor);
+            AudioManager.getInstance().buttonSound("/music/mouse_pisk.wav");
+            ratView.setCharacterSprite("/images/rat.png");
         });
 
         actions.put("leaveKitchenScene", () -> {

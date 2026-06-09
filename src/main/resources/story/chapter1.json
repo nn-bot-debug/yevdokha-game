@@ -122,18 +122,14 @@
       { "type": "action", "actionId": "triggerLightning" },
       {
         "type": "dialogue",
-        "text": ["Блискавка на мить осліпила дівчинку."]
+        "text": ["Блискавка на мить осліпила дівчинку і та втратила свідомість."]
       },
       { "type": "action", "actionId": "triggerBlackout" },
-
-      { "type": "action", "actionId": "showWindowCloseUp" },
-      { "type": "action", "actionId": "fadeFromBlackout" },
       {
         "type": "dialogue",
         "text": ["Коли Євдоха прийшла до тями, крізь розбите вікно було видно..."]
       },
-      { "type": "action", "actionId": "triggerLightning" },
-      { "type": "action", "actionId": "showMonsterInWindow" },
+      { "type": "action", "actionId": "triggerScreamerSequence" },
       {
         "type": "dialogue",
         "text": ["...страшне нелюдське обличчя."]
@@ -143,12 +139,14 @@
         "text": ["Дівчинка вронила хлібину. Звук її падіння, змусив перевести погляд донизу,"]
       },
       { "type": "action", "actionId": "showFloorView" },
+      {
+      "type": "dialogue",
+      "text": ["Раптом з привідкритої шухляди вискочив худий облізлий щур."]
+      },
       { "type": "action", "actionId": "spawnRatNearBread" },
       {
         "type": "dialogue",
-        "text": ["Раптом з привідкритої шухляди вискочив худий облізлий щур.",
-          "Підбігши до хлібини, він швидко схопив кілька крихт."
-        ]
+        "text": ["Підбігши до хлібини, він швидко схопив кілька крихт."]
       },
       { "type": "action", "actionId": "moveRatToDoor" },
       {
@@ -161,6 +159,8 @@
       { "type": "action", "actionId": "playRatSqueak" },
       {
         "type": "dialogue",
+        "character": "Щур",
+        "portrait": "/images/rat_portrait.png",
         "text": ["Євдо-о-оха-аа..."]
       },
       { "type": "action", "actionId": "leaveKitchenScene" }
