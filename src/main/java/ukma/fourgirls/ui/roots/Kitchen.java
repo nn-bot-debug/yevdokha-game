@@ -87,6 +87,9 @@ public class Kitchen extends Place {
 
     private void onBreadPickedUp() {
         actorView = new CharacterView((StackPane) this.getRoot());
+        CharacterView ratView = new CharacterView((StackPane) this.getRoot());
+        ratView.setPositionSide(false);
+
         Map<String, Runnable> actions = new HashMap<>();
 
         actions.put("showEatingSprite", () -> {
@@ -138,9 +141,37 @@ public class Kitchen extends Place {
 
         actions.put("showFloorView", () -> {
             Image floorView = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/kitchen_floor.png")));
-            ukma.fourgirls.ui.CameraController.setPanningEnabled(false);
             this.backgroundView.setImage(floorView);
-            actorView.setCharacterSprite("/images/sadyevdokha.png");
+            this.animationCanvas.setRainActive(false);
+
+            for (javafx.scene.Node topNode : this.root.getChildren()) {
+                if (topNode instanceof javafx.scene.control.ScrollPane sp) {
+                    sp.setFitToWidth(true);
+                    sp.setFitToHeight(true);
+
+                    ukma.fourgirls.ui.CameraController.setPanningEnabled(false);
+                }
+            }
+            actorView.setCharacterSprite("/images/scaredYevdokha.png");
+        });
+
+        actions.put("spawnRatNearBread", () -> {
+            ratView.setCharacterSprite("/images/rat_near_bread.png");
+        });
+
+        actions.put("moveRatToDoor", () -> {
+            ratView.setCharacterSprite("/images/rat_near_door.png");
+        });
+
+        actions.put("playRatSqueak", () -> {
+            AudioManager.getInstance().buttonSound("/music/button-click-sound.wav"); // Сюди потім твій rat_squeak.wav
+        });
+
+        actions.put("leaveKitchenScene", () -> {
+            actorView.hide();
+            ratView.hide();
+
+            System.out.println("Євдоха біжить за щуром на наступну локацію.");
         });
 
         StoryRunner.playScene("/story/chapter1.json", "kitchen_storm_sequence", (StackPane) this.getRoot(), actions, null);

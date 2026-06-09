@@ -142,7 +142,28 @@
         "type": "dialogue",
         "text": ["Дівчинка вронила хлібину. Звук її падіння, змусив перевести погляд донизу,"]
       },
-      { "type": "action", "actionId": "showFloorView" }
+      { "type": "action", "actionId": "showFloorView" },
+      { "type": "action", "actionId": "spawnRatNearBread" },
+      {
+        "type": "dialogue",
+        "text": ["Раптом з привідкритої шухляди вискочив худий облізлий щур.",
+          "Підбігши до хлібини, він швидко схопив кілька крихт."
+        ]
+      },
+      { "type": "action", "actionId": "moveRatToDoor" },
+      {
+        "type": "dialogue",
+        "text": [
+          "Голосно тупотячи лапками, він кинувся до дверей, які з останніх сил стримували негоду на вулиці.",
+          "Зупинившись біля самого порогу, щур обернувся."
+        ]
+      },
+      { "type": "action", "actionId": "playRatSqueak" },
+      {
+        "type": "dialogue",
+        "text": ["Євдо-о-оха-аа..."]
+      },
+      { "type": "action", "actionId": "leaveKitchenScene" }
     ]
   }
 }
