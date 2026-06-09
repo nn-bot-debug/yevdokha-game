@@ -2,6 +2,7 @@ package ukma.fourgirls.core;
 
 import javafx.scene.Parent;
 import javafx.stage.Stage;
+import ukma.fourgirls.ui.roots.Place;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +15,7 @@ public class SceneManager {
     private Stage primaryStage;
     private Parent mainMenuRoot;
 
-    private final Map<String, Parent> cachedRooms = new HashMap<>();
+    private final Map<String, Place> cachedRooms = new HashMap<>();
 
     private SceneManager() {}
 
@@ -51,10 +52,11 @@ public class SceneManager {
      * @param roomKey Унікальний ідентифікатор кімнати (наприклад, "MomRoom")
      * @param roomCreator Логіка створення кімнати, якщо її немає в кеші
      */
-    public void switchToCachedRoom(String roomKey, Supplier<Parent> roomCreator) {
+    public void switchToCachedRoom(String roomKey, Supplier<Place> roomCreator) {
         if (primaryStage != null && primaryStage.getScene() != null) {
-            Parent roomRoot = cachedRooms.computeIfAbsent(roomKey, k -> roomCreator.get());
-            primaryStage.getScene().setRoot(roomRoot);
+            Place room = cachedRooms.computeIfAbsent(roomKey, k -> roomCreator.get());
+            primaryStage.getScene().setRoot(room.getRoot());
+            room.onEnter();
         }
     }
 
