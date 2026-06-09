@@ -10,13 +10,13 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import ukma.fourgirls.core.AudioManager;
+import ukma.fourgirls.core.LanguageManager;
 
 import java.util.Objects;
 
 public class SettingsScreen {
     private final StackPane overlayRoot;
     private final StackPane parentContainer;
-    private Font font;
 
     public SettingsScreen(StackPane parentContainer) {
         this.parentContainer = parentContainer;
@@ -26,12 +26,6 @@ public class SettingsScreen {
 
         this.overlayRoot.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/settings.css")).toExternalForm());
 
-        try {
-            font = Font.loadFont(getClass().getResourceAsStream("/Creepster-Regular.ttf"), 24);
-        } catch (Exception e) {
-            font = Font.font("Arial", 22);
-        }
-
         VBox dialogBox = new VBox(25);
         dialogBox.setAlignment(Pos.CENTER);
         dialogBox.setMaxWidth(450);
@@ -40,8 +34,8 @@ public class SettingsScreen {
         dialogBox.getStyleClass().add("settings-dialog");
 
         // Заголовок вікна
-        Label titleLabel = new Label("SETTINGS");
-        titleLabel.setFont(font);
+        Label titleLabel = new Label(LanguageManager.getString("settings.title"));
+        //titleLabel.setFont(font);
         titleLabel.getStyleClass().add("settings-title");
         dialogBox.getChildren().add(titleLabel);
 
@@ -51,13 +45,13 @@ public class SettingsScreen {
         settingsGrid.setAlignment(Pos.CENTER);
 
         // --- Рядок 1: Музика ---
-        Label musicLabel = new Label("MUSIC");
-        musicLabel.setFont(font);
+        Label musicLabel = new Label(LanguageManager.getString("settings.music"));
+        //musicLabel.setFont(font);
         musicLabel.getStyleClass().add("settings-label");
 
         boolean mutedAtStart = AudioManager.getInstance().isMusicMuted();
-        ToggleButton musicToggle = new ToggleButton(mutedAtStart ? "OFF" : "ON");
-        musicToggle.setFont(font);
+        ToggleButton musicToggle = new ToggleButton(LanguageManager.getString(mutedAtStart ? "settings.off" : "settings.on"));
+        //musicToggle.setFont(font);
         musicToggle.getStyleClass().add("settings-toggle");
         musicToggle.setSelected(mutedAtStart);
 
@@ -75,7 +69,7 @@ public class SettingsScreen {
 
         musicToggle.setOnAction(e -> {
             boolean isMuted = AudioManager.getInstance().toggleMusic();
-            musicToggle.setText(isMuted ? "OFF" : "ON");
+            musicToggle.setText(LanguageManager.getString(isMuted ? "settings.off" : "settings.on"));
             musicSlider.setDisable(isMuted);
             AudioManager.getInstance().setVolume(musicSlider.getValue());
             AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
@@ -85,20 +79,20 @@ public class SettingsScreen {
         GridPane.setMargin(musicSlider, new Insets(0, 0, 10, 0));
 
         // --- Рядок 2: Звуки дій ---
-        Label soundLabel = new Label("SOUNDS");
-        soundLabel.setFont(font);
+        Label soundLabel = new Label(LanguageManager.getString("settings.sounds"));
+        //soundLabel.setFont(font);
         soundLabel.getStyleClass().add("settings-label");
 
-        ToggleButton soundToggle = new ToggleButton("ON");
-        soundToggle.setFont(font);
+        ToggleButton soundToggle = new ToggleButton(LanguageManager.getString("settings.on"));
+        //soundToggle.setFont(font);
         soundToggle.getStyleClass().add("settings-toggle");
 
         soundToggle.setOnAction(e -> {
             if (soundToggle.isSelected()) {
-                soundToggle.setText("OFF");
+                soundToggle.setText(LanguageManager.getString("settings.off"));
                 // TODO: Код вимкнення звуків ефектів
             } else {
-                soundToggle.setText("ON");
+                soundToggle.setText(LanguageManager.getString("settings.on"));
                 // TODO: Код ввімкнення звуків
             }
             AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
@@ -107,19 +101,22 @@ public class SettingsScreen {
         settingsGrid.add(soundToggle, 1, 2);
 
         // --- Рядок 3: Мова ---
-        Label langLabel = new Label("LANGUAGE");
-        langLabel.setFont(font);
+        Label langLabel = new Label(LanguageManager.getString("settings.language"));
+        //langLabel.setFont(font);
         langLabel.getStyleClass().add("settings-label");
 
-        Button langButton = new Button("UA");
-        langButton.setFont(font);
+        String currentLangCode = LanguageManager.getString("settings.title").equals("SETTINGS") ? "EN" : "UA";
+        Button langButton = new Button(currentLangCode);
+        //langButton.setFont(font);
         langButton.getStyleClass().add("settings-button");
 
         langButton.setOnAction(e -> {
             if (langButton.getText().equals("UA")) {
                 langButton.setText("EN");
+                LanguageManager.setLanguage(java.util.Locale.of("en"));
             } else {
                 langButton.setText("UA");
+                LanguageManager.setLanguage(java.util.Locale.of("uk"));
             }
             AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
         });
@@ -128,9 +125,12 @@ public class SettingsScreen {
 
         dialogBox.getChildren().add(settingsGrid);
 
-        Button closeButton = new Button("CLOSE");
-        closeButton.setFont(font);
+        Button closeButton = new Button(LanguageManager.getString("settings.close"));
+        //closeButton.setFont(font);
         closeButton.getStyleClass().add("settings-button");
+
+
+
         closeButton.setOnAction(e -> {
             AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
             parentContainer.getChildren().remove(overlayRoot);
@@ -138,6 +138,17 @@ public class SettingsScreen {
 
         dialogBox.getChildren().add(closeButton);
         overlayRoot.getChildren().add(dialogBox);
+
+        LanguageManager.addLanguageChangeListener(() -> {
+            titleLabel.setText(LanguageManager.getString("settings.title"));
+            musicLabel.setText(LanguageManager.getString("settings.music"));
+            soundLabel.setText(LanguageManager.getString("settings.sounds"));
+            langLabel.setText(LanguageManager.getString("settings.language"));
+            closeButton.setText(LanguageManager.getString("settings.close"));
+
+            musicToggle.setText(LanguageManager.getString(musicToggle.isSelected() ? "settings.off" : "settings.on"));
+            soundToggle.setText(LanguageManager.getString(soundToggle.isSelected() ? "settings.off" : "settings.on"));
+        });
     }
 
     public Parent getRoot() {
