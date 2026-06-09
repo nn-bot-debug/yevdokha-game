@@ -28,6 +28,8 @@ public class DialogueManager {
     private Label nameLabel;
     private ImageView portraitView;
     private Font font;
+    private VBox textContainer;
+    private HBox contentBox;
 
     private DialogueManager() {
         font = Font.font("System", javafx.scene.text.FontWeight.BOLD, 20);
@@ -52,17 +54,20 @@ public class DialogueManager {
         this.currentLineIndex = 0;
 
         Platform.runLater(() -> {
-
             boolean isNarrator = (characterName == null || characterName.isEmpty()) && portrait == null;
 
             if (isNarrator) {
                 // Для автора
                 textLabel.setAlignment(Pos.CENTER);
                 textLabel.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
+                textContainer.setAlignment(Pos.CENTER);
+                contentBox.setAlignment(Pos.CENTER);
             } else {
                 // Для персонажа
                 textLabel.setAlignment(Pos.TOP_LEFT);
                 textLabel.setTextAlignment(javafx.scene.text.TextAlignment.LEFT);
+                textContainer.setAlignment(Pos.TOP_LEFT);
+                contentBox.setAlignment(Pos.CENTER_LEFT);
             }
 
             if (portrait != null) {
@@ -103,12 +108,10 @@ public class DialogueManager {
         StackPane.setAlignment(dialogueRootPane, Pos.BOTTOM_CENTER);
         StackPane.setMargin(dialogueRootPane, new Insets(0, 0, 50, 0));
 
-        // --- ІНІЦІАЛІЗАЦІЯ НОВИХ ЕЛЕМЕНТІВ ---
         portraitView = new ImageView();
         portraitView.setFitWidth(100);
         portraitView.setFitHeight(100);
         portraitView.setPreserveRatio(true);
-        // Можна додати клас для рамки портрета: portraitView.getStyleClass().add("dialogue-portrait");
 
         nameLabel = new Label();
         nameLabel.getStyleClass().add("dialogue-name");
@@ -118,16 +121,14 @@ public class DialogueManager {
         textLabel.setFont(font);
         textLabel.getStyleClass().add("dialogue-text");
         textLabel.setWrapText(true);
-        textLabel.setAlignment(Pos.TOP_LEFT);
         textLabel.setMaxWidth(Double.MAX_VALUE);
 
-        VBox textContainer = new VBox(5);
+        textContainer = new VBox(5);
         textContainer.getChildren().addAll(nameLabel, textLabel);
         HBox.setHgrow(textContainer, Priority.ALWAYS);
 
-        HBox contentBox = new HBox(20);
+        contentBox = new HBox(20);
         contentBox.setPadding(new Insets(15));
-        contentBox.setAlignment(Pos.CENTER_LEFT);
         contentBox.getChildren().addAll(portraitView, textContainer);
 
         Label hintLabel = new Label("▶ Клікніть для продовження");
