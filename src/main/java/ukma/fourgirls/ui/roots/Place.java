@@ -64,6 +64,12 @@ public abstract class Place {
         this.root = rootPane;
     }
 
+    /**
+     * Точка входу в локацію. Перевизначається в конкретних кімнатах
+     * (MomRoom, Kitchen тощо) для запуску сюжетних катсцен чи перевірки прапорців.
+     */
+    public void onEnter() {}
+
     public Parent getRoot() {
         return root;
     }
@@ -92,36 +98,31 @@ public abstract class Place {
         NavigationPanel navPanel = new NavigationPanel();
 
         if (!"MomRoom".equals(currentRoomName) && GameState.isUnlocked("MomRoom")) {
-            navPanel.addNavigationTarget("Кімната матері", () ->
-            {
+            navPanel.addNavigationTarget("Кімната матері", () -> {
                 AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
-                SceneManager.getInstance().switchToCachedRoom("MomRoom", () -> new MomRoom().getRoot());
-            }
-            );
+                SceneManager.getInstance().switchToCachedRoom("MomRoom", MomRoom::new);
+            });
         }
 
         if (!"Kitchen".equals(currentRoomName) && GameState.isUnlocked("Kitchen")) {
-            navPanel.addNavigationTarget("Кухня", () ->
-{
+            navPanel.addNavigationTarget("Кухня", () -> {
                 AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
-    ukma.fourgirls.ui.roots.Kitchen kitchen = new ukma.fourgirls.ui.roots.Kitchen();
-    ukma.fourgirls.core.SceneManager.getInstance().switchToRoot(kitchen.getRoot());
+                SceneManager.getInstance().switchToCachedRoom("Kitchen", Kitchen::new);
             });
         }
 
         if (!"ChildRoom".equals(currentRoomName) && GameState.isUnlocked("ChildRoom")) {
-            navPanel.addNavigationTarget("Дитяча кімната", () ->
-            {
+            navPanel.addNavigationTarget("Дитяча кімната", () -> {
                 AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
-                SceneManager.getInstance().switchToCachedRoom("ChildRoom", () -> new ChildRoom().getRoot());
-            }
-            );
+                SceneManager.getInstance().switchToCachedRoom("ChildRoom", ChildRoom::new);
+            });
         }
 
+        // Вихід на вулицю
         if (GameState.isUnlocked("Street")) {
             navPanel.addNavigationTarget("Вийти на вулицю", () -> {
                 AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
-                //TODO: Логіка виходу на вулицю
+                // TODO: Логіка виходу на вулицю (наприклад, Street::new)
             });
         }
 

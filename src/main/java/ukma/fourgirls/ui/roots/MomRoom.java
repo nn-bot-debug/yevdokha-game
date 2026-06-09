@@ -28,6 +28,41 @@ public class MomRoom extends Place {
     private final ImageView drawingView;
     private final ImageView scaryMomView;
 
+    public void onEnter() {
+        if (!GameState.momRoomVisited) {
+            GameState.momRoomVisited = true;
+            this.startCutscene();
+        } else if (GameState.kitchenStormFinished) {
+            this.startRatKeyCutscene();
+        } else {
+            this.finalizeCutscene();
+        }
+    }
+
+    public void startRatKeyCutscene() {
+        CameraController.setPanningEnabled(true);
+        this.removeBlackOverlay();
+        this.root.getChildren().remove(momView);
+        this.root.getChildren().remove(drawingView);
+        this.root.getChildren().remove(scaryMomView);
+        GameState.setKarmaListener((currentKarma, addedPoints) -> StatNotification.show((StackPane) this.getRoot(), currentKarma, addedPoints));
+
+        Map<String, Runnable> actions = new HashMap<>();
+
+        actions.put("choice_ask_for_key", () -> {
+            GameState.changeKarma(1);
+            // TODO: Запуск головоломки зі стандартним часом
+        });
+
+        actions.put("choice_take_by_force", () -> {
+            GameState.changeKarma(-1);
+            //InventoryState.addItem(new ukma.fourgirls.domain.Item("Брошка", "/images/brooch.png"));
+            // TODO: Запуск головоломки зі зменшеним часом
+        });
+
+        StoryRunner.playScene("/story/chapter1.json", "mom_room_rat_key", (StackPane) this.getRoot(), actions, null);
+    }
+
     public MomRoom() {
         super(IMAGE_PATH);
 
@@ -43,8 +78,6 @@ public class MomRoom extends Place {
         momView = createCinematicView(IMAGE_PATH, 1.5);
         drawingView = createCinematicView(SECOND_IMAGE_PATH, 1.3);
         scaryMomView = createCinematicView(SCARY_MOM_PATH, 1.5);
-
-        this.startCutscene();
     }
 
     public void startCutscene() {

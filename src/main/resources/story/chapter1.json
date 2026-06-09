@@ -164,6 +164,42 @@
         "text": ["Євдо-о-оха-аа..."]
       },
       { "type": "action", "actionId": "leaveKitchenScene" }
+    ],
+    "mom_room_rat_key": [
+      {
+        "type": "dialogue",
+        "text": [
+          "В кімнаті на дівчинку вже чекав щур, але цього разу замість крихт в зубах, він тримав ключ, той самий, що від вхідних дверей."
+        ]
+      },
+      {
+        "type": "dialogue",
+        "character": "Щур",
+        "portrait": "/images/rat_portrait.png",
+        "text": ["..."]
+      },
+      {
+        "type": "dialogue",
+        "character": "Євдоха",
+        "portrait": "/images/sadyevdokha.png",
+        "text": [
+          "Ти хочеш віддати мені ключик?"
+        ]
+      },
+      {
+        "type": "choice",
+        "prompt": "Як дістати ключ?",
+        "options": [
+          {
+            "text": "попросити ключа",
+            "actionId": "choice_ask_for_key"
+          },
+          {
+            "text": "підійти і відібрати",
+            "actionId": "choice_take_by_force"
+          }
+        ]
+      }
     ]
   }
 }
