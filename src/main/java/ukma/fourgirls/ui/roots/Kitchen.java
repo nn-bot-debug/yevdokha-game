@@ -154,7 +154,6 @@ public class Kitchen extends Place {
                     }
                 }
             }
-            this.animationCanvas.setRainActive(false);
             ukma.fourgirls.ui.CameraController.setPanningEnabled(false);
             actorView.setCharacterSprite("/images/scaredYevdokha.png");
         });
@@ -174,6 +173,36 @@ public class Kitchen extends Place {
             this.backgroundView.setImage(cleanFloor);
             AudioManager.getInstance().buttonSound("/music/mouse_pisk.wav");
             ratView.setCharacterSprite("/images/rat.png");
+        });
+
+        actions.put("riseFromFloorAndHint", () -> {
+            Image normalKitchen = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/rain_in_kitchen.png")));
+            this.backgroundView.setImage(normalKitchen);
+
+            for (javafx.scene.Node topNode : this.root.getChildren()) {
+                if (topNode instanceof javafx.scene.control.ScrollPane sp) {
+                    sp.setFitToWidth(false);
+                    sp.setFitToHeight(false);
+                    ukma.fourgirls.ui.CameraController.setPanningEnabled(true);
+                }
+            }
+
+            actorView.hide();
+            ratView.hide();
+
+            StoryRunner.playScene("/story/chapter1.json", "kitchen_leave_hint", (StackPane) this.getRoot(), actions, null);
+        });
+
+        actions.put("showFindKeyHint", () -> {
+            ukma.fourgirls.state.GameState.kitchenStormFinished = true;
+            ukma.fourgirls.core.NotificationManager.showNotification(
+                    (StackPane) this.getRoot(),
+                    "Завдання: Знайди ключ у кімнаті матері."
+            );
+
+            ukma.fourgirls.state.GameState.unlockLocation("MomRoom");
+
+            this.setupNavigation("Kitchen");
         });
 
         actions.put("leaveKitchenScene", () -> {

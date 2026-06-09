@@ -163,8 +163,65 @@
         "portrait": "/images/rat_portrait.png",
         "text": ["Євдо-о-оха-аа..."]
       },
-      { "type": "action", "actionId": "leaveKitchenScene" }
+      { "type": "action", "actionId": "riseFromFloorAndHint" }
     ],
+
+    "kitchen_leave_hint": [
+      {
+        "type": "dialogue",
+        "text": ["І щур зник у щілині між дощечок."]
+      },
+      {
+        "type": "dialogue",
+        "character": "Євдоха",
+        "portrait": "/images/sadyevdokha.png",
+        "text": ["Куди ж я тепер подінусь... Мама вже не прокинеться, а тато десь далеко..."]
+      },
+      {
+        "type": "dialogue",
+        "character": "Шепіт",
+        "text": ["До лісу.... йди..... до лісу."]
+      },
+      {
+        "type": "dialogue",
+        "text": ["Почувши це, маленька обернулась, шукаючи поглядом того, хто це прошепотів, але... нікого не було."]
+      },
+      {
+        "type": "dialogue",
+        "character": "Євдоха",
+        "portrait": "/images/scaredYevdokha.png",
+        "text": ["Тато? Татку, це ти?"]
+      },
+      {
+        "type": "dialogue",
+        "character": "Шепіт",
+        "text": ["Таа-а-к... (підлий сміх)"]
+      },
+      {
+        "type": "dialogue",
+        "character": "Євдоха",
+        "portrait": "/images/sadyevdokha.png",
+        "text": ["Чекай, Татку, двері на замку!"]
+      },
+      {
+        "type": "dialogue",
+        "text": [
+          "Вирішивши йти надвір, потрібно було перш знайти ключ від дверей.",
+          "Мама не дозволяла дівчинці виходити без її нагляду, тож постійно ховала ключ."
+        ]
+      },
+      {
+        "type": "dialogue",
+        "character": "Євдоха",
+        "portrait": "/images/sadyevdokha.png",
+        "text": [
+          "Мабуть, мама вже дозволить мені вийти до батька...",
+          "Піду пошукаю ключ від дверей в її кімнаті."
+        ]
+      },
+      { "type": "action", "actionId": "showFindKeyHint" }
+    ],
+
     "mom_room_rat_key": [
       {
         "type": "dialogue",

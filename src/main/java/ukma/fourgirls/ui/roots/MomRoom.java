@@ -42,20 +42,29 @@ public class MomRoom extends Place {
     public void startRatKeyCutscene() {
         CameraController.setPanningEnabled(true);
         this.removeBlackOverlay();
-        this.root.getChildren().remove(momView);
-        this.root.getChildren().remove(drawingView);
-        this.root.getChildren().remove(scaryMomView);
-        GameState.setKarmaListener((currentKarma, addedPoints) -> StatNotification.show((StackPane) this.getRoot(), currentKarma, addedPoints));
+        this.root.getChildren().removeAll(momView, drawingView, scaryMomView);
+
+        var imageStream = getClass().getResourceAsStream("/images/mom_room_with_rat.png");
+        if (imageStream != null) {
+            this.roomView.setImage(new Image(imageStream));
+        } else {
+            System.err.println("Помилка: Файл не знайдено!");
+        }
+        GameState.setKarmaListener((currentKarma, addedPoints) ->
+                StatNotification.show((StackPane) this.getRoot(), currentKarma, addedPoints)
+        );
 
         Map<String, Runnable> actions = new HashMap<>();
 
         actions.put("choice_ask_for_key", () -> {
             GameState.changeKarma(1);
+            this.finalizeCutscene();
             // TODO: Запуск головоломки зі стандартним часом
         });
 
         actions.put("choice_take_by_force", () -> {
             GameState.changeKarma(-1);
+            this.finalizeCutscene();
             //InventoryState.addItem(new ukma.fourgirls.domain.Item("Брошка", "/images/brooch.png"));
             // TODO: Запуск головоломки зі зменшеним часом
         });
