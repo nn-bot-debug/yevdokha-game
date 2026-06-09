@@ -117,7 +117,32 @@ public class Kitchen extends Place {
             });
         });
 
-        // Запускаємо сцену з нашого JSON!
+        actions.put("showWindowCloseUp", () -> {
+            if (actorView != null) actorView.hide();
+            Image windowCloseUp = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/kitchen.png")));
+            this.backgroundView.setImage(windowCloseUp);
+        });
+
+        actions.put("fadeFromBlackout", () -> {
+            FadeTransition fade = new FadeTransition(Duration.millis(800), flashOverlay);
+            fade.setFromValue(1.0);
+            fade.setToValue(0.4);
+            fade.play();
+        });
+
+        actions.put("showMonsterInWindow", () -> {
+            Image windowMonster = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/window_monster.png")));
+            this.backgroundView.setImage(windowMonster);
+            // AudioManager.getInstance().playSFX("/music/screamer.mp3");
+        });
+
+        actions.put("showFloorView", () -> {
+            Image floorView = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/kitchen_floor.png")));
+            ukma.fourgirls.ui.CameraController.setPanningEnabled(false);
+            this.backgroundView.setImage(floorView);
+            actorView.setCharacterSprite("/images/sadyevdokha.png");
+        });
+
         StoryRunner.playScene("/story/chapter1.json", "kitchen_storm_sequence", (StackPane) this.getRoot(), actions, null);
     }
 

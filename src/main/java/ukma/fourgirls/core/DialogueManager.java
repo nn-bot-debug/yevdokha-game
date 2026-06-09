@@ -27,7 +27,7 @@ public class DialogueManager {
     private Label textLabel;
     private Label nameLabel;
     private ImageView portraitView;
-    private Font font;
+    private final Font font;
     private VBox textContainer;
     private HBox contentBox;
 
