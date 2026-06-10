@@ -75,6 +75,7 @@ public class Corridor extends Place {
 
         // TODO: Твій виклик менеджера головоломок, наприклад:
         // PuzzleManager.getInstance().startDoorPuzzle(this.root);
+        wentOut();
     }
 
     private void startIntroCutscene() {
@@ -88,5 +89,9 @@ public class Corridor extends Place {
     public void enableNavigation() {
         CameraController.setPanningEnabled(true);
         this.setupNavigation("Corridor");
+    }
+
+    private void wentOut() {
+        ukma.fourgirls.core.SceneManager.getInstance().switchToCachedRoom("Yard", Yard::new);
     }
 }

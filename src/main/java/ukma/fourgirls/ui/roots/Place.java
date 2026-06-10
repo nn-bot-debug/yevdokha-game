@@ -133,9 +133,10 @@ public abstract class Place {
             });
         }
 
-        if (GameState.isUnlocked("Street")) {
-            navPanel.addNavigationTarget("Вийти на вулицю", () -> {
-                AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
+        if (!"Yard".equals(currentRoomName) && ukma.fourgirls.state.GameState.isUnlocked("Yard")) {
+            navPanel.addNavigationTarget("Подвір'я", () -> {
+                ukma.fourgirls.core.AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
+                ukma.fourgirls.core.SceneManager.getInstance().switchToCachedRoom("Yard", Yard::new);
             });
         }
 

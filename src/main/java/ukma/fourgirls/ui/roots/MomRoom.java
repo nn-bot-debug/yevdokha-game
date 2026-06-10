@@ -63,14 +63,14 @@ public class MomRoom extends Place {
     }
 
     public void onEnter() {
-        //if (!GameState.momRoomVisited) {
-        //    GameState.momRoomVisited = true;
-        //    this.startCutscene();
-        //} else if (GameState.kitchenStormFinished) {
+        if (!GameState.momRoomVisited) {
+            GameState.momRoomVisited = true;
+            this.startCutscene();
+        } else if (GameState.kitchenStormFinished) {
             this.startRatKeyCutscene();
-        //} else {
-        //    this.finalizeCutscene();
-        //}
+        } else {
+            this.finalizeCutscene();
+        }
     }
 
     public void startRatKeyCutscene() {
