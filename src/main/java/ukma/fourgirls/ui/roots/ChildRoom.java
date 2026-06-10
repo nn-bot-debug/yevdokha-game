@@ -68,8 +68,7 @@ public class ChildRoom extends Place {
     }
 
     public void activateGameplay() {
-        Image newBackground = new Image(Objects.requireNonNull(getClass().getResourceAsStream(GAMEPLAY_IMAGE_PATH)));
-        this.roomView.setImage(newBackground);
+        this.setBackground(GAMEPLAY_IMAGE_PATH);
         CameraController.setPanningEnabled(true);
 
         this.interactiveDrawing = createInteractiveDrawing();

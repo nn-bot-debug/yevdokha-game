@@ -390,18 +390,6 @@
         "text": [
           "Брошку."
         ]
-      },
-      {
-        "type": "action",
-        "actionId": "hide_corner"
-      },
-      {
-        "type": "action",
-        "actionId": "give_brooch"
-      },
-      {
-        "type": "action",
-        "actionId": "door_interaction_brooch"
       }
     ]
   }

@@ -38,19 +38,6 @@ public class Kitchen extends Place {
     public Kitchen() {
         super(IMAGE_PATH);
 
-        for (Node topNode : this.root.getChildren()) {
-            if (topNode instanceof ScrollPane sp) {
-                if (sp.getContent() instanceof Pane container) {
-                    for (Node innerNode : container.getChildren()) {
-                        if (innerNode instanceof ImageView iv) {
-                            this.backgroundView = iv;
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
         this.animationCanvas = new AnimationCanvas();
         this.roomContentLayer.getChildren().add(animationCanvas);
 
@@ -121,8 +108,7 @@ public class Kitchen extends Place {
         });
 
         actions.put("triggerScreamerSequence", () -> {
-            Image windowCloseUp = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/rain_in_kitchen.png")));
-            this.backgroundView.setImage(windowCloseUp);
+            this.setBackground("/images/rain_in_kitchen.png");
             AudioManager.getInstance().buttonSound("/music/window.wav");
             FadeTransition fade = new FadeTransition(Duration.millis(60), flashOverlay);
             fade.setFromValue(1.0);
@@ -130,8 +116,7 @@ public class Kitchen extends Place {
 
             fade.setOnFinished(event -> {
                 this.triggerLightningFlash(() -> {
-                    Image windowMonster = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/window_monster.png")));
-                    this.backgroundView.setImage(windowMonster);
+                    this.setBackground("/images/window_monster.png");
                 });
             });
 
@@ -139,8 +124,7 @@ public class Kitchen extends Place {
         });
 
         actions.put("showFloorView", () -> {
-            Image floorView = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/kitchen_floor.png")));
-            this.backgroundView.setImage(floorView);
+            this.setBackground("/images/kitchen_floor.png");
             this.animationCanvas.setRainActive(false);
 
             for (javafx.scene.Node topNode : this.root.getChildren()) {
@@ -159,25 +143,21 @@ public class Kitchen extends Place {
         });
 
         actions.put("spawnRatNearBread", () -> {
-            Image ratNearBread = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/kitchen_with_rat.png")));
-            this.backgroundView.setImage(ratNearBread);
+            this.setBackground("/images/kitchen_with_rat.png");
         });
 
         actions.put("moveRatToDoor", () -> {
-            Image ratNearDoor = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/rat_near_door.png")));
-            this.backgroundView.setImage(ratNearDoor);
+            this.setBackground("/images/rat_near_door.png");
         });
 
         actions.put("playRatSqueak", () -> {
-            Image cleanFloor = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/kitchen_floor.png")));
-            this.backgroundView.setImage(cleanFloor);
+            this.setBackground("/images/kitchen_floor.png");
             AudioManager.getInstance().buttonSound("/music/mouse_pisk.wav");
             ratView.setCharacterSprite("/images/rat.png");
         });
 
         actions.put("riseFromFloorAndHint", () -> {
-            Image normalKitchen = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/rain_in_kitchen.png")));
-            this.backgroundView.setImage(normalKitchen);
+            this.setBackground("/images/rain_in_kitchen.png");
 
             for (javafx.scene.Node topNode : this.root.getChildren()) {
                 if (topNode instanceof javafx.scene.control.ScrollPane sp) {
@@ -220,15 +200,7 @@ public class Kitchen extends Place {
      */
     public void startStormEffects() {
         animationCanvas.setRainActive(true);
-        try {
-            Image rainBg = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/rain_in_kitchen.png")));
-
-            if (this.backgroundView != null) {
-                this.backgroundView.setImage(rainBg);
-            }
-        } catch (Exception e) {
-            System.err.println("Не вдалося оновити фон кухні: " + e.getMessage());
-        }
+        this.setBackground("/images/rain_in_kitchen.png");
     }
 
     public void triggerLightningFlash(Runnable onFlashComplete) {

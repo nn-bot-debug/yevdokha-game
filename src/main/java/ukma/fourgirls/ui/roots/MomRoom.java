@@ -7,6 +7,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
+import ukma.fourgirls.core.InventoryManager;
 import ukma.fourgirls.core.NotificationManager;
 import ukma.fourgirls.core.StatNotification;
 import ukma.fourgirls.logic.StoryRunner;
@@ -62,14 +63,14 @@ public class MomRoom extends Place {
     }
 
     public void onEnter() {
-        if (!GameState.momRoomVisited) {
-            GameState.momRoomVisited = true;
-            this.startCutscene();
-        } else if (GameState.kitchenStormFinished) {
+        //if (!GameState.momRoomVisited) {
+        //    GameState.momRoomVisited = true;
+        //    this.startCutscene();
+        //} else if (GameState.kitchenStormFinished) {
             this.startRatKeyCutscene();
-        } else {
-            this.finalizeCutscene();
-        }
+        //} else {
+        //    this.finalizeCutscene();
+        //}
     }
 
     public void startRatKeyCutscene() {
@@ -77,12 +78,8 @@ public class MomRoom extends Place {
         this.removeBlackOverlay();
         this.root.getChildren().removeAll(momView, drawingView, scaryMomView);
 
-        var imageStream = getClass().getResourceAsStream("/images/mom_room_with_rat.png");
-        if (imageStream != null) {
-            this.roomView.setImage(new Image(imageStream));
-        } else {
-            System.err.println("Помилка: Файл не знайдено!");
-        }
+        this.setBackground("/images/mom_room_with_rat.png");
+
         GameState.setKarmaListener((currentKarma, addedPoints) ->
                 StatNotification.show((StackPane) this.getRoot(), currentKarma, addedPoints)
         );
@@ -102,13 +99,32 @@ public class MomRoom extends Place {
         });
 
         actions.put("show_corner_flash", () -> {
-            if (!this.root.getChildren().contains(cornerView)) {
-                this.root.getChildren().addAll(cornerView, broochView, whiteFlash);
-            }
-        });
+            this.setBackground(CORNER_PATH);
 
-        actions.put("hide_corner", () -> {
-            this.root.getChildren().removeAll(cornerView, broochView, whiteFlash);
+            broochView.setFitWidth(150);
+            broochView.setPreserveRatio(true);
+            broochView.setTranslateX(100);
+            broochView.setTranslateY(100);
+
+            if (!this.roomContentLayer.getChildren().contains(broochView)) {
+                this.roomContentLayer.getChildren().add(broochView);
+            }
+
+            if (!this.root.getChildren().contains(whiteFlash)) {
+                this.root.getChildren().add(whiteFlash);
+            }
+
+            broochView.setStyle("-fx-cursor: hand;");
+            broochView.setPickOnBounds(true);
+
+            ukma.fourgirls.domain.Item broochItem = new ukma.fourgirls.domain.Item("Брошка", BROOCH_PATH);
+            InventoryManager.setupPickupAction(
+                    broochView,
+                    broochItem,
+                    (StackPane) this.getRoot(),
+                    "Ви підняли брошку! Тепер вона у вашому інвентарі.",
+                    this::onBroochPickedUp
+            );
         });
 
         actions.put("give_brooch", () -> {
@@ -257,5 +273,22 @@ public class MomRoom extends Place {
 
     public void hideDrawingView() {
         this.root.getChildren().remove(drawingView);
+    }
+
+    private void onBroochPickedUp() {
+        this.setBackground("/images/mom_room_with_rat.png");
+
+        this.root.getChildren().remove(whiteFlash);
+
+
+        Map<String, Runnable> actions = new HashMap<>();
+        Map<String, Animation> animations = new HashMap<>();
+
+        actions.put("door_interaction_brooch", () -> {
+            NotificationManager.showNotification(this.root, "Двері відімкнено!\n Через ваш вибір часу на головоломку стало менше (-1.5 хв).");
+            this.finalizeCutscene();
+        });
+
+        StoryRunner.playScene("/story/chapter1.json", "mom_room_after_brooch", (StackPane) this.getRoot(), actions, animations);
     }
 }

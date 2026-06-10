@@ -26,7 +26,6 @@ public abstract class Place {
 
     public Place(String imagePath) {
         StackPane rootPane = new StackPane();
-
         rootPane.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/buttons.css")).toExternalForm());
 
         try {
@@ -64,10 +63,20 @@ public abstract class Place {
         this.root = rootPane;
     }
 
-    /**
-     * Точка входу в локацію. Перевизначається в конкретних кімнатах
-     * (MomRoom, Kitchen тощо) для запуску сюжетних катсцен чи перевірки прапорців.
-     */
+
+    public void setBackground(String imagePath) {
+        try {
+            var stream = getClass().getResourceAsStream(imagePath);
+            if (stream != null) {
+                this.roomView.setImage(new Image(stream));
+            } else {
+                System.err.println("Помилка: Файл фону не знайдено за шляхом: " + imagePath);
+            }
+        } catch (Exception e) {
+            System.err.println("Не вдалося завантажити новий фон: " + e.getMessage());
+        }
+    }
+
     public void onEnter() {}
 
     public Parent getRoot() {
@@ -77,7 +86,6 @@ public abstract class Place {
     private Button createBackButton() {
         Button backButton = new Button("Back to Menu");
         backButton.setFont(font);
-
         backButton.getStyleClass().add("back-button");
 
         backButton.setOnAction(e -> {
@@ -118,11 +126,9 @@ public abstract class Place {
             });
         }
 
-        // Вихід на вулицю
         if (GameState.isUnlocked("Street")) {
             navPanel.addNavigationTarget("Вийти на вулицю", () -> {
                 AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
-                // TODO: Логіка виходу на вулицю (наприклад, Street::new)
             });
         }
 
