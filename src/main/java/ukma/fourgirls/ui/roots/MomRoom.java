@@ -47,7 +47,7 @@ public class MomRoom extends Place {
         CameraController.setPanningEnabled(false);
 
         momView = createCinematicView(IMAGE_PATH, 1.5);
-        drawingView = createCinematicView(SECOND_IMAGE_PATH, 1.3);
+        drawingView = createCinematicView(SECOND_IMAGE_PATH, 0.7);
         scaryMomView = createCinematicView(SCARY_MOM_PATH, 1.5);
 
         cornerView = createCinematicView(CORNER_PATH, 1.0);
