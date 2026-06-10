@@ -126,6 +126,13 @@ public abstract class Place {
             });
         }
 
+        if (!"Corridor".equals(currentRoomName) && GameState.isUnlocked("Corridor")) {
+            navPanel.addNavigationTarget("Коридор", () -> {
+                AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
+                SceneManager.getInstance().switchToCachedRoom("Corridor", Corridor::new);
+            });
+        }
+
         if (GameState.isUnlocked("Street")) {
             navPanel.addNavigationTarget("Вийти на вулицю", () -> {
                 AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");

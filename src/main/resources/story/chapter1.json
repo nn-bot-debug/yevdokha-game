@@ -390,8 +390,65 @@
         "text": [
           "Брошку."
         ]
+      },
+      {
+        "type": "action",
+        "actionId": "enable_brooch_pickup"
+      }
+    ],
+    "ask_for_a_key": [
+      {
+        "type": "action",
+        "actionId": "changebg1"
+      },
+      {
+        "type": "dialogue",
+        "character": "Євдоха",
+        "portrait": "/images/sadyevdokha.png",
+        "text": [
+          "Маленький щурику, голодний...\nДаси мені, будь ласочка, ключик він мені дуууже потрібен!"
+        ]
+      },
+      {
+        "type": "dialogue",
+        "character": "Щур",
+        "portrait": "/images/rat.png",
+        "text": [
+          "..."
+        ]
+      },
+      {
+        "type": "action",
+        "actionId": "changebg2"
+      },
+      {
+        "type": "dialogue",
+        "text": [
+          "Дівчинка сідає на підлогу. ЇЇ тон, максимально спокійний \nта лагідний, немов гіпнотизує тваринку."
+        ]
+      },
+      {
+        "type": "action",
+        "actionId": "changebg3"
+      },
+      {
+        "type": "dialogue",
+        "text": [
+          "Зрештою, шурик впускає ключ і біжить під мамине ліжко."
+        ]
+      },
+      {
+        "type": "dialogue",
+        "character": "Євдоха",
+        "portrait": "/images/happyYevdokha.png",
+        "text": [
+          "Дякую, щурику!"
+        ]
+      },
+      {
+        "type": "action",
+        "actionId": "give_key"
       }
     ]
   }
 }
-
