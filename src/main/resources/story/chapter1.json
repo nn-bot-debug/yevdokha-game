@@ -105,7 +105,6 @@
       {
         "type": "dialogue",
         "character": "Мати",
-        "portrait": "/images/cat.jpg",
         "text": [
           "НЕ ЙДИ ДО ЛІСУ!"
         ]
