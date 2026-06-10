@@ -12,30 +12,52 @@
         "type": "dialogue",
         "character": "Євдоха",
         "portrait": "/images/sadyevdokha.png",
-        "text": ["Останнім часом мама зовсім засмучена, сподіваюсь мій малюнок підійме їй настрій."]
+        "text": [
+          "Останнім часом мама зовсім засмучена, сподіваюсь мій малюнок підійме їй настрій."
+        ]
       },
-      { "type": "action", "actionId": "startGameplay" }
+      {
+        "type": "action",
+        "actionId": "startGameplay"
+      }
     ],
-
     "child_room_after_pickup": [
-      { "type": "action", "actionId": "showInventory" },
+      {
+        "type": "action",
+        "actionId": "showInventory"
+      },
       {
         "type": "dialogue",
         "character": "Євдоха",
         "portrait": "/images/sadyevdokha.png",
-        "text": ["Зазвичай мама в такий час вже прокинулась. Піду до неї в кімнату. "]
+        "text": [
+          "Зазвичай мама в такий час вже прокинулась. Піду до неї в кімнату. "
+        ]
       },
-      { "type": "action", "actionId": "showNavigationHint" }
+      {
+        "type": "action",
+        "actionId": "showNavigationHint"
+      }
     ],
-
     "mom_room_first_visit": [
       {
         "type": "dialogue",
-        "text": ["Побачене ніяк не засмутило дівчинку, навпаки, ніби вона все життя тільки цього і чекала, і от нарешті це сталося."]
+        "text": [
+          "Побачене ніяк не засмутило дівчинку, навпаки, ніби вона все життя тільки цього і чекала, і от нарешті це сталося."
+        ]
       },
-      { "type": "action", "actionId": "showMomView" },
-      { "type": "animation", "actionId": "part1Animation" },
-      { "type": "action", "actionId": "showDrawingView" },
+      {
+        "type": "action",
+        "actionId": "showMomView"
+      },
+      {
+        "type": "animation",
+        "actionId": "part1Animation"
+      },
+      {
+        "type": "action",
+        "actionId": "showDrawingView"
+      },
       {
         "type": "dialogue",
         "character": "Євдоха",
@@ -45,18 +67,29 @@
           "І кому ж мені тепер показати малюнок... "
         ]
       },
-      { "type": "animation", "actionId": "part2Animation" },
-      { "type": "action", "actionId": "setupKarmaAndOverlay" },
+      {
+        "type": "animation",
+        "actionId": "part2Animation"
+      },
+      {
+        "type": "action",
+        "actionId": "setupKarmaAndOverlay"
+      },
       {
         "type": "choice",
         "prompt": "Що робити із малюнком?",
         "options": [
-          { "text": "Покласти біля мами", "actionId": "choice_put_near_mom" },
-          { "text": "Заховати в кишеню", "actionId": "choice_hide_in_pocket" }
+          {
+            "text": "Покласти біля мами",
+            "actionId": "choice_put_near_mom"
+          },
+          {
+            "text": "Заховати в кишеню",
+            "actionId": "choice_hide_in_pocket"
+          }
         ]
       }
     ],
-
     "mom_room_scary_sequence": [
       {
         "type": "dialogue",
@@ -65,20 +98,30 @@
           "Намагаючись підійняти її черстві та холодні руки, дівчинка відчула ніби серце в матері ще й досі б'ється."
         ]
       },
-      { "type": "action", "actionId": "showScaryMom" },
+      {
+        "type": "action",
+        "actionId": "showScaryMom"
+      },
       {
         "type": "dialogue",
         "character": "Мати",
         "portrait": "/images/cat.jpg",
-        "text": ["НЕ ЙДИ ДО ЛІСУ!"]
+        "text": [
+          "НЕ ЙДИ ДО ЛІСУ!"
+        ]
       },
       {
         "type": "dialogue",
         "character": "Євдоха",
         "portrait": "/images/sadyevdokha.png",
-        "text": ["Ах!"]
+        "text": [
+          "Ах!"
+        ]
       },
-      { "type": "action", "actionId": "hideScaryMom" },
+      {
+        "type": "action",
+        "actionId": "hideScaryMom"
+      },
       {
         "type": "dialogue",
         "text": [
@@ -87,9 +130,11 @@
           "Тож маленька просто поклала малюнок біля матері."
         ]
       },
-      { "type": "action", "actionId": "goToKitchenHint" }
+      {
+        "type": "action",
+        "actionId": "goToKitchenHint"
+      }
     ],
-
     "mom_room_hide_sequence": [
       {
         "type": "dialogue",
@@ -98,10 +143,16 @@
           "Ні... Вона все одно не подивиться. Немає сенсу."
         ]
       },
-      { "type": "action", "actionId": "goToKitchenHint" }
+      {
+        "type": "action",
+        "actionId": "goToKitchenHint"
+      }
     ],
     "kitchen_storm_sequence": [
-      { "type": "action", "actionId": "showEatingSprite" },
+      {
+        "type": "action",
+        "actionId": "showEatingSprite"
+      },
       {
         "type": "dialogue",
         "text": [
@@ -110,7 +161,10 @@
           "Насправді так і було."
         ]
       },
-      { "type": "action", "actionId": "startStorm" },
+      {
+        "type": "action",
+        "actionId": "startStorm"
+      },
       {
         "type": "dialogue",
         "text": [
@@ -118,37 +172,70 @@
           "З вікон задував вітер, деякі краплі вже розбилися об тарілки та відкриті дверцята шухляд."
         ]
       },
-      { "type": "action", "actionId": "showScaredSprite" },
-      { "type": "action", "actionId": "triggerLightning" },
       {
-        "type": "dialogue",
-        "text": ["Блискавка на мить осліпила дівчинку і та втратила свідомість."]
+        "type": "action",
+        "actionId": "showScaredSprite"
       },
-      { "type": "action", "actionId": "triggerBlackout" },
       {
-        "type": "dialogue",
-        "text": ["Коли Євдоха прийшла до тями, крізь розбите вікно було видно..."]
-      },
-      { "type": "action", "actionId": "triggerScreamerSequence" },
-      {
-        "type": "dialogue",
-        "text": ["...страшне нелюдське обличчя."]
+        "type": "action",
+        "actionId": "triggerLightning"
       },
       {
         "type": "dialogue",
-        "text": ["Дівчинка вронила хлібину. Звук її падіння, змусив перевести погляд донизу,"]
+        "text": [
+          "Блискавка на мить осліпила дівчинку і та втратила свідомість."
+        ]
       },
-      { "type": "action", "actionId": "showFloorView" },
       {
-      "type": "dialogue",
-      "text": ["Раптом з привідкритої шухляди вискочив худий облізлий щур."]
+        "type": "action",
+        "actionId": "triggerBlackout"
       },
-      { "type": "action", "actionId": "spawnRatNearBread" },
       {
         "type": "dialogue",
-        "text": ["Підбігши до хлібини, він швидко схопив кілька крихт."]
+        "text": [
+          "Коли Євдоха прийшла до тями, крізь розбите вікно було видно..."
+        ]
       },
-      { "type": "action", "actionId": "moveRatToDoor" },
+      {
+        "type": "action",
+        "actionId": "triggerScreamerSequence"
+      },
+      {
+        "type": "dialogue",
+        "text": [
+          "...страшне нелюдське обличчя."
+        ]
+      },
+      {
+        "type": "dialogue",
+        "text": [
+          "Дівчинка вронила хлібину. Звук її падіння, змусив перевести погляд донизу,"
+        ]
+      },
+      {
+        "type": "action",
+        "actionId": "showFloorView"
+      },
+      {
+        "type": "dialogue",
+        "text": [
+          "Раптом з привідкритої шухляди вискочив худий облізлий щур."
+        ]
+      },
+      {
+        "type": "action",
+        "actionId": "spawnRatNearBread"
+      },
+      {
+        "type": "dialogue",
+        "text": [
+          "Підбігши до хлібини, він швидко схопив кілька крихт."
+        ]
+      },
+      {
+        "type": "action",
+        "actionId": "moveRatToDoor"
+      },
       {
         "type": "dialogue",
         "text": [
@@ -156,52 +243,73 @@
           "Зупинившись біля самого порогу, щур обернувся."
         ]
       },
-      { "type": "action", "actionId": "playRatSqueak" },
+      {
+        "type": "action",
+        "actionId": "playRatSqueak"
+      },
       {
         "type": "dialogue",
         "character": "Щур",
         "portrait": "/images/rat_portrait.png",
-        "text": ["Євдо-о-оха-аа..."]
+        "text": [
+          "Євдо-о-оха-аа..."
+        ]
       },
-      { "type": "action", "actionId": "riseFromFloorAndHint" }
+      {
+        "type": "action",
+        "actionId": "riseFromFloorAndHint"
+      }
     ],
-
     "kitchen_leave_hint": [
       {
         "type": "dialogue",
-        "text": ["І щур зник у щілині між дощечок."]
+        "text": [
+          "І щур зник у щілині між дощечок."
+        ]
       },
       {
         "type": "dialogue",
         "character": "Євдоха",
         "portrait": "/images/sadyevdokha.png",
-        "text": ["Куди ж я тепер подінусь... Мама вже не прокинеться, а тато десь далеко..."]
+        "text": [
+          "Куди ж я тепер подінусь... Мама вже не прокинеться, а тато десь далеко..."
+        ]
       },
       {
         "type": "dialogue",
         "character": "Шепіт",
-        "text": ["До лісу.... йди..... до лісу."]
+        "text": [
+          "До лісу.... йди..... до лісу."
+        ]
       },
       {
         "type": "dialogue",
-        "text": ["Почувши це, маленька обернулась, шукаючи поглядом того, хто це прошепотів, але... нікого не було."]
+        "text": [
+          "Почувши це, маленька обернулась, шукаючи поглядом того, хто це прошепотів, але... нікого не було."
+        ]
       },
       {
         "type": "dialogue",
         "character": "Євдоха",
         "portrait": "/images/scaredYevdokha.png",
-        "text": ["Тато? Татку, це ти?"]
+        "text": [
+          "Тато? Татку, це ти?"
+        ]
       },
       {
         "type": "dialogue",
         "character": "Шепіт",
-        "text": ["Таа-а-к... (підлий сміх)"]
+        "text": [
+          "Таа-а-к... (підлий сміх)"
+        ]
       },
       {
         "type": "dialogue",
         "character": "Євдоха",
         "portrait": "/images/sadyevdokha.png",
-        "text": ["Чекай, Татку, двері на замку!"]
+        "text": [
+          "Чекай, Татку, двері на замку!"
+        ]
       },
       {
         "type": "dialogue",
@@ -219,9 +327,11 @@
           "Піду пошукаю ключ від дверей в її кімнаті."
         ]
       },
-      { "type": "action", "actionId": "showFindKeyHint" }
+      {
+        "type": "action",
+        "actionId": "showFindKeyHint"
+      }
     ],
-
     "mom_room_rat_key": [
       {
         "type": "dialogue",
@@ -233,7 +343,9 @@
         "type": "dialogue",
         "character": "Щур",
         "portrait": "/images/rat_portrait.png",
-        "text": ["..."]
+        "text": [
+          "..."
+        ]
       },
       {
         "type": "dialogue",
@@ -257,6 +369,42 @@
           }
         ]
       }
+    ],
+    "take_key_from_rat": [
+      {
+        "type": "dialogue",
+        "text": [
+          "Євдоха, трохи нахилившись, підходить повільно до щура, а дощечки під її ногами риплять немов плачуть і плач цей настільки гучно шепоче відлунням в голові, що в останній момент, коли дівчинка вже тягнеться рукою за ключем, щурик, невитримавши, біжить із ним у роті якнайдалі звідти.",
+          "Знову вдарила блискавка, і щось відбило світло на обличчя дівчинки. Заглянувши в куток, вона знаходить...."
+        ]
+      },
+      {
+        "type": "action",
+        "actionId": "show_corner_flash"
+      },
+      {
+        "type": "animation",
+        "actionId": "lightning_pause"
+      },
+      {
+        "type": "dialogue",
+        "text": [
+          "Брошку."
+        ]
+      },
+      {
+        "type": "action",
+        "actionId": "hide_corner"
+      },
+      {
+        "type": "action",
+        "actionId": "give_brooch"
+      },
+      {
+        "type": "action",
+        "actionId": "door_interaction_brooch"
+      }
     ]
   }
 }
+

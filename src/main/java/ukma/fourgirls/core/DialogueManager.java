@@ -3,6 +3,7 @@ package ukma.fourgirls.core;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -11,36 +12,41 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.TextAlignment;
 
 import java.util.Objects;
 
 public class DialogueManager {
 
-    private static DialogueManager instance;
+    private static final double ROOT_MAX_WIDTH = 1200;
+    private static final double ROOT_HEIGHT = 180;
+    private static final double BG_BOX_HEIGHT = 140;
+    private static final double PORTRAIT_SIZE = 180;
+    private static final Insets PORTRAIT_MARGIN = new Insets(0, 0, 0, 160);
 
-    private StackPane currentContainer;
     private String[] currentLines;
     private Runnable currentOnFinished;
     private int currentLineIndex = 0;
 
+    private StackPane currentContainer;
     private StackPane dialogueRootPane;
     private Label textLabel;
     private Label nameLabel;
     private ImageView portraitView;
-    private final Font font;
     private VBox textContainer;
     private HBox contentBox;
 
-    private DialogueManager() {
-        font = Font.font("System", javafx.scene.text.FontWeight.BOLD, 20);
-        Platform.runLater(this::initUI);
+    private static class Holder {
+        private static final DialogueManager INSTANCE = new DialogueManager();
     }
 
     public static DialogueManager getInstance() {
-        if (instance == null) {
-            instance = new DialogueManager();
-        }
-        return instance;
+        return Holder.INSTANCE;
+    }
+
+    private DialogueManager() {
+        initUI();
     }
 
     public void play(StackPane container, String[] lines, Runnable onDialogueFinished) {
@@ -57,35 +63,9 @@ public class DialogueManager {
             boolean isNarrator = (characterName == null || characterName.isEmpty()) && portrait == null;
 
             if (isNarrator) {
-                // Для автора
-                textLabel.setAlignment(Pos.CENTER);
-                textLabel.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
-                textContainer.setAlignment(Pos.CENTER);
-                contentBox.setAlignment(Pos.CENTER);
+                configureNarratorStyle();
             } else {
-                // Для персонажа
-                textLabel.setAlignment(Pos.TOP_LEFT);
-                textLabel.setTextAlignment(javafx.scene.text.TextAlignment.LEFT);
-                textContainer.setAlignment(Pos.TOP_LEFT);
-                contentBox.setAlignment(Pos.CENTER_LEFT);
-            }
-
-            if (portrait != null) {
-                portraitView.setImage(portrait);
-                portraitView.setVisible(true);
-                portraitView.setManaged(true);
-            } else {
-                portraitView.setVisible(false);
-                portraitView.setManaged(false);
-            }
-
-            if (characterName != null && !characterName.isEmpty()) {
-                nameLabel.setText(characterName);
-                nameLabel.setVisible(true);
-                nameLabel.setManaged(true);
-            } else {
-                nameLabel.setVisible(false);
-                nameLabel.setManaged(false);
+                configureCharacterStyle(characterName, portrait);
             }
 
             textLabel.setText(currentLines[0]);
@@ -96,29 +76,68 @@ public class DialogueManager {
         });
     }
 
+    private void configureNarratorStyle() {
+        setNodeVisible(portraitView, false);
+        setNodeVisible(nameLabel, false);
+
+        textContainer.setAlignment(Pos.CENTER);
+        textLabel.setAlignment(Pos.CENTER);
+        textLabel.setTextAlignment(TextAlignment.CENTER);
+
+        StackPane.setMargin(contentBox, Insets.EMPTY);
+    }
+
+    private void configureCharacterStyle(String characterName, Image portrait) {
+        textContainer.setAlignment(Pos.CENTER_LEFT);
+        textLabel.setAlignment(Pos.TOP_LEFT);
+        textLabel.setTextAlignment(TextAlignment.LEFT);
+
+        if (portrait != null) {
+            portraitView.setImage(portrait);
+            setNodeVisible(portraitView, true);
+            StackPane.setMargin(contentBox, PORTRAIT_MARGIN);
+        } else {
+            setNodeVisible(portraitView, false);
+            StackPane.setMargin(contentBox, Insets.EMPTY);
+        }
+
+        if (characterName != null && !characterName.isEmpty()) {
+            nameLabel.setText(characterName);
+            setNodeVisible(nameLabel, true);
+        } else {
+            setNodeVisible(nameLabel, false);
+        }
+    }
+
     private void initUI() {
         dialogueRootPane = new StackPane();
-        dialogueRootPane.setMaxWidth(1200);
-        dialogueRootPane.setMinHeight(140);
-        dialogueRootPane.setMaxHeight(140);
-
-        dialogueRootPane.getStyleClass().add("dialogue-box");
-        dialogueRootPane.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/dialogue.css")).toExternalForm());
-
+        dialogueRootPane.setMaxWidth(ROOT_MAX_WIDTH);
+        dialogueRootPane.setMinHeight(ROOT_HEIGHT);
+        dialogueRootPane.setMaxHeight(ROOT_HEIGHT);
+        dialogueRootPane.setStyle("-fx-background-color: transparent;");
         StackPane.setAlignment(dialogueRootPane, Pos.BOTTOM_CENTER);
         StackPane.setMargin(dialogueRootPane, new Insets(0, 0, 50, 0));
 
+        StackPane bgBox = new StackPane();
+        bgBox.setMinHeight(BG_BOX_HEIGHT);
+        bgBox.setMaxHeight(BG_BOX_HEIGHT);
+        bgBox.getStyleClass().add("dialogue-box");
+        bgBox.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/dialogue.css")).toExternalForm());
+        StackPane.setAlignment(bgBox, Pos.BOTTOM_CENTER);
+
         portraitView = new ImageView();
-        portraitView.setFitWidth(100);
-        portraitView.setFitHeight(100);
+        portraitView.setFitWidth(PORTRAIT_SIZE);
+        portraitView.setFitHeight(PORTRAIT_SIZE);
         portraitView.setPreserveRatio(true);
+        StackPane.setAlignment(portraitView, Pos.BOTTOM_LEFT);
+        StackPane.setMargin(portraitView, new Insets(0, 0, 0, 10));
 
         nameLabel = new Label();
         nameLabel.getStyleClass().add("dialogue-name");
-        nameLabel.setFont(Font.font("System", javafx.scene.text.FontWeight.BOLD, 18));
+        nameLabel.setFont(Font.font("System", FontWeight.BOLD, 18));
 
         textLabel = new Label();
-        textLabel.setFont(font);
+        textLabel.setFont(Font.font("System", FontWeight.BOLD, 20));
         textLabel.getStyleClass().add("dialogue-text");
         textLabel.setWrapText(true);
         textLabel.setMaxWidth(Double.MAX_VALUE);
@@ -127,16 +146,18 @@ public class DialogueManager {
         textContainer.getChildren().addAll(nameLabel, textLabel);
         HBox.setHgrow(textContainer, Priority.ALWAYS);
 
-        contentBox = new HBox(20);
-        contentBox.setPadding(new Insets(15));
-        contentBox.getChildren().addAll(portraitView, textContainer);
+        contentBox = new HBox();
+        contentBox.setPadding(new Insets(15, 40, 15, 20));
+        contentBox.getChildren().add(textContainer);
 
         Label hintLabel = new Label("▶ Клікніть для продовження");
         hintLabel.getStyleClass().add("dialogue-hint");
         StackPane.setAlignment(hintLabel, Pos.BOTTOM_RIGHT);
-        StackPane.setMargin(hintLabel, new Insets(0, 10, 10, 0));
+        StackPane.setMargin(hintLabel, new Insets(0, 15, 10, 0));
 
-        dialogueRootPane.getChildren().addAll(contentBox, hintLabel);
+        bgBox.getChildren().addAll(contentBox, hintLabel);
+        assert dialogueRootPane != null;
+        dialogueRootPane.getChildren().addAll(bgBox, portraitView);
 
         dialogueRootPane.setOnMouseClicked(e -> nextLine());
     }
@@ -152,5 +173,10 @@ public class DialogueManager {
                 currentOnFinished.run();
             }
         }
+    }
+
+    private void setNodeVisible(Node node, boolean isVisible) {
+        node.setVisible(isVisible);
+        node.setManaged(isVisible);
     }
 }

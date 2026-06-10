@@ -32,3 +32,9 @@
 
     -fx-padding: 10px;
 }
+
+.dialogue-name {
+    -fx-text-fill: #8ba5aa;
+    -fx-font-style: italic;
+    -fx-underline: true;
+}
