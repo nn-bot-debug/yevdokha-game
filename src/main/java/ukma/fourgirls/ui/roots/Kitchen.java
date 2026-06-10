@@ -104,7 +104,7 @@ public class Kitchen extends Place {
         });
 
         actions.put("showScaredSprite", () -> {
-            actorView.setCharacterSprite("/images/scaredYevdokha.png");
+            actorView.setCharacterSprite("/images/scaredYevdokhaFull.png");
         });
 
         actions.put("triggerLightning", () -> {
@@ -155,7 +155,7 @@ public class Kitchen extends Place {
                 }
             }
             ukma.fourgirls.ui.CameraController.setPanningEnabled(false);
-            actorView.setCharacterSprite("/images/scaredYevdokha.png");
+            actorView.setCharacterSprite("/images/scaredYevdokhaFull.png");
         });
 
         actions.put("spawnRatNearBread", () -> {
