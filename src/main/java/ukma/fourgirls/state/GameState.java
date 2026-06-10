@@ -7,6 +7,8 @@ public class GameState {
     private static final Set<String> unlockedLocations = new HashSet<>();
     private static int karmaBalance = 0;
     private static boolean inventoryUnlocked = false;
+    public static boolean momRoomVisited = false;
+    public static boolean kitchenStormFinished = false;
 
     public interface KarmaChangeListener {
         void onKarmaChange(int currentKarma, int addedPoints);

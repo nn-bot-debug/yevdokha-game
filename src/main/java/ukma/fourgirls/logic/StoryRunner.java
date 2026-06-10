@@ -43,8 +43,11 @@ public class StoryRunner {
             switch (event.type) {
 
                 case "dialogue":
-                    if (event.character != null && event.portrait != null) {
-                        Image portrait = new Image(Objects.requireNonNull(StoryRunner.class.getResourceAsStream(event.portrait)));
+                    if (event.character != null && !event.character.isEmpty()) {
+                        Image portrait = null;
+                        if (event.portrait != null && !event.portrait.isEmpty()) {
+                            portrait = new Image(Objects.requireNonNull(StoryRunner.class.getResourceAsStream(event.portrait)));
+                        }
                         sequence.addDialogue(event.character, portrait, event.text.toArray(new String[0]));
                     } else {
                         sequence.addDialogue(event.text.toArray(new String[0]));

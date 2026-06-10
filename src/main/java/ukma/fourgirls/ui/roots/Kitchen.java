@@ -87,6 +87,9 @@ public class Kitchen extends Place {
 
     private void onBreadPickedUp() {
         actorView = new CharacterView((StackPane) this.getRoot());
+        CharacterView ratView = new CharacterView((StackPane) this.getRoot());
+        ratView.setPositionSide(false);
+
         Map<String, Runnable> actions = new HashMap<>();
 
         actions.put("showEatingSprite", () -> {
@@ -101,7 +104,7 @@ public class Kitchen extends Place {
         });
 
         actions.put("showScaredSprite", () -> {
-            actorView.setCharacterSprite("/images/scaredYevdokha.png");
+            actorView.setCharacterSprite("/images/scaredYevdokhaFull.png");
         });
 
         actions.put("triggerLightning", () -> {
@@ -117,7 +120,98 @@ public class Kitchen extends Place {
             });
         });
 
-        // Запускаємо сцену з нашого JSON!
+        actions.put("triggerScreamerSequence", () -> {
+            Image windowCloseUp = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/rain_in_kitchen.png")));
+            this.backgroundView.setImage(windowCloseUp);
+            AudioManager.getInstance().buttonSound("/music/window.wav");
+            FadeTransition fade = new FadeTransition(Duration.millis(60), flashOverlay);
+            fade.setFromValue(1.0);
+            fade.setToValue(0.0);
+
+            fade.setOnFinished(event -> {
+                this.triggerLightningFlash(() -> {
+                    Image windowMonster = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/window_monster.png")));
+                    this.backgroundView.setImage(windowMonster);
+                });
+            });
+
+            fade.play();
+        });
+
+        actions.put("showFloorView", () -> {
+            Image floorView = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/kitchen_floor.png")));
+            this.backgroundView.setImage(floorView);
+            this.animationCanvas.setRainActive(false);
+
+            for (javafx.scene.Node topNode : this.root.getChildren()) {
+                if (topNode instanceof javafx.scene.control.ScrollPane sp) {
+                    sp.setFitToWidth(true);
+                    sp.setFitToHeight(true);
+
+                    if (sp.getContent() instanceof javafx.scene.layout.Region contentRegion) {
+                        contentRegion.setPrefWidth(this.root.getWidth());
+                        contentRegion.setPrefHeight(this.root.getHeight());
+                    }
+                }
+            }
+            ukma.fourgirls.ui.CameraController.setPanningEnabled(false);
+            actorView.setCharacterSprite("/images/scaredYevdokhaFull.png");
+        });
+
+        actions.put("spawnRatNearBread", () -> {
+            Image ratNearBread = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/kitchen_with_rat.png")));
+            this.backgroundView.setImage(ratNearBread);
+        });
+
+        actions.put("moveRatToDoor", () -> {
+            Image ratNearDoor = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/rat_near_door.png")));
+            this.backgroundView.setImage(ratNearDoor);
+        });
+
+        actions.put("playRatSqueak", () -> {
+            Image cleanFloor = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/kitchen_floor.png")));
+            this.backgroundView.setImage(cleanFloor);
+            AudioManager.getInstance().buttonSound("/music/mouse_pisk.wav");
+            ratView.setCharacterSprite("/images/rat.png");
+        });
+
+        actions.put("riseFromFloorAndHint", () -> {
+            Image normalKitchen = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/rain_in_kitchen.png")));
+            this.backgroundView.setImage(normalKitchen);
+
+            for (javafx.scene.Node topNode : this.root.getChildren()) {
+                if (topNode instanceof javafx.scene.control.ScrollPane sp) {
+                    sp.setFitToWidth(false);
+                    sp.setFitToHeight(false);
+                    ukma.fourgirls.ui.CameraController.setPanningEnabled(true);
+                }
+            }
+
+            actorView.hide();
+            ratView.hide();
+
+            StoryRunner.playScene("/story/chapter1.json", "kitchen_leave_hint", (StackPane) this.getRoot(), actions, null);
+        });
+
+        actions.put("showFindKeyHint", () -> {
+            ukma.fourgirls.state.GameState.kitchenStormFinished = true;
+            ukma.fourgirls.core.NotificationManager.showNotification(
+                    (StackPane) this.getRoot(),
+                    "Завдання: Знайди ключ у кімнаті матері."
+            );
+
+            ukma.fourgirls.state.GameState.unlockLocation("MomRoom");
+
+            this.setupNavigation("Kitchen");
+        });
+
+        actions.put("leaveKitchenScene", () -> {
+            actorView.hide();
+            ratView.hide();
+
+            System.out.println("Євдоха біжить за щуром на наступну локацію.");
+        });
+
         StoryRunner.playScene("/story/chapter1.json", "kitchen_storm_sequence", (StackPane) this.getRoot(), actions, null);
     }
 

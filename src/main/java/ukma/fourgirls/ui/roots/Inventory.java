@@ -70,7 +70,7 @@ public class Inventory {
                 Image image = new Image(imgStream);
                 ImageView icon = new ImageView(image);
 
-                icon.setFitWidth(70);
+                icon.setFitWidth(65);
                 icon.setFitHeight(65);
                 icon.setPreserveRatio(true);
 
@@ -92,7 +92,7 @@ public class Inventory {
         window.getStyleClass().add("inventory-window");
 
         window.setPrefSize(340, 120);
-        window.setMaxWidth(340);
+        window.setMaxWidth(300);
         window.setMaxHeight(120);
 
         window.setTranslateY(50);
@@ -105,7 +105,7 @@ public class Inventory {
         inventoryBoard.getStyleClass().add("inventory-board");
 
 // inventoryBoard.setSpacing(0);
-        inventoryBoard.setPadding(new Insets(4, 0, 0, 57));
+        inventoryBoard.setPadding(new Insets(4, 0, 0, 49));
 
         inventoryBoard.setMaxWidth(480);
         inventoryBoard.setMaxHeight(BOARD_HEIGHT);

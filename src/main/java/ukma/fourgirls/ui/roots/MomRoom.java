@@ -23,10 +23,16 @@ public class MomRoom extends Place {
     private static final String SECOND_IMAGE_PATH = "/images/drawing.png";
     private static final String SCARY_MOM_PATH = "/images/scary_mom_screamer.jpeg";
 
+    private static final String CORNER_PATH = "/images/corner.png";
+    private static final String BROOCH_PATH = "/images/brooch.png";
+
     private final Rectangle blackOverlay;
     private final ImageView momView;
     private final ImageView drawingView;
     private final ImageView scaryMomView;
+    private ImageView cornerView;
+    private ImageView broochView;
+    private Rectangle whiteFlash;
 
     public MomRoom() {
         super(IMAGE_PATH);
@@ -41,10 +47,83 @@ public class MomRoom extends Place {
         CameraController.setPanningEnabled(false);
 
         momView = createCinematicView(IMAGE_PATH, 1.5);
-        drawingView = createCinematicView(SECOND_IMAGE_PATH, 1.3);
+        drawingView = createCinematicView(SECOND_IMAGE_PATH, 0.7);
         scaryMomView = createCinematicView(SCARY_MOM_PATH, 1.5);
 
-        this.startCutscene();
+        cornerView = createCinematicView(CORNER_PATH, 1.0);
+        broochView = createCinematicView(BROOCH_PATH, 1.0);
+
+        whiteFlash = new Rectangle();
+        whiteFlash.widthProperty().bind(this.root.widthProperty());
+        whiteFlash.heightProperty().bind(this.root.heightProperty());
+        whiteFlash.setFill(Color.WHITE);
+        whiteFlash.setOpacity(0.0);
+        whiteFlash.setMouseTransparent(true);
+    }
+
+    public void onEnter() {
+        if (!GameState.momRoomVisited) {
+            GameState.momRoomVisited = true;
+            this.startCutscene();
+        } else if (GameState.kitchenStormFinished) {
+            this.startRatKeyCutscene();
+        } else {
+            this.finalizeCutscene();
+        }
+    }
+
+    public void startRatKeyCutscene() {
+        CameraController.setPanningEnabled(true);
+        this.removeBlackOverlay();
+        this.root.getChildren().removeAll(momView, drawingView, scaryMomView);
+
+        var imageStream = getClass().getResourceAsStream("/images/mom_room_with_rat.png");
+        if (imageStream != null) {
+            this.roomView.setImage(new Image(imageStream));
+        } else {
+            System.err.println("Помилка: Файл не знайдено!");
+        }
+        GameState.setKarmaListener((currentKarma, addedPoints) ->
+                StatNotification.show((StackPane) this.getRoot(), currentKarma, addedPoints)
+        );
+
+        Map<String, Runnable> actions = new HashMap<>();
+        Map<String, Animation> animations = new HashMap<>();
+
+        actions.put("choice_ask_for_key", () -> {
+            GameState.changeKarma(1);
+            this.finalizeCutscene();
+            // TODO: Запуск головоломки зі стандартним часом
+        });
+
+        actions.put("choice_take_by_force", () -> {
+            GameState.changeKarma(-1);
+            StoryRunner.playScene("/story/chapter1.json", "take_key_from_rat", (StackPane) this.getRoot(), actions, animations);
+        });
+
+        actions.put("show_corner_flash", () -> {
+            if (!this.root.getChildren().contains(cornerView)) {
+                this.root.getChildren().addAll(cornerView, broochView, whiteFlash);
+            }
+        });
+
+        actions.put("hide_corner", () -> {
+            this.root.getChildren().removeAll(cornerView, broochView, whiteFlash);
+        });
+
+        actions.put("give_brooch", () -> {
+            InventoryState.addItem(new ukma.fourgirls.domain.Item("Брошка", BROOCH_PATH));
+            NotificationManager.showNotification(this.root, "Ви отримали нову річ: Брошка");
+        });
+
+        actions.put("door_interaction_brooch", () -> {
+            NotificationManager.showNotification(this.root, "Двері відімкнено!\n Через ваш вибір часу на головоломку стало менше (-1.5 хв).");
+            this.finalizeCutscene();
+        });
+
+        animations.put("lightning_pause", getLightningAnimation());
+
+        StoryRunner.playScene("/story/chapter1.json", "mom_room_rat_key", (StackPane) this.getRoot(), actions, animations);
     }
 
     public void startCutscene() {
@@ -117,10 +196,23 @@ public class MomRoom extends Place {
         this.root.getChildren().remove(blackOverlay);
     }
 
-    // Відновлює звичайний режим гри
     public void finalizeCutscene() {
         CameraController.setPanningEnabled(true);
         setupNavigation("MomRoom");
+    }
+
+    private Animation getLightningAnimation() {
+        FadeTransition flashIn = new FadeTransition(Duration.seconds(0.1), whiteFlash);
+        flashIn.setFromValue(0.0);
+        flashIn.setToValue(1.0);
+
+        FadeTransition flashOut = new FadeTransition(Duration.seconds(0.3), whiteFlash);
+        flashOut.setFromValue(1.0);
+        flashOut.setToValue(0.0);
+
+        PauseTransition pause = new PauseTransition(Duration.seconds(2.0));
+
+        return new SequentialTransition(flashIn, flashOut, pause);
     }
 
     public Animation getPart1Animation() {

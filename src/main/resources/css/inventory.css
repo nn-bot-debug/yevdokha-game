@@ -11,9 +11,3 @@
     -fx-background-repeat: no-repeat;
     -fx-background-position: center;
 }
-
-.dialogue-name {
-    -fx-text-fill: #a3c2a4;
-    -fx-font-style: italic;
-    -fx-underline: true;
-}

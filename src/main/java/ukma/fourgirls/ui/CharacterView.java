@@ -28,8 +28,7 @@ public class CharacterView {
 
         frame.setMaxSize(StackPane.USE_PREF_SIZE, StackPane.USE_PREF_SIZE);
 
-        StackPane.setAlignment(frame, Pos.BOTTOM_LEFT);
-        StackPane.setMargin(frame, new Insets(0, 0, 210, 160));
+        this.setPositionSide(true);
     }
 
     /**
@@ -46,6 +45,20 @@ public class CharacterView {
             }
         } catch (Exception e) {
             System.err.println("Не вдалося завантажити портрет: " + imagePath);
+        }
+    }
+
+    /**
+     * Встановлює сторону екрана, на якій відображається персонаж.
+     * @param isLeft true — зліва (як зазвичай), false — справа
+     */
+    public void setPositionSide(boolean isLeft) {
+        if (isLeft) {
+            StackPane.setAlignment(frame, Pos.BOTTOM_LEFT);
+            StackPane.setMargin(frame, new Insets(0, 0, 210, 160));
+        } else {
+            StackPane.setAlignment(frame, Pos.BOTTOM_RIGHT);
+            StackPane.setMargin(frame, new Insets(0, 160, 210, 0));
         }
     }
 
