@@ -250,7 +250,7 @@
       {
         "type": "dialogue",
         "character": "Щур",
-        "portrait": "/images/rat_portrait.png",
+        "portrait": "/images/rat.png",
         "text": [
           "Євдо-о-оха-аа..."
         ]
@@ -342,7 +342,7 @@
       {
         "type": "dialogue",
         "character": "Щур",
-        "portrait": "/images/rat_portrait.png",
+        "portrait": "/images/rat.png",
         "text": [
           "..."
         ]
