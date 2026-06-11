@@ -47,7 +47,7 @@ public final class ChoiceManager {
                 var btn = new Button(option.text());
                 btn.getStyleClass().add("choice-button");
 
-                btn.setOnAction(_ -> {
+                btn.setOnAction(e -> {
                     container.getChildren().removeAll(choiceBox);
                     if (option.action() != null) {
                         option.action().run();

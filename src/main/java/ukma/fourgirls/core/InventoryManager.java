@@ -21,7 +21,7 @@ public final class InventoryManager {
             System.err.println("Error: itemNode is null. The item has not been created on the screen yet!");
             return;
         }
-        itemNode.setOnMouseClicked(_ -> {
+        itemNode.setOnMouseClicked(e -> {
             itemNode.setVisible(false);
             InventoryState.addItem(itemToPickUp);
             if (notificationText != null && !notificationText.isEmpty()) {

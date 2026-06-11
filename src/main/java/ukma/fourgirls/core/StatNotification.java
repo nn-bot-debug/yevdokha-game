@@ -68,9 +68,9 @@ public final class StatNotification {
         fadeOut.setToValue(0.0);
         fadeOut.setDelay(Duration.seconds(3.0));
 
-        fadeOut.setOnFinished(_ -> container.getChildren().remove(notificationPane));
+        fadeOut.setOnFinished(e -> container.getChildren().remove(notificationPane));
 
-        showAnim.setOnFinished(_ -> fadeOut.play());
+        showAnim.setOnFinished(e -> fadeOut.play());
         showAnim.play();
     }
 }

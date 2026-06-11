@@ -65,7 +65,7 @@ public final class NotificationManager {
 
         var sequence = new SequentialTransition(fadeIn, stay, fadeOut);
 
-        sequence.setOnFinished(_ -> container.getChildren().remove(notificationPane));
+        sequence.setOnFinished(e -> container.getChildren().remove(notificationPane));
 
         sequence.play();
     }

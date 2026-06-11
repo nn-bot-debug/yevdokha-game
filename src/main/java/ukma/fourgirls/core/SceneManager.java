@@ -60,7 +60,7 @@ public class SceneManager {
      */
     public void switchToCachedRoom(String roomKey, Supplier<Place> roomCreator) {
         if (primaryStage != null && primaryStage.getScene() != null) {
-            var room = cachedRooms.computeIfAbsent(roomKey, _ -> roomCreator.get());
+            var room = cachedRooms.computeIfAbsent(roomKey, e -> roomCreator.get());
             primaryStage.getScene().setRoot(room.getRoot());
             room.onEnter();
         } else {

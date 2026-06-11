@@ -9,6 +9,24 @@ public class GameState {
     private static boolean inventoryUnlocked = false;
     public static boolean momRoomVisited = false;
     public static boolean kitchenStormFinished = false;
+    private static boolean childRoomIntroPlayed = false;
+    private static boolean drawingPickedUp = false;
+
+    public static boolean isDrawingPickedUp() {
+        return drawingPickedUp;
+    }
+
+    public static void setDrawingPickedUp(boolean drawingPickedUp) {
+        GameState.drawingPickedUp = drawingPickedUp;
+    }
+
+    public static boolean isChildRoomIntroPlayed() {
+        return childRoomIntroPlayed;
+    }
+
+    public static void setChildRoomIntroPlayed(boolean childRoomIntroPlayed) {
+        GameState.childRoomIntroPlayed = childRoomIntroPlayed;
+    }
 
     public interface KarmaChangeListener {
         void onKarmaChange(int currentKarma, int addedPoints);
