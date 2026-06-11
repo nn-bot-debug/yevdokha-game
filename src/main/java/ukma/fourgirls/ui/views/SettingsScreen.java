@@ -8,7 +8,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.*;
-import javafx.scene.text.Font;
 import ukma.fourgirls.core.AudioManager;
 import ukma.fourgirls.core.LanguageManager;
 
@@ -29,13 +28,11 @@ public class SettingsScreen {
         VBox dialogBox = new VBox(25);
         dialogBox.setAlignment(Pos.CENTER);
         dialogBox.setMaxWidth(450);
-        dialogBox.setMaxHeight(350);
+        dialogBox.setMaxHeight(450);
         dialogBox.setPadding(new Insets(30, 40, 30, 40));
         dialogBox.getStyleClass().add("settings-dialog");
 
-        // Заголовок вікна
         Label titleLabel = new Label(LanguageManager.getString("settings.title"));
-        //titleLabel.setFont(font);
         titleLabel.getStyleClass().add("settings-title");
         dialogBox.getChildren().add(titleLabel);
 
@@ -44,22 +41,21 @@ public class SettingsScreen {
         settingsGrid.setVgap(15);
         settingsGrid.setAlignment(Pos.CENTER);
 
-        // --- Рядок 1: Музика ---
+        // --- Рядок 1: Музика (Кнопка) ---
         Label musicLabel = new Label(LanguageManager.getString("settings.music"));
-        //musicLabel.setFont(font);
         musicLabel.getStyleClass().add("settings-label");
 
         boolean mutedAtStart = AudioManager.getInstance().isMusicMuted();
         ToggleButton musicToggle = new ToggleButton(LanguageManager.getString(mutedAtStart ? "settings.off" : "settings.on"));
-        //musicToggle.setFont(font);
         musicToggle.getStyleClass().add("settings-toggle");
         musicToggle.setSelected(mutedAtStart);
 
         settingsGrid.add(musicLabel, 0, 0);
         settingsGrid.add(musicToggle, 1, 0);
 
-        double currentVolume = AudioManager.getInstance().getVolume();
-        Slider musicSlider = new Slider(0.0, 1.0, currentVolume);
+        // --- Рядок 2: Музика (Повзунок) ---
+        double currentMusicVolume = AudioManager.getInstance().getVolume();
+        Slider musicSlider = new Slider(0.0, 1.0, currentMusicVolume);
         musicSlider.getStyleClass().add("settings-slider");
         musicSlider.setDisable(mutedAtStart);
 
@@ -78,36 +74,44 @@ public class SettingsScreen {
         settingsGrid.add(musicSlider, 0, 1, 2, 1);
         GridPane.setMargin(musicSlider, new Insets(0, 0, 10, 0));
 
-        // --- Рядок 2: Звуки дій ---
+        // --- Рядок 3: Звуки дій (Кнопка) ---
         Label soundLabel = new Label(LanguageManager.getString("settings.sounds"));
-        //soundLabel.setFont(font);
         soundLabel.getStyleClass().add("settings-label");
 
-        ToggleButton soundToggle = new ToggleButton(LanguageManager.getString("settings.on"));
-        //soundToggle.setFont(font);
+        boolean sfxMutedAtStart = AudioManager.getInstance().isSFXMuted();
+        ToggleButton soundToggle = new ToggleButton(LanguageManager.getString(sfxMutedAtStart ? "settings.off" : "settings.on"));
         soundToggle.getStyleClass().add("settings-toggle");
+        soundToggle.setSelected(sfxMutedAtStart);
 
-        soundToggle.setOnAction(e -> {
-            if (soundToggle.isSelected()) {
-                soundToggle.setText(LanguageManager.getString("settings.off"));
-                // TODO: Код вимкнення звуків ефектів
-            } else {
-                soundToggle.setText(LanguageManager.getString("settings.on"));
-                // TODO: Код ввімкнення звуків
-            }
-            AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
-        });
         settingsGrid.add(soundLabel, 0, 2);
         settingsGrid.add(soundToggle, 1, 2);
 
-        // --- Рядок 3: Мова ---
+        // --- Рядок 4: Звуки дій (Повзунок) ---
+        double currentSfxVolume = AudioManager.getInstance().getSFXVolume();
+        Slider soundSlider = new Slider(0.0, 1.0, currentSfxVolume);
+        soundSlider.getStyleClass().add("settings-slider");
+        soundSlider.setDisable(sfxMutedAtStart);
+
+        soundSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            AudioManager.getInstance().setSFXVolume(newValue.doubleValue());
+        });
+
+        soundToggle.setOnAction(e -> {
+            boolean isMuted = AudioManager.getInstance().toggleSFX();
+            soundToggle.setText(LanguageManager.getString(isMuted ? "settings.off" : "settings.on"));
+            soundSlider.setDisable(isMuted);
+            AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
+        });
+
+        settingsGrid.add(soundSlider, 0, 3, 2, 1);
+        GridPane.setMargin(soundSlider, new Insets(0, 0, 10, 0));
+
+        // --- Рядок 5: Мова ---
         Label langLabel = new Label(LanguageManager.getString("settings.language"));
-        //langLabel.setFont(font);
         langLabel.getStyleClass().add("settings-label");
 
         String currentLangCode = LanguageManager.getString("settings.title").equals("SETTINGS") ? "EN" : "UA";
         Button langButton = new Button(currentLangCode);
-        //langButton.setFont(font);
         langButton.getStyleClass().add("settings-button");
 
         langButton.setOnAction(e -> {
@@ -120,16 +124,13 @@ public class SettingsScreen {
             }
             AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
         });
-        settingsGrid.add(langLabel, 0, 3);
-        settingsGrid.add(langButton, 1, 3);
+        settingsGrid.add(langLabel, 0, 4); // Змістили на індекс 4
+        settingsGrid.add(langButton, 1, 4);
 
         dialogBox.getChildren().add(settingsGrid);
 
         Button closeButton = new Button(LanguageManager.getString("settings.close"));
-        //closeButton.setFont(font);
         closeButton.getStyleClass().add("settings-button");
-
-
 
         closeButton.setOnAction(e -> {
             AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");

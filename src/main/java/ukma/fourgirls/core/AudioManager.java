@@ -11,13 +11,16 @@ public class AudioManager {
 
     private MediaPlayer backgroundMusicPlayer;
     private boolean isMusicMuted = false;
-    private double currentVolume = 0.4;
+    private boolean isSFXMuted = false;
+
+    private double musicVolume = 0.4;
+    private double sfxVolume = 0.4;
 
     private AudioManager() {}
 
     public static AudioManager getInstance() {
         if (instance == null) {
-            instance = new InstanceHolder().INSTANCE; // Безпечний Singleton
+            instance = InstanceHolder.INSTANCE;
         }
         return instance;
     }
@@ -26,10 +29,9 @@ public class AudioManager {
         private static final AudioManager INSTANCE = new AudioManager();
     }
 
-
     /**
      * Запускає фонову музику по колу
-     * @param resourcePath Шлях до файлу в ресурсах (наприклад, "/music/ambient.mp3")
+     * @param resourcePath Шлях до файлу в ресурсах
      */
     public void playBackgroundMusic(String resourcePath) {
         try {
@@ -37,14 +39,12 @@ public class AudioManager {
                 backgroundMusicPlayer.stop();
             }
 
-            // Завантажуємо файл
             var resource = Objects.requireNonNull(getClass().getResource(resourcePath));
             Media media = new Media(resource.toExternalForm());
             backgroundMusicPlayer = new MediaPlayer(media);
 
             backgroundMusicPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-
-            backgroundMusicPlayer.setVolume(currentVolume);
+            backgroundMusicPlayer.setVolume(musicVolume);
 
             if (isMusicMuted) {
                 backgroundMusicPlayer.setMute(true);
@@ -58,7 +58,6 @@ public class AudioManager {
 
     /**
      * Перемикач стану музики (Mute / Unmute)
-     * @return поточний стан (true = звуку немає, false = звук є)
      */
     public boolean toggleMusic() {
         isMusicMuted = !isMusicMuted;
@@ -75,34 +74,61 @@ public class AudioManager {
     }
 
     /**
-     * Динамічно змінює гучність плеєра прямо під час перетягування повзунка
-     * @param volume значення від 0.0 до 1.0
+     * Перемикач стану ефектів
+     */
+    public boolean toggleSFX() {
+        isSFXMuted = !isSFXMuted;
+        return isSFXMuted;
+    }
+
+    public boolean isSFXMuted() {
+        return isSFXMuted;
+    }
+
+    /**
+     * Динамічно змінює гучність музики
      */
     public void setVolume(double volume) {
-        this.currentVolume = volume;
+        this.musicVolume = volume;
         if (backgroundMusicPlayer != null) {
             backgroundMusicPlayer.setVolume(volume);
         }
     }
 
     /**
-     * Повертає поточну гучність, щоб повзунок у налаштуваннях знав, де саме стати при відкритті
+     * Повертає поточну гучність музики для повзунка
      */
     public double getVolume() {
-        return currentVolume;
+        return musicVolume;
     }
 
+    /**
+     * Метод для зміни гучності ефектів (якщо знадобиться окремий повзунок)
+     */
+    public void setSFXVolume(double volume) {
+        this.sfxVolume = volume;
+    }
+
+    public double getSFXVolume() {
+        return sfxVolume;
+    }
+
+    /**
+     * Відтворює звук кнопки/дії
+     */
     public void buttonSound(String resourcePath) {
+        if (isSFXMuted) {
+            return;
+        }
+
         try {
             var resource = Objects.requireNonNull(getClass().getResource(resourcePath));
             AudioClip audioClip = new AudioClip(resource.toExternalForm());
 
-            audioClip.setVolume(currentVolume);
-
+            audioClip.setVolume(sfxVolume); // Використовуємо гучність для SFX
             audioClip.play();
-        }
-        catch (Exception e) {
-            System.err.println("Не вдалося запустити аудіо: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Не вдалося запустити аудіо ефект: " + e.getMessage());
         }
     }
 }
