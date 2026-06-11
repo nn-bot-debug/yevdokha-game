@@ -7,6 +7,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
+import ukma.fourgirls.core.InventoryManager;
 import ukma.fourgirls.core.NotificationManager;
 import ukma.fourgirls.core.StatNotification;
 import ukma.fourgirls.logic.StoryRunner;
@@ -77,12 +78,8 @@ public class MomRoom extends Place {
         this.removeBlackOverlay();
         this.root.getChildren().removeAll(momView, drawingView, scaryMomView);
 
-        var imageStream = getClass().getResourceAsStream("/images/mom_room_with_rat.png");
-        if (imageStream != null) {
-            this.roomView.setImage(new Image(imageStream));
-        } else {
-            System.err.println("Помилка: Файл не знайдено!");
-        }
+        this.setBackground("/images/mom_room_with_rat.png");
+
         GameState.setKarmaListener((currentKarma, addedPoints) ->
                 StatNotification.show((StackPane) this.getRoot(), currentKarma, addedPoints)
         );
@@ -92,8 +89,7 @@ public class MomRoom extends Place {
 
         actions.put("choice_ask_for_key", () -> {
             GameState.changeKarma(1);
-            this.finalizeCutscene();
-            // TODO: Запуск головоломки зі стандартним часом
+            StoryRunner.playScene("/story/chapter1.json", "ask_for_a_key", (StackPane) this.getRoot(), actions, animations);
         });
 
         actions.put("choice_take_by_force", () -> {
@@ -102,18 +98,60 @@ public class MomRoom extends Place {
         });
 
         actions.put("show_corner_flash", () -> {
-            if (!this.root.getChildren().contains(cornerView)) {
-                this.root.getChildren().addAll(cornerView, broochView, whiteFlash);
+            this.setBackground(CORNER_PATH);
+
+            broochView.setFitWidth(150);
+            broochView.setPreserveRatio(true);
+            broochView.setTranslateX(100);
+            broochView.setTranslateY(100);
+
+            if (!this.roomContentLayer.getChildren().contains(broochView)) {
+                this.roomContentLayer.getChildren().add(broochView);
+            }
+
+            if (!this.root.getChildren().contains(whiteFlash)) {
+                this.root.getChildren().add(whiteFlash);
             }
         });
 
-        actions.put("hide_corner", () -> {
-            this.root.getChildren().removeAll(cornerView, broochView, whiteFlash);
+        actions.put("enable_brooch_pickup", () -> {
+            broochView.setStyle("-fx-cursor: hand;");
+            broochView.setPickOnBounds(true);
+
+            ukma.fourgirls.domain.Item broochItem = new ukma.fourgirls.domain.Item("Брошка", BROOCH_PATH);
+            InventoryManager.setupPickupAction(
+                    broochView,
+                    broochItem,
+                    (StackPane) this.getRoot(),
+                    "Ви підняли брошку! Тепер вона у вашому інвентарі.",
+                    this::onBroochPickedUp
+            );
+        });
+
+        actions.put("changebg1", () -> {
+            this.setBackground("/images/RoomWithRat1.png");
+        });
+
+        actions.put("changebg2", () -> {
+            this.setBackground("/images/RoomWithRat2.png");
+        });
+
+        actions.put("changebg3", () -> {
+            this.setBackground("/images/RoomWithRat3.png");
         });
 
         actions.put("give_brooch", () -> {
             InventoryState.addItem(new ukma.fourgirls.domain.Item("Брошка", BROOCH_PATH));
             NotificationManager.showNotification(this.root, "Ви отримали нову річ: Брошка");
+        });
+
+        actions.put("give_key", () -> {
+            this.setBackground(IMAGE_PATH);
+            InventoryState.addItem(new ukma.fourgirls.domain.Item("Ключ від дверей", "/images/key.png"));
+            NotificationManager.showNotification(this.root, "Ви отримали ключ від дверей");
+
+            GameState.unlockLocation("Corridor");
+            this.finalizeCutscene();
         });
 
         actions.put("door_interaction_brooch", () -> {
@@ -257,5 +295,13 @@ public class MomRoom extends Place {
 
     public void hideDrawingView() {
         this.root.getChildren().remove(drawingView);
+    }
+
+    private void onBroochPickedUp() {
+        this.setBackground(IMAGE_PATH);
+
+        GameState.unlockLocation("Corridor");
+        this.root.getChildren().remove(whiteFlash);
+        setupNavigation("MomRoom");
     }
 }
