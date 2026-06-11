@@ -159,7 +159,7 @@ public class DialogueManager {
         assert dialogueRootPane != null;
         dialogueRootPane.getChildren().addAll(bgBox, portraitView);
 
-        dialogueRootPane.setOnMouseClicked(e -> nextLine());
+        dialogueRootPane.setOnMouseClicked(_ -> nextLine());
     }
 
     private void nextLine() {

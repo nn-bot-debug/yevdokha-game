@@ -7,25 +7,22 @@ import java.util.Objects;
 
 public class AudioManager {
 
-    private static AudioManager instance;
-
     private MediaPlayer backgroundMusicPlayer;
+
+    //прапорці стану
     private boolean isMusicMuted = false;
     private boolean isSFXMuted = false;
+    private boolean isVFXMuted = false;
 
+    //рівні гучності
     private double musicVolume = 0.4;
     private double sfxVolume = 0.4;
-
-    private boolean isVFXMuted = false;
     private double vfxVolume = 0.4;
 
     private AudioManager() {}
 
     public static AudioManager getInstance() {
-        if (instance == null) {
-            instance = InstanceHolder.INSTANCE;
-        }
-        return instance;
+        return InstanceHolder.INSTANCE;
     }
 
     private static class InstanceHolder {
@@ -48,49 +45,26 @@ public class AudioManager {
 
             backgroundMusicPlayer.setCycleCount(MediaPlayer.INDEFINITE);
             backgroundMusicPlayer.setVolume(musicVolume);
-
-            if (isMusicMuted) {
-                backgroundMusicPlayer.setMute(true);
-            }
+            backgroundMusicPlayer.setMute(isMusicMuted);
 
             backgroundMusicPlayer.play();
         } catch (Exception e) {
-            System.err.println("Не вдалося запустити аудіо: " + e.getMessage());
+            System.err.println("Failed to start background music: " + e.getMessage());
         }
     }
 
-    /**
-     * Перемикач стану музики (Mute / Unmute)
-     */
+    // --- Управління музикою (Music) ---
+
     public boolean toggleMusic() {
         isMusicMuted = !isMusicMuted;
-
         if (backgroundMusicPlayer != null) {
             backgroundMusicPlayer.setMute(isMusicMuted);
         }
-
         return isMusicMuted;
     }
 
-    public boolean isMusicMuted() {
-        return isMusicMuted;
-    }
+    public boolean isMusicMuted() { return isMusicMuted; }
 
-    /**
-     * Перемикач стану ефектів
-     */
-    public boolean toggleSFX() {
-        isSFXMuted = !isSFXMuted;
-        return isSFXMuted;
-    }
-
-    public boolean isSFXMuted() {
-        return isSFXMuted;
-    }
-
-    /**
-     * Динамічно змінює гучність музики
-     */
     public void setVolume(double volume) {
         this.musicVolume = volume;
         if (backgroundMusicPlayer != null) {
@@ -98,72 +72,54 @@ public class AudioManager {
         }
     }
 
-    /**
-     * Повертає поточну гучність музики для повзунка
-     */
-    public double getVolume() {
-        return musicVolume;
+    public double getVolume() { return musicVolume; }
+
+    // --- Управління ефектами інтерфейсу (SFX) ---
+
+    public boolean toggleSFX() {
+        isSFXMuted = !isSFXMuted;
+        return isSFXMuted;
     }
 
-    /**
-     * Метод для зміни гучності ефектів (якщо знадобиться окремий повзунок)
-     */
-    public void setSFXVolume(double volume) {
-        this.sfxVolume = volume;
-    }
+    public boolean isSFXMuted() { return isSFXMuted; }
 
-    public double getSFXVolume() {
-        return sfxVolume;
-    }
+    public void setSFXVolume(double volume) { this.sfxVolume = volume; }
+
+    public double getSFXVolume() { return sfxVolume; }
+
+    // --- Управління візуальними ефектами (VFX) ---
 
     public boolean toggleVFX() {
         isVFXMuted = !isVFXMuted;
         return isVFXMuted;
     }
 
-    public boolean isVFXMuted() {
-        return isVFXMuted;
-    }
+    public boolean isVFXMuted() { return isVFXMuted; }
 
-    public void setVFXVolume(double volume) {
-        this.vfxVolume = volume;
-    }
+    public void setVFXVolume(double volume) { this.vfxVolume = volume; }
 
-    public double getVFXVolume() {
-        return vfxVolume;
-    }
-    /**
-     * Відтворює звук кнопки/дії
-     */
+    public double getVFXVolume() { return vfxVolume; }
+
+    // --- Відтворення коротких звуків ---
+
     public void buttonSound(String resourcePath) {
-        if (isSFXMuted) {
-            return;
-        }
-
-        try {
-            var resource = Objects.requireNonNull(getClass().getResource(resourcePath));
-            AudioClip audioClip = new AudioClip(resource.toExternalForm());
-
-            audioClip.setVolume(sfxVolume); // Використовуємо гучність для SFX
-            audioClip.play();
-        } catch (Exception e) {
-            System.err.println("Не вдалося запустити аудіо ефект: " + e.getMessage());
-        }
+        playSoundEffect(resourcePath, isSFXMuted, sfxVolume);
     }
 
     public void vfxSound(String resourcePath) {
-        if (isVFXMuted) {
-            return;
-        }
+        playSoundEffect(resourcePath, isVFXMuted, vfxVolume);
+    }
+
+    private void playSoundEffect(String resourcePath, boolean isMuted, double volume) {
+        if (isMuted) return;
 
         try {
             var resource = Objects.requireNonNull(getClass().getResource(resourcePath));
             AudioClip audioClip = new AudioClip(resource.toExternalForm());
-
-            audioClip.setVolume(vfxVolume);
+            audioClip.setVolume(volume);
             audioClip.play();
         } catch (Exception e) {
-            System.err.println("Не вдалося запустити аудіо VFX: " + e.getMessage());
+            System.err.println("Failed to play audio effect (" + resourcePath + "): " + e.getMessage());
         }
     }
 }

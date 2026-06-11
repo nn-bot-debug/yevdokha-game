@@ -8,31 +8,27 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import java.util.Objects;
 
-public class ChoiceManager {
+public final class ChoiceManager {
+
+    private static final String CSS_PATH = Objects.requireNonNull(
+            ChoiceManager.class.getResource("/css/choices.css")
+    ).toExternalForm();
+
+    private ChoiceManager() {}
+
+    public record Option(String text, Runnable action) {}
 
     /**
-     * Допоміжний клас, який зв'язує текст на кнопці з дією, яка має відбутися.
-     */
-    public static class Option {
-        private final String text;
-        private final Runnable action;
-
-        public Option(String text, Runnable action) {
-            this.text = text;
-            this.action = action;
-        }
-    }
-
-    /**
-     * Виводить модальне вікно вибору з довільною кількістю варіантів.
-     * * @param container StackPane кімнати
-     * @param question Текст питання
-     * @param options Перелік варіантів
+     * Displays a modal selection window with an arbitrary number of options.
+     *
+     * @param container The room's StackPane
+     * @param question The question text
+     * @param options List of options
      */
     public static void show(StackPane container, String question, Option... options) {
 
         Platform.runLater(() -> {
-            VBox choiceBox = new VBox(20);
+            var choiceBox = new VBox(20);
             choiceBox.setAlignment(Pos.CENTER);
             choiceBox.setMinWidth(400);
             choiceBox.setMaxWidth(450);
@@ -40,28 +36,28 @@ public class ChoiceManager {
             choiceBox.setMaxHeight(VBox.USE_PREF_SIZE);
             choiceBox.getStyleClass().add("choice-box");
 
-            choiceBox.getStylesheets().add(Objects.requireNonNull(ChoiceManager.class.getResource("/css/choices.css")).toExternalForm());
+            choiceBox.getStylesheets().add(CSS_PATH);
 
-            Label promptText = new Label(question);
+            var promptText = new Label(question);
             promptText.getStyleClass().add("choice-prompt");
             promptText.setWrapText(true);
             choiceBox.getChildren().add(promptText);
 
-            for (Option option : options) {
-                Button btn = new Button(option.text);
+            for (var option : options) {
+                var btn = new Button(option.text());
                 btn.getStyleClass().add("choice-button");
 
-                btn.setOnAction(e -> {
-                    container.getChildren().remove(choiceBox);
-                    if (option.action != null) {
-                        option.action.run();
+                btn.setOnAction(_ -> {
+                    container.getChildren().removeAll(choiceBox);
+                    if (option.action() != null) {
+                        option.action().run();
                     }
                 });
                 choiceBox.getChildren().add(btn);
             }
 
             StackPane.setAlignment(choiceBox, Pos.CENTER);
-            container.getChildren().add(choiceBox);
+            container.getChildren().addAll(choiceBox);
         });
     }
 }
