@@ -16,6 +16,9 @@ public class AudioManager {
     private double musicVolume = 0.4;
     private double sfxVolume = 0.4;
 
+    private boolean isVFXMuted = false;
+    private double vfxVolume = 0.4;
+
     private AudioManager() {}
 
     public static AudioManager getInstance() {
@@ -113,6 +116,22 @@ public class AudioManager {
         return sfxVolume;
     }
 
+    public boolean toggleVFX() {
+        isVFXMuted = !isVFXMuted;
+        return isVFXMuted;
+    }
+
+    public boolean isVFXMuted() {
+        return isVFXMuted;
+    }
+
+    public void setVFXVolume(double volume) {
+        this.vfxVolume = volume;
+    }
+
+    public double getVFXVolume() {
+        return vfxVolume;
+    }
     /**
      * Відтворює звук кнопки/дії
      */
@@ -129,6 +148,22 @@ public class AudioManager {
             audioClip.play();
         } catch (Exception e) {
             System.err.println("Не вдалося запустити аудіо ефект: " + e.getMessage());
+        }
+    }
+
+    public void vfxSound(String resourcePath) {
+        if (isVFXMuted) {
+            return;
+        }
+
+        try {
+            var resource = Objects.requireNonNull(getClass().getResource(resourcePath));
+            AudioClip audioClip = new AudioClip(resource.toExternalForm());
+
+            audioClip.setVolume(vfxVolume);
+            audioClip.play();
+        } catch (Exception e) {
+            System.err.println("Не вдалося запустити аудіо VFX: " + e.getMessage());
         }
     }
 }
