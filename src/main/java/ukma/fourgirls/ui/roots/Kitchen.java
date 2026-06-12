@@ -98,7 +98,7 @@ public class Kitchen extends Place {
         actions.put("showSadYevdokhaSprite", () -> {
             ratView.hide();
             actorView.setPositionSide(true);
-            actorView.setCharacterSprite("/images/sadyevdokha.png");
+            actorView.setCharacterSprite("/images/Zasmuchena_evdoha.png");
         });
 
         actions.put("hideActorsForWhisper", () -> {
