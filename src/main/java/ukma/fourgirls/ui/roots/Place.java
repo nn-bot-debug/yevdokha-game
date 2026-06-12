@@ -89,7 +89,20 @@ public abstract class Place {
         backButton.getStyleClass().add("back-button");
 
         backButton.setOnAction(e -> {
+            if (ukma.fourgirls.state.GameState.isCutsceneActive) {
+                AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
+                ukma.fourgirls.core.NotificationManager.showNotification(
+                        this.root,
+                        "Ви не можете вийти в меню під час розмови чи важливої події!"
+                );
+                return;
+            }
+
             AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
+            String currentRoomId = this.getClass().getSimpleName();
+
+            ukma.fourgirls.core.SaveManager.saveGame(currentRoomId, "");
+
             SceneManager.getInstance().switchToMainMenu();
         });
         return backButton;

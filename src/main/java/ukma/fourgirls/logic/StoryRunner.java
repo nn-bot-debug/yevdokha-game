@@ -20,6 +20,9 @@ public class StoryRunner {
 
     public static void playScene(String jsonFilePath, String sceneId, StackPane roomRoot, Map<String, Runnable> actions, Map<String, Animation> animations) {
 
+        ukma.fourgirls.state.GameState.activeSceneId = sceneId;
+        ukma.fourgirls.state.GameState.isCutsceneActive = true;
+
         InputStream inputStream = StoryRunner.class.getResourceAsStream(jsonFilePath);
         if (inputStream == null) {
             System.err.println("Помилка: Файл " + jsonFilePath + " не знайдено!");
@@ -82,6 +85,11 @@ public class StoryRunner {
                     break;
             }
         }
+
+        sequence.execute(() -> {
+            ukma.fourgirls.state.GameState.activeSceneId = "";
+            ukma.fourgirls.state.GameState.isCutsceneActive = false;
+        });
 
         sequence.play();
     }

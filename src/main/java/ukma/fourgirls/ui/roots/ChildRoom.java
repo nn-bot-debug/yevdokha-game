@@ -22,16 +22,37 @@ public class ChildRoom extends Place {
     private ImageView interactiveDrawing;
 
     public ChildRoom() {
-        super(INTRO_IMAGE_PATH);
-        CameraController.setPanningEnabled(false);
+        super(GameState.isChildRoomIntroPlayed() ? GAMEPLAY_IMAGE_PATH : INTRO_IMAGE_PATH);
 
-        this.startIntroCutscene();
+        if (!GameState.isChildRoomIntroPlayed()) {
+            CameraController.setPanningEnabled(false);
+            this.startIntroCutscene();
+        } else {
+            CameraController.setPanningEnabled(true);
+
+            if (!GameState.isDrawingPickedUp()) {
+                this.interactiveDrawing = createInteractiveDrawing();
+                this.roomContentLayer.getChildren().add(interactiveDrawing);
+
+                Item yevdokhaDrawing = new Item("Малюнок", "/images/drawing.png");
+                InventoryManager.setupPickupAction(
+                        this.interactiveDrawing,
+                        yevdokhaDrawing,
+                        (StackPane) this.getRoot(),
+                        "Ви підняли малюнок! Підібрані речі ви можете побачити в інвентарі.",
+                        this::onDrawingPickedUp
+                );
+            }
+
+            this.enableNavigation();
+        }
     }
 
     public void startIntroCutscene() {
         Map<String, Runnable> actions = new HashMap<>();
 
         actions.put("startGameplay", () -> {
+            GameState.setChildRoomIntroPlayed(true);
             this.activateGameplay();
             NotificationManager.showNotification((StackPane) this.getRoot(),
                     "Завдання: Підніміть малюнок зі столу\nПідказка: щоб підняти річ, натисніть на неї ЛКМ)");
@@ -51,6 +72,7 @@ public class ChildRoom extends Place {
     }
 
     private void onDrawingPickedUp() {
+        GameState.setDrawingPickedUp(true);
         Map<String, Runnable> actions = new HashMap<>();
 
         actions.put("showInventory", () -> {
