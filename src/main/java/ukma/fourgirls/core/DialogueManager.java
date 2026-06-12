@@ -82,17 +82,21 @@ public class DialogueManager {
         setNodeVisible(portraitView, false);
         setNodeVisible(nameLabel, false);
 
-        dialogueRootPane.setStyle("-fx-background-color: rgba(0, 0, 0, 0.65);");
-        StackPane.setAlignment(dialogueRootPane, Pos.CENTER);
-        StackPane.setMargin(dialogueRootPane, Insets.EMPTY);
+        dialogueRootPane.setStyle("-fx-background-color: transparent;");
+        StackPane.setAlignment(dialogueRootPane, Pos.BOTTOM_CENTER);
+        StackPane.setMargin(dialogueRootPane, new Insets(0, 0, 40, 0));
 
-        bgBox.getStyleClass().remove("dialogue-box");
-        bgBox.setStyle("-fx-background-color: transparent;");
+        if (!bgBox.getStyleClass().contains("dialogue-box")) {
+            bgBox.getStyleClass().add("dialogue-box");
+        }
+        bgBox.setStyle("");
 
         textContainer.setAlignment(Pos.CENTER);
         textLabel.setAlignment(Pos.CENTER);
         textLabel.setTextAlignment(TextAlignment.CENTER);
-        textLabel.setStyle("-fx-text-fill: #e5e5e5; -fx-font-style: italic;");
+
+        textLabel.setStyle("-fx-text-fill: white;");
+
         StackPane.setMargin(contentBox, Insets.EMPTY);
     }
 
