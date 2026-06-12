@@ -31,7 +31,6 @@ public class DialogueManager {
 
     private StackPane currentContainer;
     private StackPane dialogueRootPane;
-    private StackPane bgBox;
     private Label textLabel;
     private Label nameLabel;
     private ImageView portraitView;
@@ -74,7 +73,6 @@ public class DialogueManager {
             if (!currentContainer.getChildren().contains(dialogueRootPane)) {
                 currentContainer.getChildren().add(dialogueRootPane);
             }
-            dialogueRootPane.toFront();
         });
     }
 
@@ -82,34 +80,17 @@ public class DialogueManager {
         setNodeVisible(portraitView, false);
         setNodeVisible(nameLabel, false);
 
-        dialogueRootPane.setStyle("-fx-background-color: rgba(0, 0, 0, 0.65);");
-        StackPane.setAlignment(dialogueRootPane, Pos.CENTER);
-        StackPane.setMargin(dialogueRootPane, Insets.EMPTY);
-
-        bgBox.getStyleClass().remove("dialogue-box");
-        bgBox.setStyle("-fx-background-color: transparent;");
-
         textContainer.setAlignment(Pos.CENTER);
         textLabel.setAlignment(Pos.CENTER);
         textLabel.setTextAlignment(TextAlignment.CENTER);
-        textLabel.setStyle("-fx-text-fill: #e5e5e5; -fx-font-style: italic;");
+
         StackPane.setMargin(contentBox, Insets.EMPTY);
     }
 
     private void configureCharacterStyle(String characterName, Image portrait) {
-        dialogueRootPane.setStyle("-fx-background-color: transparent;");
-        StackPane.setAlignment(dialogueRootPane, Pos.BOTTOM_CENTER);
-        StackPane.setMargin(dialogueRootPane, new Insets(0, 0, 40, 0)); // Відступ плашки знизу
-
-        if (!bgBox.getStyleClass().contains("dialogue-box")) {
-            bgBox.getStyleClass().add("dialogue-box");
-        }
-        bgBox.setStyle("");
-
         textContainer.setAlignment(Pos.CENTER_LEFT);
         textLabel.setAlignment(Pos.TOP_LEFT);
         textLabel.setTextAlignment(TextAlignment.LEFT);
-        textLabel.setStyle("-fx-text-fill: white;");
 
         if (portrait != null) {
             portraitView.setImage(portrait);
@@ -133,8 +114,11 @@ public class DialogueManager {
         dialogueRootPane.setMaxWidth(ROOT_MAX_WIDTH);
         dialogueRootPane.setMinHeight(ROOT_HEIGHT);
         dialogueRootPane.setMaxHeight(ROOT_HEIGHT);
+        dialogueRootPane.setStyle("-fx-background-color: transparent;");
+        StackPane.setAlignment(dialogueRootPane, Pos.BOTTOM_CENTER);
+        StackPane.setMargin(dialogueRootPane, new Insets(0, 0, 50, 0));
 
-        bgBox = new StackPane();
+        StackPane bgBox = new StackPane();
         bgBox.setMinHeight(BG_BOX_HEIGHT);
         bgBox.setMaxHeight(BG_BOX_HEIGHT);
         bgBox.getStyleClass().add("dialogue-box");
@@ -172,6 +156,7 @@ public class DialogueManager {
         StackPane.setMargin(hintLabel, new Insets(0, 15, 10, 0));
 
         bgBox.getChildren().addAll(contentBox, hintLabel);
+        assert dialogueRootPane != null;
         dialogueRootPane.getChildren().addAll(bgBox, portraitView);
 
         dialogueRootPane.setOnMouseClicked(e -> nextLine());

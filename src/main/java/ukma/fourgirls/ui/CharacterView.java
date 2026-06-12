@@ -11,14 +11,22 @@ import java.util.Objects;
 public class CharacterView {
     private final StackPane container;
     private final ImageView spriteView;
+    private final StackPane frame;
 
     public CharacterView(StackPane container) {
         this.container = container;
         this.spriteView = new ImageView();
+        this.frame = new StackPane(spriteView);
 
-        spriteView.setFitHeight(640);
+        frame.getStylesheets().add(Objects.requireNonNull(
+                getClass().getResource("/css/dialogue.css")
+        ).toExternalForm());
+        frame.getStyleClass().add("dialog-actor-frame");
+
+        spriteView.setFitHeight(500);
         spriteView.setPreserveRatio(true);
-        spriteView.setManaged(true);
+
+        frame.setMaxSize(StackPane.USE_PREF_SIZE, StackPane.USE_PREF_SIZE);
 
         this.setPositionSide(true);
     }
@@ -31,11 +39,10 @@ public class CharacterView {
             Image img = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
             spriteView.setImage(img);
 
-            if (!container.getChildren().contains(spriteView)) {
-                container.getChildren().add(spriteView);
+            if (!container.getChildren().contains(frame)) {
+                container.getChildren().add(frame);
+                frame.toFront();
             }
-            spriteView.toFront();
-
         } catch (Exception e) {
             System.err.println("Не вдалося завантажити портрет: " + imagePath);
         }
@@ -47,11 +54,11 @@ public class CharacterView {
      */
     public void setPositionSide(boolean isLeft) {
         if (isLeft) {
-            StackPane.setAlignment(spriteView, Pos.BOTTOM_LEFT);
-            StackPane.setMargin(spriteView, new Insets(0, 0, 0, 50));
+            StackPane.setAlignment(frame, Pos.BOTTOM_LEFT);
+            StackPane.setMargin(frame, new Insets(0, 0, 210, 160));
         } else {
-            StackPane.setAlignment(spriteView, Pos.BOTTOM_RIGHT);
-            StackPane.setMargin(spriteView, new Insets(0, 50, 0, 0));
+            StackPane.setAlignment(frame, Pos.BOTTOM_RIGHT);
+            StackPane.setMargin(frame, new Insets(0, 160, 210, 0));
         }
     }
 
@@ -59,7 +66,7 @@ public class CharacterView {
      * Повністю очищує екран від портрета та рамки
      */
     public void hide() {
-        container.getChildren().remove(spriteView);
+        container.getChildren().remove(frame);
         spriteView.setImage(null);
     }
 }

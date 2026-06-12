@@ -34,7 +34,6 @@ public class Kitchen extends Place {
     private final Rectangle flashOverlay;
 
     private CharacterView actorView;
-    private CharacterView ratView;
 
     public Kitchen() {
         super(IMAGE_PATH);
@@ -75,12 +74,14 @@ public class Kitchen extends Place {
 
     private void onBreadPickedUp() {
         actorView = new CharacterView((StackPane) this.getRoot());
-        ratView = new CharacterView((StackPane) this.getRoot());
+        CharacterView ratView = new CharacterView((StackPane) this.getRoot());
+        ratView.setPositionSide(false);
 
         Map<String, Runnable> actions = new HashMap<>();
 
         actions.put("showEatingSprite", () -> {
             InventoryState.removeItem("Зацвілий хліб");
+            actorView.setCharacterSprite("/images/Yevdokha_eating.png");
         });
 
         actions.put("startStorm", () -> {
@@ -90,20 +91,7 @@ public class Kitchen extends Place {
         });
 
         actions.put("showScaredSprite", () -> {
-            ratView.hide();
-            actorView.setPositionSide(true);
             actorView.setCharacterSprite("/images/scaredYevdokhaFull.png");
-        });
-
-        actions.put("showSadYevdokhaSprite", () -> {
-            ratView.hide();
-            actorView.setPositionSide(true);
-            actorView.setCharacterSprite("/images/Zasmuchena_evdoha.png");
-        });
-
-        actions.put("hideActorsForWhisper", () -> {
-            actorView.hide();
-            ratView.hide();
         });
 
         actions.put("triggerLightning", () -> {
@@ -151,6 +139,7 @@ public class Kitchen extends Place {
                 }
             }
             ukma.fourgirls.ui.CameraController.setPanningEnabled(false);
+            actorView.setCharacterSprite("/images/scaredYevdokhaFull.png");
         });
 
         actions.put("spawnRatNearBread", () -> {
@@ -162,13 +151,9 @@ public class Kitchen extends Place {
         });
 
         actions.put("playRatSqueak", () -> {
-            if (actorView != null) {
-                actorView.hide();
-            }
             this.setBackground("/images/kitchen_floor.png");
             AudioManager.getInstance().buttonSound("/music/mouse_pisk.wav");
-            ratView.setPositionSide(false);
-            ratView.setCharacterSprite("/images/scary_rat.png");
+            ratView.setCharacterSprite("/images/rat.png");
         });
 
         actions.put("riseFromFloorAndHint", () -> {
@@ -182,8 +167,9 @@ public class Kitchen extends Place {
                 }
             }
 
-            if (actorView != null) actorView.hide();
-            if (ratView != null) ratView.hide();
+            actorView.hide();
+            ratView.hide();
+
             StoryRunner.playScene("/story/chapter1.json", "kitchen_leave_hint", (StackPane) this.getRoot(), actions, null);
         });
 
@@ -195,12 +181,14 @@ public class Kitchen extends Place {
             );
 
             ukma.fourgirls.state.GameState.unlockLocation("MomRoom");
+
             this.setupNavigation("Kitchen");
         });
 
         actions.put("leaveKitchenScene", () -> {
             actorView.hide();
             ratView.hide();
+
             System.out.println("Євдоха біжить за щуром на наступну локацію.");
         });
 
