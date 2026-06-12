@@ -14,6 +14,7 @@ import ukma.fourgirls.logic.StoryRunner;
 import ukma.fourgirls.state.GameState;
 import ukma.fourgirls.state.InventoryState;
 import ukma.fourgirls.ui.CameraController;
+import ukma.fourgirls.ui.CharacterView;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,6 +35,9 @@ public class MomRoom extends Place {
     private ImageView cornerView;
     private ImageView broochView;
     private Rectangle whiteFlash;
+
+    private CharacterView actorView;
+    private CharacterView ratView;
 
     public MomRoom() {
         super(IMAGE_PATH);
@@ -78,7 +82,10 @@ public class MomRoom extends Place {
         this.removeBlackOverlay();
         this.root.getChildren().removeAll(momView, drawingView, scaryMomView);
 
-        this.setBackground("/images/mom_room_with_rat.png");
+        this.setBackground("/images/part_of_mom_room.png");
+
+        actorView = new CharacterView((StackPane) this.getRoot());
+        ratView = new CharacterView((StackPane) this.getRoot());
 
         GameState.setKarmaListener((currentKarma, addedPoints) ->
                 StatNotification.show((StackPane) this.getRoot(), currentKarma, addedPoints)
@@ -86,6 +93,29 @@ public class MomRoom extends Place {
 
         Map<String, Runnable> actions = new HashMap<>();
         Map<String, Animation> animations = new HashMap<>();
+
+        actions.put("showRat", () -> {
+            if (actorView != null) actorView.hide();
+            ratView.setPositionSide(false);
+            ratView.setCharacterSprite("/images/rat_with_key.png");
+        });
+
+        actions.put("showSadYevdokha", () -> {
+            if (ratView != null) ratView.hide();
+            actorView.setPositionSide(true);
+            actorView.setCharacterSprite("/images/Zasmuchena_evdoha.png");
+        });
+
+        actions.put("showHappyYevdokha", () -> {
+            if (ratView != null) ratView.hide();
+            actorView.setPositionSide(true);
+            actorView.setCharacterSprite("/images/happy_Yevdokha.png");
+        });
+
+        actions.put("hideAllActors", () -> {
+            if (actorView != null) actorView.hide();
+            if (ratView != null) ratView.hide();
+        });
 
         actions.put("choice_ask_for_key", () -> {
             GameState.changeKarma(1);
@@ -126,18 +156,6 @@ public class MomRoom extends Place {
                     "Ви підняли брошку! Тепер вона у вашому інвентарі.",
                     this::onBroochPickedUp
             );
-        });
-
-        actions.put("changebg1", () -> {
-            this.setBackground("/images/RoomWithRat1.png");
-        });
-
-        actions.put("changebg2", () -> {
-            this.setBackground("/images/RoomWithRat2.png");
-        });
-
-        actions.put("changebg3", () -> {
-            this.setBackground("/images/RoomWithRat3.png");
         });
 
         actions.put("give_brooch", () -> {
