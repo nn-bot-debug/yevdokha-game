@@ -24,4 +24,8 @@ public class InventoryState {
     public static ObservableList<Item> getItems() {
         return items;
     }
+
+    public static void reset() {
+        items.clear();
+    }
 }

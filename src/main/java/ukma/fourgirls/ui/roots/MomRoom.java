@@ -73,6 +73,7 @@ public class MomRoom extends Place {
         } else if (GameState.kitchenStormFinished) {
             this.startRatKeyCutscene();
         } else {
+            this.removeBlackOverlay();
             this.finalizeCutscene();
         }
     }

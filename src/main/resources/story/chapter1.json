@@ -173,6 +173,10 @@
       },
       {
         "type": "action",
+        "actionId": "showScaredSprite"
+      },
+      {
+        "type": "action",
         "actionId": "triggerLightning"
       },
       {
@@ -245,6 +249,7 @@
       {
         "type": "dialogue",
         "character": "Щур",
+        "portrait": "/images/rat.png",
         "text": [
           "Євдо-о-оха-аа..."
         ]
@@ -261,15 +266,14 @@
           "І щур зник у щілині між дощечок."
         ]
       },
-      { "type": "action", "actionId": "showSadYevdokhaSprite" },
       {
         "type": "dialogue",
         "character": "Євдоха",
+        "portrait": "/images/sadyevdokha.png",
         "text": [
           "Куди ж я тепер подінусь... Мама вже не прокинеться, а тато десь далеко..."
         ]
       },
-      { "type": "action", "actionId": "hideActorsForWhisper" },
       {
         "type": "dialogue",
         "character": "Шепіт",
@@ -283,15 +287,14 @@
           "Почувши це, маленька обернулась, шукаючи поглядом того, хто це прошепотів, але... нікого не було."
         ]
       },
-      { "type": "action", "actionId": "showScaredSprite" },
       {
         "type": "dialogue",
         "character": "Євдоха",
+        "portrait": "/images/scaredYevdokha.png",
         "text": [
           "Тато? Татку, це ти?"
         ]
       },
-      { "type": "action", "actionId": "hideActorsForWhisper" },
       {
         "type": "dialogue",
         "character": "Шепіт",
@@ -299,15 +302,14 @@
           "Таа-а-к... (підлий сміх)"
         ]
       },
-      { "type": "action", "actionId": "showSadYevdokhaSprite" },
       {
         "type": "dialogue",
         "character": "Євдоха",
+        "portrait": "/images/sadyevdokha.png",
         "text": [
           "Чекай, Татку, двері на замку!"
         ]
       },
-      { "type": "action", "actionId": "hideActorsForWhisper" },
       {
         "type": "dialogue",
         "text": [
@@ -315,16 +317,15 @@
           "Мама не дозволяла дівчинці виходити без її нагляду, тож постійно ховала ключ."
         ]
       },
-      { "type": "action", "actionId": "showSadYevdokhaSprite" },
       {
         "type": "dialogue",
         "character": "Євдоха",
+        "portrait": "/images/sadyevdokha.png",
         "text": [
           "Мабуть, мама вже дозволить мені вийти до батька...",
           "Піду пошукаю ключ від дверей в її кімнаті."
         ]
       },
-      { "type": "action", "actionId": "hideActorsForWhisper" },
       {
         "type": "action",
         "actionId": "showFindKeyHint"
