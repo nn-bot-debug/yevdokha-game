@@ -11,6 +11,12 @@ public class GameState {
     public static boolean kitchenStormFinished = false;
     private static boolean childRoomIntroPlayed = false;
     private static boolean drawingPickedUp = false;
+    public static String activeSceneId = "";
+    public static boolean isCutsceneActive = false;
+
+    public static Set<String> getUnlockedLocations() {
+        return unlockedLocations;
+    }
 
     public static boolean isDrawingPickedUp() {
         return drawingPickedUp;
@@ -69,5 +75,16 @@ public class GameState {
 
     public static void unlockInventory() {
         inventoryUnlocked = true;
+    }
+
+    public static void reset() {
+        unlockedLocations.clear();
+        karmaBalance = 0;
+        inventoryUnlocked = false;
+        momRoomVisited = false;
+        kitchenStormFinished = false;
+        childRoomIntroPlayed = false;
+        drawingPickedUp = false;
+        isCutsceneActive = false;
     }
 }

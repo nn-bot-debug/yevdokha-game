@@ -12,6 +12,7 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import ukma.fourgirls.core.AudioManager;
 import ukma.fourgirls.core.LanguageManager;
+import ukma.fourgirls.domain.Item;
 import ukma.fourgirls.ui.animation.MenuAnimationCanvas;
 import ukma.fourgirls.core.SceneManager;
 
@@ -63,6 +64,9 @@ public class MainMenuWindow extends Application {
 
         Map<String, Runnable> buttonActions = new LinkedHashMap<>();
         buttonActions.put("menu.new", () -> {
+            ukma.fourgirls.state.GameState.reset();
+            ukma.fourgirls.state.InventoryState.reset();
+
             ukma.fourgirls.ui.roots.ChildRoom childRoom = new ukma.fourgirls.ui.roots.ChildRoom();
             ukma.fourgirls.state.GameState.unlockLocation("ChildRoom");
             ukma.fourgirls.core.SceneManager.getInstance().switchToRoot((javafx.scene.layout.StackPane) childRoom.getRoot());
@@ -106,5 +110,63 @@ public class MainMenuWindow extends Application {
     }
 
     private void continueGame() {
+        ukma.fourgirls.state.SaveData data = ukma.fourgirls.core.SaveManager.loadGame();
+
+        if (data == null) {
+            // Тут можна додати виклик віконця (Alert), яке скаже гравцеві, що збережень немає
+            return;
+        }
+
+        ukma.fourgirls.state.GameState.reset();
+        ukma.fourgirls.state.GameState.changeKarma(data.karmaBalance);
+        ukma.fourgirls.state.GameState.activeSceneId = data.currentDialogNodeId;
+
+        ukma.fourgirls.state.GameState.momRoomVisited = data.momRoomVisited;
+        ukma.fourgirls.state.GameState.kitchenStormFinished = data.kitchenStormFinished;
+        ukma.fourgirls.state.GameState.setChildRoomIntroPlayed(data.childRoomIntroPlayed);
+        ukma.fourgirls.state.GameState.setDrawingPickedUp(data.drawingPickedUp);
+
+        if (data.inventoryUnlocked) {
+            ukma.fourgirls.state.GameState.unlockInventory();
+        }
+
+        if (data.unlockedLocations != null) {
+            for (String loc : data.unlockedLocations) {
+                ukma.fourgirls.state.GameState.unlockLocation(loc);
+            }
+        }
+
+        ukma.fourgirls.state.InventoryState.reset();
+
+        java.util.List<String> savedItems = data.inventoryItemNames;
+        if (savedItems != null) {
+            for (String itemName : savedItems) {
+                ukma.fourgirls.domain.Item restoredItem = ukma.fourgirls.state.ItemRegistry.getItemByName(itemName);
+                if (restoredItem != null) {
+                    ukma.fourgirls.state.InventoryState.addItem(restoredItem);
+                }
+            }
+        }
+
+        System.out.println("Завантажуємо кімнату: " + data.currentRoomId);
+
+        if ("ChildRoom".equals(data.currentRoomId)) {
+            ukma.fourgirls.core.SceneManager.getInstance().switchToCachedRoom("ChildRoom", ukma.fourgirls.ui.roots.ChildRoom::new);
+        }
+        else if ("MomRoom".equals(data.currentRoomId)) {
+            ukma.fourgirls.core.SceneManager.getInstance().switchToCachedRoom("MomRoom", ukma.fourgirls.ui.roots.MomRoom::new);
+        }
+        else if ("Kitchen".equals(data.currentRoomId)) {
+            ukma.fourgirls.core.SceneManager.getInstance().switchToCachedRoom("Kitchen", ukma.fourgirls.ui.roots.Kitchen::new);
+        }
+        else if ("Corridor".equals(data.currentRoomId)) {
+            ukma.fourgirls.core.SceneManager.getInstance().switchToCachedRoom("Corridor", ukma.fourgirls.ui.roots.Corridor::new);
+        }
+        else if ("Yard".equals(data.currentRoomId)) {
+            ukma.fourgirls.core.SceneManager.getInstance().switchToCachedRoom("Yard", ukma.fourgirls.ui.roots.Yard::new);
+        }
+        else {
+            System.err.println("Error: Unknown room saved - " + data.currentRoomId);
+        }
     }
 }
