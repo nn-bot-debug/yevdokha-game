@@ -29,7 +29,7 @@ public abstract class Place {
         rootPane.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/buttons.css")).toExternalForm());
 
         try {
-            font = Font.loadFont(getClass().getResourceAsStream("/Creepster-Regular.ttf"), 22);
+            font = Font.loadFont(getClass().getResourceAsStream("/fonts/Creepster-Regular.ttf"), 22);
         } catch (Exception e) {
             font = Font.font("Arial", 24);
         }
