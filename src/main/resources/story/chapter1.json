@@ -332,28 +332,31 @@
       }
     ],
     "mom_room_rat_key": [
+      { "type": "action", "actionId": "hideAllActors" },
       {
         "type": "dialogue",
         "text": [
           "В кімнаті на дівчинку вже чекав щур, але цього разу замість крихт в зубах, він тримав ключ, той самий, що від вхідних дверей."
         ]
       },
+      { "type": "action", "actionId": "showRat" },
       {
         "type": "dialogue",
         "character": "Щур",
-        "portrait": "/images/rat.png",
         "text": [
           "..."
         ]
       },
+      { "type": "action", "actionId": "hideAllActors" },
+      { "type": "action", "actionId": "showSadYevdokha" },
       {
         "type": "dialogue",
         "character": "Євдоха",
-        "portrait": "/images/sadyevdokha.png",
         "text": [
           "Ти хочеш віддати мені ключик?"
         ]
       },
+      { "type": "action", "actionId": "hideAllActors" },
       {
         "type": "choice",
         "prompt": "Як дістати ключ?",
@@ -397,30 +400,23 @@
       }
     ],
     "ask_for_a_key": [
-      {
-        "type": "action",
-        "actionId": "changebg1"
-      },
+      { "type": "action", "actionId": "showSadYevdokha" },
       {
         "type": "dialogue",
         "character": "Євдоха",
-        "portrait": "/images/sadyevdokha.png",
         "text": [
           "Маленький щурику, голодний...\nДаси мені, будь ласочка, ключик він мені дуууже потрібен!"
         ]
       },
+      { "type": "action", "actionId": "showRat" },
       {
         "type": "dialogue",
         "character": "Щур",
-        "portrait": "/images/rat.png",
         "text": [
           "..."
         ]
       },
-      {
-        "type": "action",
-        "actionId": "changebg2"
-      },
+      { "type": "action", "actionId": "hideAllActors" },
       {
         "type": "dialogue",
         "text": [
@@ -428,23 +424,20 @@
         ]
       },
       {
-        "type": "action",
-        "actionId": "changebg3"
-      },
-      {
         "type": "dialogue",
         "text": [
           "Зрештою, шурик впускає ключ і біжить під мамине ліжко."
         ]
       },
+      { "type": "action", "actionId": "showHappyYevdokha" },
       {
         "type": "dialogue",
         "character": "Євдоха",
-        "portrait": "/images/happyYevdokha.png",
         "text": [
           "Дякую, щурику!"
         ]
       },
+      { "type": "action", "actionId": "hideAllActors" },
       {
         "type": "action",
         "actionId": "give_key"

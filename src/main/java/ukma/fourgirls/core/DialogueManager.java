@@ -76,13 +76,24 @@ public class DialogueManager {
         });
     }
 
-    private void configureNarratorStyle() {
+   private void configureNarratorStyle() {
         setNodeVisible(portraitView, false);
         setNodeVisible(nameLabel, false);
 
+        dialogueRootPane.setStyle("-fx-background-color: transparent;");
+        StackPane.setAlignment(dialogueRootPane, Pos.BOTTOM_CENTER);
+        StackPane.setMargin(dialogueRootPane, new Insets(0, 0, 40, 0));
+
+        if (!bgBox.getStyleClass().contains("dialogue-box")) {
+            bgBox.getStyleClass().add("dialogue-box");
+        }
+        bgBox.setStyle("");
+     
         textContainer.setAlignment(Pos.CENTER);
         textLabel.setAlignment(Pos.CENTER);
         textLabel.setTextAlignment(TextAlignment.CENTER);
+
+        textLabel.setStyle("-fx-text-fill: white;");
 
         StackPane.setMargin(contentBox, Insets.EMPTY);
     }
