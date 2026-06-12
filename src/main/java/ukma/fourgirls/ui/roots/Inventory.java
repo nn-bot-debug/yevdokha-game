@@ -70,11 +70,17 @@ public class Inventory {
                 Image image = new Image(imgStream);
                 ImageView icon = new ImageView(image);
 
-                icon.setFitWidth(65);
-                icon.setFitHeight(65);
+                icon.setFitWidth(58);
+                icon.setFitHeight(58);
                 icon.setPreserveRatio(true);
+                icon.setSmooth(true);
 
-                inventoryBoard.getChildren().add(icon);
+                StackPane cell = new StackPane(icon);
+                cell.setPrefSize(70, 70);
+                cell.setMaxSize(70, 70);
+                StackPane.setAlignment(icon, Pos.CENTER);
+
+                inventoryBoard.getChildren().add(cell);
             }
             catch (Exception e) {
                 System.err.println("Помилка завантаження іконки (" + item.getName() + "): " + e.getMessage());
@@ -82,7 +88,12 @@ public class Inventory {
                 Label fallbackLabel = new Label(item.getName());
                 fallbackLabel.setStyle("-fx-text-fill: white; -fx-font-size: 12px; -fx-text-alignment: center;");
                 fallbackLabel.setWrapText(true);
-                inventoryBoard.getChildren().add(fallbackLabel);
+
+                StackPane cell = new StackPane(fallbackLabel);
+                cell.setPrefSize(70, 70);
+                StackPane.setAlignment(fallbackLabel, Pos.CENTER);
+
+                inventoryBoard.getChildren().add(cell);
             }
         }
     }
