@@ -11,6 +11,9 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
 import ukma.fourgirls.core.AudioManager;
 import ukma.fourgirls.core.LanguageManager;
+import ukma.fourgirls.core.LocationRegistry;
+import ukma.fourgirls.core.NotificationManager;
+import ukma.fourgirls.core.SaveManager;
 import ukma.fourgirls.core.SceneManager;
 import ukma.fourgirls.state.GameSession;
 import ukma.fourgirls.ui.CameraController;
@@ -38,10 +41,10 @@ public abstract class Place {
         } catch (Exception e) {
             enFont = Font.font("Arial", 24);
         }
+
         try {
             ukFont = Font.loadFont(getClass().getResourceAsStream("/fonts/Epoch_YP_Demo.ttf"), 22);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             ukFont = Font.font("Arial", 24);
         }
 
@@ -80,10 +83,10 @@ public abstract class Place {
             if (stream != null) {
                 this.roomView.setImage(new Image(stream));
             } else {
-                System.err.println("Помилка: Файл фону не знайдено за шляхом: " + imagePath);
+                System.err.println("Background file not found: " + imagePath);
             }
         } catch (Exception e) {
-            System.err.println("Не вдалося завантажити новий фон: " + e.getMessage());
+            System.err.println("Could not load background: " + e.getMessage());
         }
     }
 
@@ -97,30 +100,13 @@ public abstract class Place {
         Button backButton = new Button();
         backButton.getStyleClass().add("back-button");
 
-        LanguageManager.addLanguageChangeListener(()->{
-            String translated = LanguageManager.getString("button.back");
-            backButton.setText(translated);
-            if("Назад до меню".equals(translated)){
-                backButton.setFont(Font.font(ukFont.getFamily(), 18));
-            }
-            else{
-                backButton.setFont(Font.font(enFont.getFamily(), 20));
-            }
-        });
-
-        String currentLan = LanguageManager.getString("button.back");
-        backButton.setText(currentLan);
-        if("Назад до меню".equals(currentLan)){
-            backButton.setFont(Font.font(ukFont.getFamily(), 18));
-        }
-        else{
-            backButton.setFont(Font.font(enFont.getFamily(), 20));
-        }
+        LanguageManager.addLanguageChangeListener(() -> updateBackButtonText(backButton));
+        updateBackButtonText(backButton);
 
         backButton.setOnAction(e -> {
             if (session.isCutsceneActive()) {
                 AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
-                ukma.fourgirls.core.NotificationManager.showNotification(
+                NotificationManager.showNotification(
                         this.root,
                         "Ви не можете вийти в меню під час розмови чи важливої події!"
                 );
@@ -128,13 +114,21 @@ public abstract class Place {
             }
 
             AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
-            String currentRoomId = this.getClass().getSimpleName();
-
-            ukma.fourgirls.core.SaveManager.saveGame(session, currentRoomId, "");
-
+            SaveManager.saveGame(session, this.getClass().getSimpleName(), "");
             SceneManager.getInstance().switchToMainMenu();
         });
         return backButton;
+    }
+
+    private void updateBackButtonText(Button backButton) {
+        String translated = LanguageManager.getString("button.back");
+        backButton.setText(translated);
+
+        if ("Назад до меню".equals(translated)) {
+            backButton.setFont(Font.font(ukFont.getFamily(), 18));
+        } else {
+            backButton.setFont(Font.font(enFont.getFamily(), 20));
+        }
     }
 
     private ImageView setupRoomImage(String imagePath) {
@@ -146,43 +140,18 @@ public abstract class Place {
 
     protected void setupNavigation(String currentRoomName) {
         if (currentNavPanel != null) {
-            currentNavPanel.detachFrom(this.root); // прибрати стару
+            currentNavPanel.detachFrom(this.root);
         }
+
         NavigationPanel navPanel = new NavigationPanel();
 
-        if (!"MomRoom".equals(currentRoomName) && session.isUnlocked("MomRoom")) {
-            navPanel.addNavigationTarget("Кімната матері", () -> {
-                AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
-                SceneManager.getInstance().switchToCachedRoom("MomRoom", MomRoom::new);
-            });
-        }
-
-        if (!"Kitchen".equals(currentRoomName) && session.isUnlocked("Kitchen")) {
-            navPanel.addNavigationTarget("Кухня", () -> {
-                AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
-                SceneManager.getInstance().switchToCachedRoom("Kitchen", Kitchen::new);
-            });
-        }
-
-        if (!"ChildRoom".equals(currentRoomName) && session.isUnlocked("ChildRoom")) {
-            navPanel.addNavigationTarget("Дитяча кімната", () -> {
-                AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
-                SceneManager.getInstance().switchToCachedRoom("ChildRoom", ChildRoom::new);
-            });
-        }
-
-        if (!"Corridor".equals(currentRoomName) && session.isUnlocked("Corridor")) {
-            navPanel.addNavigationTarget("Коридор", () -> {
-                AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
-                SceneManager.getInstance().switchToCachedRoom("Corridor", Corridor::new);
-            });
-        }
-
-        if (!"Yard".equals(currentRoomName) && session.isUnlocked("Yard")) {
-            navPanel.addNavigationTarget("Подвір'я", () -> {
-                ukma.fourgirls.core.AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
-                ukma.fourgirls.core.SceneManager.getInstance().switchToCachedRoom("Yard", Yard::new);
-            });
+        for (LocationRegistry.Location location : LocationRegistry.navigationLocations()) {
+            if (!location.getId().equals(currentRoomName) && session.isUnlocked(location.getId())) {
+                navPanel.addNavigationTarget(location.getDisplayName(), () -> {
+                    AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
+                    LocationRegistry.switchTo(location.getId());
+                });
+            }
         }
 
         navPanel.attachTo(this.root);

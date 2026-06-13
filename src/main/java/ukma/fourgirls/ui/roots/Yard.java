@@ -5,7 +5,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
-import ukma.fourgirls.core.SceneManager;
+import ukma.fourgirls.core.LocationRegistry;
 import ukma.fourgirls.logic.StoryRunner;
 import ukma.fourgirls.ui.CameraController;
 import ukma.fourgirls.ui.CharacterView;
@@ -82,7 +82,7 @@ public class Yard extends Place {
             fadeToBlack.setFromValue(0.0);
             fadeToBlack.setToValue(1.0);
             fadeToBlack.setOnFinished(e ->
-                    SceneManager.getInstance().switchToCachedRoom("Forest", Forest::new)
+                    LocationRegistry.switchTo("Forest")
             );
             fadeToBlack.play();
         });

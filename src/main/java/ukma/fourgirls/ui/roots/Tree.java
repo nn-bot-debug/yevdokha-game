@@ -6,6 +6,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import ukma.fourgirls.core.AudioManager;
+import ukma.fourgirls.core.LocationRegistry;
 import ukma.fourgirls.core.StatNotification;
 import ukma.fourgirls.logic.StoryRunner;
 import ukma.fourgirls.ui.CameraController;
@@ -134,7 +135,7 @@ public class Tree extends Place{
                 session.removeItem("Порожній горщик");
                 session.addItem(new ukma.fourgirls.domain.Item("Горщик зі смолою", "/images/full_pot.png"));
 
-                ukma.fourgirls.core.SceneManager.getInstance().switchToCachedRoom("Forest", Forest::new);
+                LocationRegistry.switchTo("Forest");
             });
             fadeOut.play();
         });

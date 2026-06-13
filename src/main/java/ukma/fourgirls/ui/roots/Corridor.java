@@ -5,8 +5,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
+import ukma.fourgirls.core.LocationRegistry;
 import ukma.fourgirls.core.NotificationManager;
-import ukma.fourgirls.core.SceneManager;
 import ukma.fourgirls.logic.StoryRunner;
 import ukma.fourgirls.ui.CameraController;
 
@@ -33,7 +33,7 @@ public class Corridor extends Place {
     @Override
     public void onEnter() {
         if (!session.isUnlocked("Yard") && !session.isUnlocked("ChildRoom")) {
-            SceneManager.getInstance().switchToCachedRoom("Forest", Forest::new);
+            LocationRegistry.switchTo("Forest");
             return;
         }
         this.enableNavigation();
@@ -97,6 +97,6 @@ public class Corridor extends Place {
     }
 
     private void wentOut() {
-        ukma.fourgirls.core.SceneManager.getInstance().switchToCachedRoom("Yard", Yard::new);
+        LocationRegistry.switchTo("Yard");
     }
 }

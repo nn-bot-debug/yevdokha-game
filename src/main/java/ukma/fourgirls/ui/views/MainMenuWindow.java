@@ -19,6 +19,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import ukma.fourgirls.core.AudioManager;
 import ukma.fourgirls.core.LanguageManager;
+import ukma.fourgirls.core.LocationRegistry;
 import ukma.fourgirls.ui.animation.MenuAnimationCanvas;
 import ukma.fourgirls.core.SceneManager;
 
@@ -123,7 +124,7 @@ public class MainMenuWindow extends Application {
         Map<String, Runnable> buttonActions = new LinkedHashMap<>();
         buttonActions.put("menu.new", () -> {
             SceneManager.getInstance().resetSession();
-            SceneManager.getInstance().switchToCachedRoom("ChildRoom", ukma.fourgirls.ui.roots.ChildRoom::new);
+            LocationRegistry.switchTo("ChildRoom");
         });
         buttonActions.put("menu.continue", this::continueGame);
         buttonActions.put("menu.instruction", () -> SceneManager.getInstance().switchToRoot(new InstructionsScreen().getRoot()));
@@ -187,28 +188,7 @@ public class MainMenuWindow extends Application {
 
         System.out.println("Завантажуємо кімнату: " + data.currentRoomId);
 
-        if ("ChildRoom".equals(data.currentRoomId)) {
-            ukma.fourgirls.core.SceneManager.getInstance().switchToCachedRoom("ChildRoom", ukma.fourgirls.ui.roots.ChildRoom::new);
-        }
-        else if ("MomRoom".equals(data.currentRoomId)) {
-            ukma.fourgirls.core.SceneManager.getInstance().switchToCachedRoom("MomRoom", ukma.fourgirls.ui.roots.MomRoom::new);
-        }
-        else if ("Kitchen".equals(data.currentRoomId)) {
-            ukma.fourgirls.core.SceneManager.getInstance().switchToCachedRoom("Kitchen", ukma.fourgirls.ui.roots.Kitchen::new);
-        }
-        else if ("Corridor".equals(data.currentRoomId)) {
-            ukma.fourgirls.core.SceneManager.getInstance().switchToCachedRoom("Corridor", ukma.fourgirls.ui.roots.Corridor::new);
-        }
-        else if ("Yard".equals(data.currentRoomId)) {
-            ukma.fourgirls.core.SceneManager.getInstance().switchToCachedRoom("Yard", ukma.fourgirls.ui.roots.Yard::new);
-        }
-        else if ("Forest".equals(data.currentRoomId)) {
-            ukma.fourgirls.core.SceneManager.getInstance().switchToCachedRoom("Forest", ukma.fourgirls.ui.roots.Forest::new);
-        }
-        else if ("Tree".equals(data.currentRoomId)) {
-            ukma.fourgirls.core.SceneManager.getInstance().switchToCachedRoom("Tree", ukma.fourgirls.ui.roots.Tree::new);
-        }
-        else {
+        if (!LocationRegistry.switchTo(data.currentRoomId)) {
             System.err.println("Error: Unknown room saved - " + data.currentRoomId);
         }
     }

@@ -7,6 +7,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import ukma.fourgirls.core.AudioManager;
+import ukma.fourgirls.core.LocationRegistry;
 import ukma.fourgirls.core.StatNotification;
 import javafx.util.Duration;
 import ukma.fourgirls.logic.StoryRunner;
@@ -110,7 +111,7 @@ public class Forest extends Place{
             FadeTransition fadeOut = new FadeTransition(Duration.seconds(1.2), blackOverlay);
             fadeOut.setFromValue(0.0);
             fadeOut.setToValue(1.0);
-            fadeOut.setOnFinished(e -> ukma.fourgirls.core.SceneManager.getInstance().switchToCachedRoom("Tree", Tree::new));
+            fadeOut.setOnFinished(e -> LocationRegistry.switchTo("Tree"));
             fadeOut.play();
         });
 
