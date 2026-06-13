@@ -9,6 +9,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import ukma.fourgirls.core.AudioManager;
+import ukma.fourgirls.core.LanguageManager;
 import ukma.fourgirls.core.SceneManager;
 import ukma.fourgirls.ui.animation.AnimationCanvas;
 
@@ -117,15 +118,32 @@ public class InstructionsScreen {
         VBox bottomContainer = new VBox();
         bottomContainer.setAlignment(Pos.TOP_LEFT);
         bottomContainer.setPadding(new Insets(14, 0, 0, 14));
-
-        Button backButton = new Button("Back to Menu");
-        backButton.setFont(btnFont);
+        Button backButton = new Button();
         backButton.getStyleClass().add("back-button");
         backButton.setOnAction(e -> {
             AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
             SceneManager.getInstance().switchToMainMenu();
         });
 
+        LanguageManager.addLanguageChangeListener(()->{
+            String translated = LanguageManager.getString("button.back");
+            backButton.setText(translated);
+            if("Назад до меню".equals(translated)){
+                backButton.setFont(Font.font(textFont.getFamily(), 18));
+            }
+            else{
+                backButton.setFont(Font.font(btnFont.getFamily(), 20));
+            }
+        });
+
+        String currentLan = LanguageManager.getString("button.back");
+        backButton.setText(currentLan);
+        if("Назад до меню".equals(currentLan)){
+            backButton.setFont(Font.font(textFont.getFamily(), 18));
+        }
+        else{
+            backButton.setFont(Font.font(btnFont.getFamily(), 20));
+        }
 
         bottomContainer.getChildren().add(backButton);
         root.getChildren().add(uiLayer);
