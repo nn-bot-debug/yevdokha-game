@@ -1,13 +1,17 @@
 package ukma.fourgirls.core;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.util.Duration;
 import java.util.Objects;
 
 public class AudioManager {
 
     private MediaPlayer backgroundMusicPlayer;
+    private MediaPlayer activeEyePlayer;
 
     //прапорці стану
     private boolean isMusicMuted = false;
@@ -16,7 +20,7 @@ public class AudioManager {
 
     //рівні гучності
     private double musicVolume = 0.4;
-    private double sfxVolume = 0.4;
+    private double sfxVolume = 0.7;
     private double vfxVolume = 0.4;
 
     private AudioManager() {}
@@ -53,6 +57,58 @@ public class AudioManager {
         }
     }
 
+    public MediaPlayer playEyeLoopSound(String resourcePath) {
+        if (isSFXMuted) return null;
+        try {
+            if (activeEyePlayer != null) {
+                activeEyePlayer.stop();
+            }
+
+            var resource = Objects.requireNonNull(getClass().getResource(resourcePath));
+            Media media = new Media(resource.toExternalForm());
+            activeEyePlayer = new MediaPlayer(media);
+
+            activeEyePlayer.setCycleCount(MediaPlayer.INDEFINITE);
+            activeEyePlayer.setVolume(sfxVolume);
+            activeEyePlayer.play();
+
+            return activeEyePlayer;
+        } catch (Exception e) {
+            System.err.println("Failed to play eye loop sound: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public void fadeOutAndStop(MediaPlayer player, double durationSeconds) {
+        if (player == null) return;
+
+        double startVolume = player.getVolume();
+        int steps = 25;
+        double volumeStep = startVolume / steps;
+        double timeStep = durationSeconds / steps;
+
+        Timeline fadeTimeline = new Timeline();
+
+        for (int i = 0; i <= steps; i++) {
+            final double targetVolume = Math.max(0, startVolume - (i * volumeStep));
+            KeyFrame frame = new KeyFrame(
+                    Duration.seconds(i * timeStep),
+                    e -> player.setVolume(targetVolume)
+            );
+            fadeTimeline.getKeyFrames().add(frame);
+        }
+
+        fadeTimeline.setOnFinished(e -> {
+            player.stop();
+            player.dispose();
+            if (player == activeEyePlayer) {
+                activeEyePlayer = null;
+            }
+        });
+
+        fadeTimeline.play();
+    }
+
     // --- Управління музикою (Music) ---
 
     public boolean toggleMusic() {
@@ -83,7 +139,12 @@ public class AudioManager {
 
     public boolean isSFXMuted() { return isSFXMuted; }
 
-    public void setSFXVolume(double volume) { this.sfxVolume = volume; }
+    public void setSFXVolume(double volume) {
+        this.sfxVolume = volume;
+        if (activeEyePlayer != null) {
+            activeEyePlayer.setVolume(volume);
+        }
+    }
 
     public double getSFXVolume() { return sfxVolume; }
 

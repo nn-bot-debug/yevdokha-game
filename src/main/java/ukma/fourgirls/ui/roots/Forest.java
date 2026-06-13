@@ -6,6 +6,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import ukma.fourgirls.core.AudioManager;
 import ukma.fourgirls.core.StatNotification;
 import javafx.util.Duration;
 import ukma.fourgirls.logic.StoryRunner;
@@ -26,6 +27,7 @@ public class Forest extends Place{
 
     public Forest() {
         super(NORMAL_FOREST);
+        this.getRoot().getStylesheets().add(getClass().getResource("/css/settings.css").toExternalForm());
 
         blackOverlay = new Rectangle();
         blackOverlay.widthProperty().bind(this.root.widthProperty());
@@ -70,12 +72,18 @@ public class Forest extends Place{
             StackPane.setAlignment(eyeButton, Pos.TOP_RIGHT);
             StackPane.setMargin(eyeButton, new javafx.geometry.Insets(20, 20, 0, 0));
 
+            var eyeTrack = AudioManager.getInstance().playEyeLoopSound("/music/eye-button.wav");
+
             eyeButton.setOnAction(e -> {
+                if (eyeTrack != null)
+                    AudioManager.getInstance().fadeOutAndStop(eyeTrack, 1.5);
+
                 ((StackPane) this.getRoot()).getChildren().remove(eyeButton);
                 this.setBackground(MAGIC_FOREST);
                 StoryRunner.playScene("/story/chapter2.json", "forest_meeting", (StackPane) this.getRoot(), actions, null);
             });
             ((StackPane) this.getRoot()).getChildren().add(eyeButton);
+            eyeButton.toFront();
         });
 
         actions.put("setupKarmaListener", () -> {

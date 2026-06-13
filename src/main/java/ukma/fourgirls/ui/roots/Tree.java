@@ -23,6 +23,7 @@ public class Tree extends Place{
 
     public Tree() {
         super(IMAGE_PATH);
+        this.getRoot().getStylesheets().add(getClass().getResource("/css/settings.css").toExternalForm());
 
         blackOverlay = new Rectangle();
         blackOverlay.widthProperty().bind(this.root.widthProperty());
@@ -87,13 +88,17 @@ public class Tree extends Place{
             StackPane.setAlignment(eyeButton, Pos.TOP_RIGHT);
             StackPane.setMargin(eyeButton, new javafx.geometry.Insets(20, 20, 0, 0));
 
+            var eyeTrack = AudioManager.getInstance().playEyeLoopSound("/music/eye-button.wav");
+
             eyeButton.setOnAction(e -> {
-                //AudioManager.getInstance().buttonSound("/music/magic_eye_flare.wav");
+                if (eyeTrack != null)
+                    AudioManager.getInstance().fadeOutAndStop(eyeTrack, 1.5);
+
                 ((StackPane) this.getRoot()).getChildren().remove(eyeButton);
                 StoryRunner.playScene("/story/chapter2.json", "ant_colony_dialogue", (StackPane) this.getRoot(), actions, null);
             });
-
             ((StackPane) this.getRoot()).getChildren().add(eyeButton);
+            eyeButton.toFront();
         });
 
         actions.put("trigger_root_vision", () -> {
