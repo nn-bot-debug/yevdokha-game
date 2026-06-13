@@ -115,6 +115,15 @@ public class Forest extends Place{
             ukma.fourgirls.domain.Item pot = new ukma.fourgirls.domain.Item("Порожній горщик", "/images/empty_pot.png");
             ukma.fourgirls.state.InventoryState.addItem(pot);
             ukma.fourgirls.core.NotificationManager.showNotification(this.root, "Ви отримали предмет: Порожній горщик");
+
+            blackOverlay.toFront();
+            javafx.animation.FadeTransition fadeOut = new javafx.animation.FadeTransition(javafx.util.Duration.seconds(1.2), blackOverlay);
+            fadeOut.setFromValue(0.0);
+            fadeOut.setToValue(1.0);
+            fadeOut.setOnFinished(e -> {
+                ukma.fourgirls.core.SceneManager.getInstance().switchToCachedRoom("Tree", Tree::new);
+            });
+            fadeOut.play();
         });
 
         StoryRunner.playScene("/story/chapter2.json", "forest_intro_scene", (StackPane) this.getRoot(), actions, null);
