@@ -12,14 +12,16 @@ public class CharacterView {
     private final StackPane container;
     private final ImageView spriteView;
 
+    private boolean isLeft = true;
+    private double bottomOffset = 0;
+
     public CharacterView(StackPane container) {
         this.container = container;
         this.spriteView = new ImageView();
 
-        spriteView.setFitHeight(640);
         spriteView.setPreserveRatio(true);
+        spriteView.setSmooth(true);
         spriteView.setManaged(true);
-
         this.setPositionSide(true);
     }
 
@@ -31,10 +33,22 @@ public class CharacterView {
             Image img = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
             spriteView.setImage(img);
 
+            if (imagePath.contains("ant-ryadovuy") || imagePath.contains("ant-brother")) {
+                spriteView.setFitWidth(480);
+                spriteView.setFitHeight(0);
+
+                this.bottomOffset = 95;
+            } else {
+                spriteView.setFitHeight(640);
+                spriteView.setFitWidth(0);
+
+                this.bottomOffset = 0;
+            }
             if (!container.getChildren().contains(spriteView)) {
                 container.getChildren().add(spriteView);
             }
             spriteView.toFront();
+            this.updatePosition();
 
         } catch (Exception e) {
             System.err.println("Не вдалося завантажити портрет: " + imagePath);
@@ -46,12 +60,22 @@ public class CharacterView {
      * @param isLeft true — зліва (як зазвичай), false — справа
      */
     public void setPositionSide(boolean isLeft) {
+        this.isLeft = isLeft;
+        this.updatePosition();
+    }
+
+    /**
+     * 🔥 Внутрішній метод для чистого розрахунку марджинів та відступів
+     */
+    private void updatePosition() {
+        if (spriteView.getImage() == null) return;
+
         if (isLeft) {
             StackPane.setAlignment(spriteView, Pos.BOTTOM_LEFT);
             StackPane.setMargin(spriteView, new Insets(0, 0, 0, 50));
         } else {
             StackPane.setAlignment(spriteView, Pos.BOTTOM_RIGHT);
-            StackPane.setMargin(spriteView, new Insets(0, 50, 0, 0));
+            StackPane.setMargin(spriteView, new Insets(0, 50, bottomOffset, 0));
         }
     }
 
@@ -61,5 +85,6 @@ public class CharacterView {
     public void hide() {
         container.getChildren().remove(spriteView);
         spriteView.setImage(null);
+        this.bottomOffset = 0;
     }
 }

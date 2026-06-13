@@ -68,11 +68,19 @@ public class Tree extends Place{
             }
         });
 
-        actions.put("showAnt", () -> {
+        actions.put("showAntRyadovuy", () -> {
             if (actorView != null) actorView.hide();
             if (antView != null) {
                 antView.setPositionSide(false);
-                antView.setCharacterSprite("/images/rat.png");
+                antView.setCharacterSprite("/images/ant-ryadovuy.png");
+            }
+        });
+
+        actions.put("showAntBrother", () -> {
+            if (actorView != null) actorView.hide();
+            if (antView != null) {
+                antView.setPositionSide(false);
+                antView.setCharacterSprite("/images/ant-brother.png");
             }
         });
 
