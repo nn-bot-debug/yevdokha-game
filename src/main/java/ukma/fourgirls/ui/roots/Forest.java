@@ -10,7 +10,6 @@ import ukma.fourgirls.core.AudioManager;
 import ukma.fourgirls.core.StatNotification;
 import javafx.util.Duration;
 import ukma.fourgirls.logic.StoryRunner;
-import ukma.fourgirls.state.GameState;
 import ukma.fourgirls.ui.CameraController;
 import ukma.fourgirls.ui.CharacterView;
 
@@ -47,7 +46,7 @@ public class Forest extends Place{
     @Override
     public void onEnter() {
         CameraController.setPanningEnabled(true);
-        if (ukma.fourgirls.state.InventoryState.hasItem("Горщик зі смолою")) {
+        if (session.hasItem("Горщик зі смолою")) {
             this.executeHealingPhase();
         } else {
             this.executeIntroPhase();
@@ -80,31 +79,31 @@ public class Forest extends Place{
 
                 ((StackPane) this.getRoot()).getChildren().remove(eyeButton);
                 this.setBackground(MAGIC_FOREST);
-                StoryRunner.playScene("/story/chapter2.json", "forest_meeting", (StackPane) this.getRoot(), actions, null);
+                StoryRunner.playScene(session, "/story/chapter2.json", "forest_meeting", (StackPane) this.getRoot(), actions, null);
             });
             ((StackPane) this.getRoot()).getChildren().add(eyeButton);
             eyeButton.toFront();
         });
 
         actions.put("setupKarmaListener", () -> {
-            GameState.setKarmaListener((currentKarma, addedPoints) ->
+            session.setKarmaListener((currentKarma, addedPoints) ->
                     StatNotification.show((StackPane) this.getRoot(), currentKarma, addedPoints)
             );
         });
 
         actions.put("choice_say_name", () -> {
-            GameState.changeKarma(1);
-            StoryRunner.playScene("/story/chapter2.json", "lisovuk_quest_start", (StackPane) this.getRoot(), actions, null);
+            session.changeKarma(1);
+            StoryRunner.playScene(session, "/story/chapter2.json", "lisovuk_quest_start", (StackPane) this.getRoot(), actions, null);
         });
 
         actions.put("choice_stay_silent", () -> {
-            GameState.changeKarma(-1);
-            StoryRunner.playScene("/story/chapter2.json", "lisovuk_quest_start", (StackPane) this.getRoot(), actions, null);
+            session.changeKarma(-1);
+            StoryRunner.playScene(session, "/story/chapter2.json", "lisovuk_quest_start", (StackPane) this.getRoot(), actions, null);
         });
 
         actions.put("give_empty_pot", () -> {
             ukma.fourgirls.domain.Item pot = new ukma.fourgirls.domain.Item("Порожній горщик", "/images/empty_pot.png");
-            ukma.fourgirls.state.InventoryState.addItem(pot);
+            session.addItem(pot);
             ukma.fourgirls.core.NotificationManager.showNotification(this.root, "Ви отримали предмет: Порожній горщик");
 
             blackOverlay.toFront();
@@ -115,7 +114,7 @@ public class Forest extends Place{
             fadeOut.play();
         });
 
-        StoryRunner.playScene("/story/chapter2.json", "forest_intro_scene", (StackPane) this.getRoot(), actions, null);
+        StoryRunner.playScene(session, "/story/chapter2.json", "forest_intro_scene", (StackPane) this.getRoot(), actions, null);
     }
 
     /**
@@ -126,12 +125,12 @@ public class Forest extends Place{
         this.playFadeIn();
 
         actions.put("finish_lisovuk_quest_line", () -> {
-            ukma.fourgirls.state.InventoryState.removeItem("Горщик зі смолою");
+            session.removeItem("Горщик зі смолою");
             ukma.fourgirls.core.NotificationManager.showNotification(this.root, "Смолу використано. Шлях углиб лісу відкрито!");
             this.enableNavigation();
         });
 
-        StoryRunner.playScene("/story/chapter2.json", "lisovuk_healing_and_prophecy", (StackPane) this.getRoot(), actions, null);
+        StoryRunner.playScene(session, "/story/chapter2.json", "lisovuk_healing_and_prophecy", (StackPane) this.getRoot(), actions, null);
     }
 
     private void initBaseActions() {

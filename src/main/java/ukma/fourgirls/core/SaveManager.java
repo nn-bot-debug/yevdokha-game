@@ -3,8 +3,7 @@ package ukma.fourgirls.core;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import ukma.fourgirls.domain.Item;
-import ukma.fourgirls.state.GameState;
-import ukma.fourgirls.state.InventoryState;
+import ukma.fourgirls.state.GameSession;
 import ukma.fourgirls.state.SaveData;
 
 import java.io.FileReader;
@@ -16,18 +15,20 @@ public class SaveManager {
     private static final String SAVE_FILE = "savegame.json";
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    public static void saveGame(String currentRoomId, String currentDialogNodeId) {
+    public static void saveGame(GameSession session, String currentRoomId, String currentDialogNodeId) {
         SaveData data = new SaveData();
 
-        data.karmaBalance = GameState.getKarmaBalance();
-        data.unlockedLocations = GameState.getUnlockedLocations();
-        data.inventoryUnlocked = GameState.isInventoryUnlocked();
-        data.momRoomVisited = GameState.momRoomVisited;
-        data.kitchenStormFinished = GameState.kitchenStormFinished;
-        data.childRoomIntroPlayed = GameState.isChildRoomIntroPlayed();
-        data.drawingPickedUp = GameState.isDrawingPickedUp();
+        data.karmaBalance = session.getKarmaBalance();
+        data.unlockedLocations = session.getUnlockedLocations();
+        data.inventoryUnlocked = session.isInventoryUnlocked();
+        data.momRoomVisited = session.isMomRoomVisited();
+        data.kitchenStormFinished = session.isKitchenStormFinished();
+        data.childRoomIntroPlayed = session.isChildRoomIntroPlayed();
+        data.drawingPickedUp = session.isDrawingPickedUp();
+        data.momRoomRatScenePlayed = session.isMomRoomRatScenePlayed();
 
-        data.inventoryItemNames = InventoryState.getItems().stream()
+
+        data.inventoryItemNames = session.getInventoryItems().stream()
                 .map(Item::getName)
                 .collect(Collectors.toList());
 

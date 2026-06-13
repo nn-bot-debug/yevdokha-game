@@ -122,12 +122,8 @@ public class MainMenuWindow extends Application {
 
         Map<String, Runnable> buttonActions = new LinkedHashMap<>();
         buttonActions.put("menu.new", () -> {
-            ukma.fourgirls.state.GameState.reset();
-            ukma.fourgirls.state.InventoryState.reset();
-
-            ukma.fourgirls.ui.roots.ChildRoom childRoom = new ukma.fourgirls.ui.roots.ChildRoom();
-            ukma.fourgirls.state.GameState.unlockLocation("ChildRoom");
-            ukma.fourgirls.core.SceneManager.getInstance().switchToRoot((javafx.scene.layout.StackPane) childRoom.getRoot());
+            SceneManager.getInstance().resetSession();
+            SceneManager.getInstance().switchToCachedRoom("ChildRoom", ukma.fourgirls.ui.roots.ChildRoom::new);
         });
         buttonActions.put("menu.continue", this::continueGame);
         buttonActions.put("menu.instruction", () -> SceneManager.getInstance().switchToRoot(new InstructionsScreen().getRoot()));
@@ -187,36 +183,7 @@ public class MainMenuWindow extends Application {
             return;
         }
 
-        ukma.fourgirls.state.GameState.reset();
-        ukma.fourgirls.state.GameState.changeKarma(data.karmaBalance);
-        ukma.fourgirls.state.GameState.activeSceneId = data.currentDialogNodeId;
-
-        ukma.fourgirls.state.GameState.momRoomVisited = data.momRoomVisited;
-        ukma.fourgirls.state.GameState.kitchenStormFinished = data.kitchenStormFinished;
-        ukma.fourgirls.state.GameState.setChildRoomIntroPlayed(data.childRoomIntroPlayed);
-        ukma.fourgirls.state.GameState.setDrawingPickedUp(data.drawingPickedUp);
-
-        if (data.inventoryUnlocked) {
-            ukma.fourgirls.state.GameState.unlockInventory();
-        }
-
-        if (data.unlockedLocations != null) {
-            for (String loc : data.unlockedLocations) {
-                ukma.fourgirls.state.GameState.unlockLocation(loc);
-            }
-        }
-
-        ukma.fourgirls.state.InventoryState.reset();
-
-        java.util.List<String> savedItems = data.inventoryItemNames;
-        if (savedItems != null) {
-            for (String itemName : savedItems) {
-                ukma.fourgirls.domain.Item restoredItem = ukma.fourgirls.state.ItemRegistry.getItemByName(itemName);
-                if (restoredItem != null) {
-                    ukma.fourgirls.state.InventoryState.addItem(restoredItem);
-                }
-            }
-        }
+        SceneManager.getInstance().loadSession(data);
 
         System.out.println("Завантажуємо кімнату: " + data.currentRoomId);
 
@@ -234,6 +201,12 @@ public class MainMenuWindow extends Application {
         }
         else if ("Yard".equals(data.currentRoomId)) {
             ukma.fourgirls.core.SceneManager.getInstance().switchToCachedRoom("Yard", ukma.fourgirls.ui.roots.Yard::new);
+        }
+        else if ("Forest".equals(data.currentRoomId)) {
+            ukma.fourgirls.core.SceneManager.getInstance().switchToCachedRoom("Forest", ukma.fourgirls.ui.roots.Forest::new);
+        }
+        else if ("Tree".equals(data.currentRoomId)) {
+            ukma.fourgirls.core.SceneManager.getInstance().switchToCachedRoom("Tree", ukma.fourgirls.ui.roots.Tree::new);
         }
         else {
             System.err.println("Error: Unknown room saved - " + data.currentRoomId);

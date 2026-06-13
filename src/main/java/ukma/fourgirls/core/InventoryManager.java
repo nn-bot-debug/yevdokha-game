@@ -3,7 +3,7 @@ package ukma.fourgirls.core;
 import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
 import ukma.fourgirls.domain.Item;
-import ukma.fourgirls.state.InventoryState;
+import ukma.fourgirls.state.GameSession;
 
 public final class InventoryManager {
 
@@ -16,14 +16,14 @@ public final class InventoryManager {
      * @param notificationText The text displayed after picking up the item
      * @param onSuccess The logic to be executed after a successful pick-up
      */
-    public static void setupPickupAction(Node itemNode, Item itemToPickUp, StackPane roomRoot, String notificationText, Runnable onSuccess) {
+    public static void setupPickupAction(GameSession session, Node itemNode, Item itemToPickUp, StackPane roomRoot, String notificationText, Runnable onSuccess) {
         if (itemNode == null) {
             System.err.println("Error: itemNode is null. The item has not been created on the screen yet!");
             return;
         }
         itemNode.setOnMouseClicked(e -> {
             itemNode.setVisible(false);
-            InventoryState.addItem(itemToPickUp);
+            session.addItem(itemToPickUp);
             if (notificationText != null && !notificationText.isEmpty()) {
                 NotificationManager.showNotification(roomRoot, notificationText);
             }

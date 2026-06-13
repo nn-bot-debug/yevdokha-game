@@ -8,7 +8,6 @@ import javafx.scene.shape.Rectangle;
 import ukma.fourgirls.core.AudioManager;
 import ukma.fourgirls.core.StatNotification;
 import ukma.fourgirls.logic.StoryRunner;
-import ukma.fourgirls.state.GameState;
 import ukma.fourgirls.ui.CameraController;
 import ukma.fourgirls.ui.CharacterView;
 
@@ -103,14 +102,14 @@ public class Tree extends Place{
                     AudioManager.getInstance().fadeOutAndStop(eyeTrack, 1.5);
 
                 ((StackPane) this.getRoot()).getChildren().remove(eyeButton);
-                StoryRunner.playScene("/story/chapter2.json", "ant_colony_dialogue", (StackPane) this.getRoot(), actions, null);
+                StoryRunner.playScene(session, "/story/chapter2.json", "ant_colony_dialogue", (StackPane) this.getRoot(), actions, null);
             });
             ((StackPane) this.getRoot()).getChildren().add(eyeButton);
             eyeButton.toFront();
         });
 
         actions.put("trigger_root_vision", () -> {
-            StoryRunner.playScene("/story/chapter2.json", "ant_rescue_start", (StackPane) this.getRoot(), actions, null);
+            StoryRunner.playScene(session, "/story/chapter2.json", "ant_rescue_start", (StackPane) this.getRoot(), actions, null);
         });
 
         actions.put("start_ant_rescue_puzzle", () -> {
@@ -123,7 +122,7 @@ public class Tree extends Place{
         actions.put("enable_resin_planning", () -> {
             System.out.println("Почався таймер підготовки. Гравець планує збір смоли.");
             // Тут буде запуск збору смоли.
-            StoryRunner.playScene("/story/chapter2.json", "resin_collection_success", (StackPane) this.getRoot(), actions, null);
+            StoryRunner.playScene(session, "/story/chapter2.json", "resin_collection_success", (StackPane) this.getRoot(), actions, null);
         });
 
         actions.put("go_back_to_forest_with_resin", () -> {
@@ -132,20 +131,20 @@ public class Tree extends Place{
             fadeOut.setFromValue(0.0);
             fadeOut.setToValue(1.0);
             fadeOut.setOnFinished(e -> {
-                ukma.fourgirls.state.InventoryState.removeItem("Порожній горщик");
-                ukma.fourgirls.state.InventoryState.addItem(new ukma.fourgirls.domain.Item("Горщик зі смолою", "/images/full_pot.png"));
+                session.removeItem("Порожній горщик");
+                session.addItem(new ukma.fourgirls.domain.Item("Горщик зі смолою", "/images/full_pot.png"));
 
                 ukma.fourgirls.core.SceneManager.getInstance().switchToCachedRoom("Forest", Forest::new);
             });
             fadeOut.play();
         });
 
-        StoryRunner.playScene("/story/chapter2.json", "resin_tree_intro", (StackPane) this.getRoot(), actions, null);
+        StoryRunner.playScene(session, "/story/chapter2.json", "resin_tree_intro", (StackPane) this.getRoot(), actions, null);
     }
 
 
     private void onPuzzleFinished(int livesLeft, Map<String, Runnable> actions) {
-        GameState.setKarmaListener((currentKarma, addedPoints) ->
+        session.setKarmaListener((currentKarma, addedPoints) ->
                 StatNotification.show((StackPane) this.getRoot(), currentKarma, addedPoints)
         );
 
@@ -156,9 +155,9 @@ public class Tree extends Place{
             karmaChange = 1;
         }
         if (karmaChange != 0) {
-            GameState.changeKarma(karmaChange);
+            session.changeKarma(karmaChange);
         }
 
-        StoryRunner.playScene("/story/chapter2.json", "ant_rescue_success", (StackPane) this.getRoot(), actions, null);
+        StoryRunner.playScene(session, "/story/chapter2.json", "ant_rescue_success", (StackPane) this.getRoot(), actions, null);
     }
 }

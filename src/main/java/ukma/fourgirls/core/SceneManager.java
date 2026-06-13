@@ -2,6 +2,8 @@ package ukma.fourgirls.core;
 
 import javafx.scene.Parent;
 import javafx.stage.Stage;
+import ukma.fourgirls.state.GameSession;
+import ukma.fourgirls.state.SaveData;
 import ukma.fourgirls.ui.roots.Place;
 
 import java.util.HashMap;
@@ -12,6 +14,7 @@ public class SceneManager {
 
     private Stage primaryStage;
     private Parent mainMenuRoot;
+    private final GameSession session = new GameSession();
 
     private final Map<String, Place> cachedRooms = new HashMap<>();
 
@@ -70,6 +73,20 @@ public class SceneManager {
 
     public void clearCache() {
         cachedRooms.clear();
+    }
+
+    public GameSession getSession() {
+        return session;
+    }
+
+    public void resetSession() {
+        session.reset();
+        clearCache();
+    }
+
+    public void loadSession(SaveData data) {
+        session.loadFrom(data);
+        clearCache();
     }
 
     public double getWidth() {

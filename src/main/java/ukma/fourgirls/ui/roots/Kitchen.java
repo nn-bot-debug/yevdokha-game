@@ -3,11 +3,9 @@ package ukma.fourgirls.ui.roots;
 import javafx.animation.FadeTransition;
 import javafx.animation.SequentialTransition;
 import javafx.scene.Node;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -18,7 +16,6 @@ import ukma.fourgirls.core.InventoryManager;
 import ukma.fourgirls.core.NotificationManager;
 import ukma.fourgirls.domain.Item;
 import ukma.fourgirls.logic.StoryRunner;
-import ukma.fourgirls.state.InventoryState;
 import ukma.fourgirls.ui.CharacterView;
 import ukma.fourgirls.ui.animation.AnimationCanvas;
 
@@ -28,7 +25,6 @@ import java.util.Objects;
 
 public class Kitchen extends Place {
     private static final String IMAGE_PATH = "/images/kitchen.png";
-    private ImageView backgroundView;
     private final ImageView interactiveBread;
     private final AnimationCanvas animationCanvas;
     private final Rectangle flashOverlay;
@@ -39,43 +35,42 @@ public class Kitchen extends Place {
     public Kitchen() {
         super(IMAGE_PATH);
 
-        if (this.getRoot() instanceof StackPane) {
-            StackPane rootPane = (StackPane) this.getRoot();
-
-            rootPane.widthProperty().addListener((obs, old, newVal) ->
-                    System.out.println("ПОТОЧНА ШИРИНА ВІКНА: " + newVal)
-            );
-            rootPane.heightProperty().addListener((obs, old, newVal) ->
-                    System.out.println("ПОТОЧНА ВИСОТА ВІКНА: " + newVal)
-            );
-        }
-
         this.animationCanvas = new AnimationCanvas();
         this.roomContentLayer.getChildren().add(animationCanvas);
 
         this.interactiveBread = createInteractiveBread();
         this.roomContentLayer.getChildren().add(interactiveBread);
 
-        // Спалах блискавки
         this.flashOverlay = new Rectangle();
         this.flashOverlay.widthProperty().bind(this.root.widthProperty());
         this.flashOverlay.heightProperty().bind(this.root.heightProperty());
         this.flashOverlay.setOpacity(0.0);
         this.flashOverlay.setMouseTransparent(true);
         this.root.getChildren().add(flashOverlay);
+    }
 
+    @Override
+    public void onEnter() {
         setupNavigation("Kitchen");
+
+        if (session.isKitchenStormFinished()) {
+            return;
+        }
 
         this.startKitchenGameplay();
     }
 
     public void startKitchenGameplay() {
-        NotificationManager.showNotification((StackPane) this.getRoot(), "Завдання: Знайдіть щось поїсти на кухні.");
+        NotificationManager.showNotification(
+                (StackPane) this.getRoot(),
+                "Завдання: Знайдіть щось поїсти на кухні."
+        );
 
         Item bread = new Item("Зацвілий хліб", "/images/bread.png");
         Node breadNode = this.getInteractiveBread();
 
         InventoryManager.setupPickupAction(
+                session,
                 breadNode,
                 bread,
                 (StackPane) this.getRoot(),
@@ -90,9 +85,9 @@ public class Kitchen extends Place {
 
         Map<String, Runnable> actions = new HashMap<>();
 
-        actions.put("showEatingSprite", () -> {
-            InventoryState.removeItem("Зацвілий хліб");
-        });
+        actions.put("showEatingSprite", () ->
+                session.removeItem("Зацвілий хліб")
+        );
 
         actions.put("startStorm", () -> {
             actorView.hide();
@@ -117,18 +112,17 @@ public class Kitchen extends Place {
             ratView.hide();
         });
 
-        actions.put("triggerLightning", () -> {
-            this.triggerLightningFlash(() -> {
-                System.out.println("Спалах грози відбувся!");
-            });
-        });
+        actions.put("triggerLightning", () ->
+                this.triggerLightningFlash(() ->
+                        System.out.println("Спалах грози відбувся!"))
+        );
 
-        actions.put("triggerBlackout", () -> {
-            this.fadeToBlackout(() -> {
-                actorView.hide();
-                System.out.println("Дівчинка знепритомніла. Екран чорний.");
-            });
-        });
+        actions.put("triggerBlackout", () ->
+                this.fadeToBlackout(() -> {
+                    actorView.hide();
+                    System.out.println("Дівчинка знепритомніла. Екран чорний.");
+                })
+        );
 
         actions.put("triggerScreamerSequence", () -> {
             this.setBackground("/images/rain_in_kitchen.png");
@@ -136,13 +130,10 @@ public class Kitchen extends Place {
             FadeTransition fade = new FadeTransition(Duration.millis(60), flashOverlay);
             fade.setFromValue(1.0);
             fade.setToValue(0.0);
-
-            fade.setOnFinished(event -> {
-                this.triggerLightningFlash(() -> {
-                    this.setBackground("/images/window_monster.png");
-                });
-            });
-
+            fade.setOnFinished(event ->
+                    this.triggerLightningFlash(() ->
+                            this.setBackground("/images/window_monster.png"))
+            );
             fade.play();
         });
 
@@ -150,11 +141,10 @@ public class Kitchen extends Place {
             this.setBackground("/images/kitchen_floor.png");
             this.animationCanvas.setRainActive(false);
 
-            for (javafx.scene.Node topNode : this.root.getChildren()) {
+            for (Node topNode : this.root.getChildren()) {
                 if (topNode instanceof javafx.scene.control.ScrollPane sp) {
                     sp.setFitToWidth(true);
                     sp.setFitToHeight(true);
-
                     if (sp.getContent() instanceof javafx.scene.layout.Region contentRegion) {
                         contentRegion.setPrefWidth(this.root.getWidth());
                         contentRegion.setPrefHeight(this.root.getHeight());
@@ -164,18 +154,16 @@ public class Kitchen extends Place {
             ukma.fourgirls.ui.CameraController.setPanningEnabled(false);
         });
 
-        actions.put("spawnRatNearBread", () -> {
-            this.setBackground("/images/kitchen_with_rat.png");
-        });
+        actions.put("spawnRatNearBread", () ->
+                this.setBackground("/images/kitchen_with_rat.png")
+        );
 
-        actions.put("moveRatToDoor", () -> {
-            this.setBackground("/images/rat_near_door.png");
-        });
+        actions.put("moveRatToDoor", () ->
+                this.setBackground("/images/rat_near_door.png")
+        );
 
         actions.put("playRatSqueak", () -> {
-            if (actorView != null) {
-                actorView.hide();
-            }
+            if (actorView != null) actorView.hide();
             this.setBackground("/images/kitchen_floor.png");
             AudioManager.getInstance().buttonSound("/music/mouse_pisk.wav");
             ratView.setPositionSide(false);
@@ -185,7 +173,7 @@ public class Kitchen extends Place {
         actions.put("riseFromFloorAndHint", () -> {
             this.setBackground("/images/rain_in_kitchen.png");
 
-            for (javafx.scene.Node topNode : this.root.getChildren()) {
+            for (Node topNode : this.root.getChildren()) {
                 if (topNode instanceof javafx.scene.control.ScrollPane sp) {
                     sp.setFitToWidth(false);
                     sp.setFitToHeight(false);
@@ -195,18 +183,17 @@ public class Kitchen extends Place {
 
             if (actorView != null) actorView.hide();
             if (ratView != null) ratView.hide();
-            StoryRunner.playScene("/story/chapter1.json", "kitchen_leave_hint", (StackPane) this.getRoot(), actions, null);
+            StoryRunner.playScene(session, "/story/chapter1.json", "kitchen_leave_hint",
+                    (StackPane) this.getRoot(), actions, null);
         });
 
         actions.put("showFindKeyHint", () -> {
-            ukma.fourgirls.state.GameState.kitchenStormFinished = true;
-            ukma.fourgirls.core.NotificationManager.showNotification(
+            session.setKitchenStormFinished(true);
+            NotificationManager.showNotification(
                     (StackPane) this.getRoot(),
                     "Завдання: Знайди ключ у кімнаті матері."
             );
-
-            ukma.fourgirls.state.GameState.unlockLocation("MomRoom");
-            this.setupNavigation("Kitchen");
+            session.unlockLocation("MomRoom");
         });
 
         actions.put("leaveKitchenScene", () -> {
@@ -215,12 +202,10 @@ public class Kitchen extends Place {
             System.out.println("Євдоха біжить за щуром на наступну локацію.");
         });
 
-        StoryRunner.playScene("/story/chapter1.json", "kitchen_storm_sequence", (StackPane) this.getRoot(), actions, null);
+        StoryRunner.playScene(session, "/story/chapter1.json", "kitchen_storm_sequence",
+                (StackPane) this.getRoot(), actions, null);
     }
 
-    /**
-     * Вмикає зливу в системі частинок та змінює фон вікна
-     */
     public void startStormEffects() {
         animationCanvas.setRainActive(true);
         this.setBackground("/images/rain_in_kitchen.png");
@@ -251,28 +236,21 @@ public class Kitchen extends Place {
         fade.play();
     }
 
-    /**
-     * Геометрія, 3D-нахил та стилізація зацвілого хліба на столі
-     */
     private ImageView createInteractiveBread() {
-        Image breadImg = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/bread.png")));
+        Image breadImg = new Image(Objects.requireNonNull(
+                getClass().getResourceAsStream("/images/bread.png")));
         ImageView breadView = new ImageView(breadImg);
 
         breadView.setFitWidth(180);
         breadView.setPreserveRatio(true);
 
-        if (this.getRoot() instanceof StackPane) {
-            StackPane rootPane = (StackPane) this.getRoot();
-
-            rootPane.widthProperty().addListener((obs, oldVal, newVal) -> {
-                double currentWidth = newVal.doubleValue();
-                breadView.setTranslateX(currentWidth * (540.0 / 1536.0));
-            });
-
-            rootPane.heightProperty().addListener((obs, oldVal, newVal) -> {
-                double currentHeight = newVal.doubleValue();
-                breadView.setTranslateY(currentHeight * (170.0 / 960.0));
-            });
+        if (this.getRoot() instanceof StackPane rootPane) {
+            rootPane.widthProperty().addListener((obs, oldVal, newVal) ->
+                    breadView.setTranslateX(newVal.doubleValue() * (540.0 / 1536.0))
+            );
+            rootPane.heightProperty().addListener((obs, oldVal, newVal) ->
+                    breadView.setTranslateY(newVal.doubleValue() * (170.0 / 960.0))
+            );
         } else {
             breadView.setTranslateX(540);
             breadView.setTranslateY(170);
@@ -284,9 +262,7 @@ public class Kitchen extends Place {
         darkenEffect.setSaturation(-0.1);
         breadView.setEffect(darkenEffect);
 
-        breadView.setOnMouseEntered(e -> {
-            breadView.setEffect(null);
-        });
+        breadView.setOnMouseEntered(e -> breadView.setEffect(null));
         breadView.setOnMouseExited(e -> breadView.setEffect(darkenEffect));
 
         breadView.setPickOnBounds(true);

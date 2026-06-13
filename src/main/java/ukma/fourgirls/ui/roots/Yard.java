@@ -68,25 +68,26 @@ public class Yard extends Place {
         });
 
         actions.put("enable_papyrus_pickup", () -> {
-            // Тут ти потім налаштуєш клік по папірусу через InventoryManager, як у ChildRoom!
             System.out.println("Папірус піднято по сюжету.");
         });
 
         actions.put("go_to_forest_automatically", () -> {
+            session.lockLocation("ChildRoom");
+            session.lockLocation("Kitchen");
+            session.lockLocation("MomRoom");
+            session.lockLocation("Corridor");
+            session.lockLocation("Yard");
             blackOverlay.toFront();
-
             FadeTransition fadeToBlack = new FadeTransition(Duration.seconds(1.2), blackOverlay);
             fadeToBlack.setFromValue(0.0);
             fadeToBlack.setToValue(1.0);
-
-            fadeToBlack.setOnFinished(e -> {
-                SceneManager.getInstance().switchToCachedRoom("Forest", Forest::new);
-            });
-
+            fadeToBlack.setOnFinished(e ->
+                    SceneManager.getInstance().switchToCachedRoom("Forest", Forest::new)
+            );
             fadeToBlack.play();
         });
 
-        StoryRunner.playScene("/story/chapter2.json", "yard_raven_scene", (StackPane) this.getRoot(), actions, null);
+        StoryRunner.playScene(session, "/story/chapter2.json", "yard_raven_scene", (StackPane) this.getRoot(), actions, null);
     }
 
     public void enableNavigation() {

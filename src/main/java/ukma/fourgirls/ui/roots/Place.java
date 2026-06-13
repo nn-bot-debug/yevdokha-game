@@ -12,7 +12,7 @@ import javafx.scene.text.Font;
 import ukma.fourgirls.core.AudioManager;
 import ukma.fourgirls.core.LanguageManager;
 import ukma.fourgirls.core.SceneManager;
-import ukma.fourgirls.state.GameState;
+import ukma.fourgirls.state.GameSession;
 import ukma.fourgirls.ui.CameraController;
 import ukma.fourgirls.ui.NavigationPanel;
 
@@ -22,11 +22,14 @@ public abstract class Place {
     protected final StackPane root;
     protected final StackPane roomContentLayer;
     protected final ImageView roomView;
+    protected final GameSession session;
     private Font enFont;
     private Font ukFont;
     protected final Inventory inventory;
+    private NavigationPanel currentNavPanel;
 
     public Place(String imagePath) {
+        this.session = SceneManager.getInstance().getSession();
         StackPane rootPane = new StackPane();
         rootPane.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/buttons.css")).toExternalForm());
 
@@ -61,9 +64,9 @@ public abstract class Place {
 
         rootPane.getChildren().addAll(scrollPane, backButton);
 
-        this.inventory = new Inventory();
+        this.inventory = new Inventory(session);
         this.inventory.attachTo(rootPane);
-        this.inventory.setVisible(GameState.isInventoryUnlocked());
+        this.inventory.setVisible(session.isInventoryUnlocked());
 
         CameraController.enableMousePanning(rootPane, scrollPane);
         javafx.application.Platform.runLater(() -> scrollPane.setHvalue(0.5));
@@ -115,7 +118,7 @@ public abstract class Place {
         }
 
         backButton.setOnAction(e -> {
-            if (ukma.fourgirls.state.GameState.isCutsceneActive) {
+            if (session.isCutsceneActive()) {
                 AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
                 ukma.fourgirls.core.NotificationManager.showNotification(
                         this.root,
@@ -127,7 +130,7 @@ public abstract class Place {
             AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
             String currentRoomId = this.getClass().getSimpleName();
 
-            ukma.fourgirls.core.SaveManager.saveGame(currentRoomId, "");
+            ukma.fourgirls.core.SaveManager.saveGame(session, currentRoomId, "");
 
             SceneManager.getInstance().switchToMainMenu();
         });
@@ -142,37 +145,40 @@ public abstract class Place {
     }
 
     protected void setupNavigation(String currentRoomName) {
+        if (currentNavPanel != null) {
+            currentNavPanel.detachFrom(this.root); // прибрати стару
+        }
         NavigationPanel navPanel = new NavigationPanel();
 
-        if (!"MomRoom".equals(currentRoomName) && GameState.isUnlocked("MomRoom")) {
+        if (!"MomRoom".equals(currentRoomName) && session.isUnlocked("MomRoom")) {
             navPanel.addNavigationTarget("Кімната матері", () -> {
                 AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
                 SceneManager.getInstance().switchToCachedRoom("MomRoom", MomRoom::new);
             });
         }
 
-        if (!"Kitchen".equals(currentRoomName) && GameState.isUnlocked("Kitchen")) {
+        if (!"Kitchen".equals(currentRoomName) && session.isUnlocked("Kitchen")) {
             navPanel.addNavigationTarget("Кухня", () -> {
                 AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
                 SceneManager.getInstance().switchToCachedRoom("Kitchen", Kitchen::new);
             });
         }
 
-        if (!"ChildRoom".equals(currentRoomName) && GameState.isUnlocked("ChildRoom")) {
+        if (!"ChildRoom".equals(currentRoomName) && session.isUnlocked("ChildRoom")) {
             navPanel.addNavigationTarget("Дитяча кімната", () -> {
                 AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
                 SceneManager.getInstance().switchToCachedRoom("ChildRoom", ChildRoom::new);
             });
         }
 
-        if (!"Corridor".equals(currentRoomName) && GameState.isUnlocked("Corridor")) {
+        if (!"Corridor".equals(currentRoomName) && session.isUnlocked("Corridor")) {
             navPanel.addNavigationTarget("Коридор", () -> {
                 AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
                 SceneManager.getInstance().switchToCachedRoom("Corridor", Corridor::new);
             });
         }
 
-        if (!"Yard".equals(currentRoomName) && ukma.fourgirls.state.GameState.isUnlocked("Yard")) {
+        if (!"Yard".equals(currentRoomName) && session.isUnlocked("Yard")) {
             navPanel.addNavigationTarget("Подвір'я", () -> {
                 ukma.fourgirls.core.AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
                 ukma.fourgirls.core.SceneManager.getInstance().switchToCachedRoom("Yard", Yard::new);
@@ -180,10 +186,11 @@ public abstract class Place {
         }
 
         navPanel.attachTo(this.root);
+        this.currentNavPanel = navPanel;
     }
 
     public void showInventoryUI() {
-        GameState.unlockInventory();
+        session.unlockInventory();
         this.inventory.setVisible(true);
     }
 }

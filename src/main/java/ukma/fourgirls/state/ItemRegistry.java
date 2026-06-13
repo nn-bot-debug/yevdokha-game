@@ -10,8 +10,11 @@ public class ItemRegistry {
 
     static {
         registerItem(new Item("Малюнок", "/images/drawing.png"));
-        registerItem(new Item("Ключ", "/images/key.png"));
-        registerItem(new Item("Брошка","/images/brooch.png"));
+        registerItem(new Item("Ключ від дверей", "/images/key.png"));
+        registerItem(new Item("Брошка", "/images/brooch.png"));
+        registerItem(new Item("Зацвілий хліб", "/images/bread.png"));
+        registerItem(new Item("Порожній горщик", "/images/empty_pot.png"));
+        registerItem(new Item("Горщик зі смолою", "/images/full_pot.png"));
     }
 
     private static void registerItem(Item item) {

@@ -11,7 +11,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 import ukma.fourgirls.domain.Item;
-import ukma.fourgirls.state.InventoryState;
+import ukma.fourgirls.state.GameSession;
 
 import java.util.List;
 import java.util.Objects;
@@ -20,9 +20,11 @@ public class Inventory {
     private final StackPane container;
     private final HBox inventoryBoard;
     private final StackPane window;
+    private final GameSession session;
     private static final double BOARD_HEIGHT = 170;
 
-    public Inventory() {
+    public Inventory(GameSession session) {
+        this.session = session;
         this.inventoryBoard = createBoard();
         this.window = createWindow();
 
@@ -39,7 +41,7 @@ public class Inventory {
     }
 
     private void setupStateListener() {
-        InventoryState.getItems().addListener((ListChangeListener<Item>) change -> {
+        session.getInventoryItems().addListener((ListChangeListener<Item>) change -> {
             updateUI();
         });
 
@@ -49,7 +51,7 @@ public class Inventory {
     private void updateUI() {
 
         inventoryBoard.getChildren().clear();
-        List<Item> currentItems = InventoryState.getItems();
+        List<Item> currentItems = session.getInventoryItems();
 
         for(Item item : currentItems){
             try {

@@ -6,6 +6,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import ukma.fourgirls.core.NotificationManager;
+import ukma.fourgirls.core.SceneManager;
 import ukma.fourgirls.logic.StoryRunner;
 import ukma.fourgirls.ui.CameraController;
 
@@ -31,6 +32,10 @@ public class Corridor extends Place {
 
     @Override
     public void onEnter() {
+        if (!session.isUnlocked("Yard") && !session.isUnlocked("ChildRoom")) {
+            SceneManager.getInstance().switchToCachedRoom("Forest", Forest::new);
+            return;
+        }
         this.enableNavigation();
 
         PauseTransition testPause = new PauseTransition(Duration.seconds(2));
@@ -83,7 +88,7 @@ public class Corridor extends Place {
         Map<String, Runnable> actions = new HashMap<>();
         actions.put("endCutscene", this::enableNavigation);
 
-        StoryRunner.playScene("/story/chapter1.json", "corridor_intro", (StackPane) this.getRoot(), actions, null);
+        StoryRunner.playScene(session, "/story/chapter1.json", "corridor_intro", (StackPane) this.getRoot(), actions, null);
     }
 
     public void enableNavigation() {
