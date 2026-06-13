@@ -5,8 +5,10 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
+import ukma.fourgirls.core.SceneManager;
 import ukma.fourgirls.logic.StoryRunner;
 import ukma.fourgirls.ui.CameraController;
+import ukma.fourgirls.ui.CharacterView;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,6 +16,7 @@ import java.util.Map;
 public class Yard extends Place {
     private static final String IMAGE_PATH = "/images/yard.png";
     private final Rectangle blackOverlay;
+    private CharacterView actorView;
 
     public Yard() {
         super(IMAGE_PATH);
@@ -31,11 +34,11 @@ public class Yard extends Place {
     @Override
     public void onEnter() {
         CameraController.setPanningEnabled(false);
-
         this.startYardRavenCutscene();
     }
 
     private void startYardRavenCutscene() {
+        actorView = new CharacterView((StackPane) this.getRoot());
         Map<String, Runnable> actions = new HashMap<>();
 
         actions.put("show_yard_view", () -> {
@@ -45,9 +48,42 @@ public class Yard extends Place {
             fadeInYard.play();
         });
 
+        actions.put("showSadYevdokha", () -> {
+            if (actorView != null) {
+                actorView.setPositionSide(true);
+                actorView.setCharacterSprite("/images/Zasmuchena_evdoha.png");
+            }
+        });
+
+        actions.put("showHappyYevdokha", () -> {
+            if (actorView != null) {
+                actorView.setPositionSide(true);
+                actorView.setCharacterSprite("/images/happy_Yevdokha.png");
+            }
+        });
+
+        actions.put("hideActor", () -> {
+            if (actorView != null)
+                actorView.hide();
+        });
+
         actions.put("enable_papyrus_pickup", () -> {
             // Тут ти потім налаштуєш клік по папірусу через InventoryManager, як у ChildRoom!
-            this.enableNavigation();
+            System.out.println("Папірус піднято по сюжету.");
+        });
+
+        actions.put("go_to_forest_automatically", () -> {
+            blackOverlay.toFront();
+
+            FadeTransition fadeToBlack = new FadeTransition(Duration.seconds(1.2), blackOverlay);
+            fadeToBlack.setFromValue(0.0);
+            fadeToBlack.setToValue(1.0);
+
+            fadeToBlack.setOnFinished(e -> {
+                SceneManager.getInstance().switchToCachedRoom("Forest", Forest::new);
+            });
+
+            fadeToBlack.play();
         });
 
         StoryRunner.playScene("/story/chapter2.json", "yard_raven_scene", (StackPane) this.getRoot(), actions, null);
