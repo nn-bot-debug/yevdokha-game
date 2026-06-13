@@ -1,20 +1,27 @@
 package ukma.fourgirls.ui.views;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import ukma.fourgirls.core.AudioManager;
 import ukma.fourgirls.core.LanguageManager;
-import ukma.fourgirls.domain.Item;
 import ukma.fourgirls.ui.animation.MenuAnimationCanvas;
 import ukma.fourgirls.core.SceneManager;
+
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -22,7 +29,8 @@ import java.util.Objects;
 
 public class MainMenuWindow extends Application {
 
-    private Font font;
+    private Font uaFont;
+    private Font enFont;
 
     @Override
     public void start(Stage primaryStage){
@@ -32,6 +40,20 @@ public class MainMenuWindow extends Application {
         primaryStage.setFullScreen(true);
         //primaryStage.setResizable(false);
         StackPane root = new StackPane();
+
+        try{
+            uaFont = Font.loadFont(getClass().getResourceAsStream("/fonts/Epoch_YP_Demo.ttf"), 20);
+        }
+        catch (Exception e) {
+            uaFont = Font.font("Arial", 24);
+        }
+
+        try{
+            enFont = Font.loadFont(getClass().getResourceAsStream("/fonts/Creepster-Regular.ttf"), 20);
+        }
+        catch (Exception e) {
+            enFont = Font.font("Arial", 24);
+        }
 
         try{
             Image backgroundImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/MainMenuBackground.jpg")));
@@ -51,6 +73,42 @@ public class MainMenuWindow extends Application {
 
         MenuAnimationCanvas animationCanvas = new MenuAnimationCanvas();
         root.getChildren().add(animationCanvas);
+
+        Label gameTitle = new Label("Побачиш мої чари?");
+
+        try {
+            Font titleFont = Font.loadFont(getClass().getResourceAsStream("/fonts/Epoch_YP_Demo.ttf"), 50);
+            gameTitle.setFont(titleFont);
+        }
+        catch (Exception e) {
+            gameTitle.setFont(Font.font("Arial", 20));
+
+        }
+
+        gameTitle.setTextFill(Color.web("#828f86"));
+
+        DropShadow dropShadow = new DropShadow();
+        dropShadow.setColor(Color.web("#404d42"));
+        dropShadow.setRadius(0.3);
+        dropShadow.setSpread(0.5);
+
+        gameTitle.setEffect(dropShadow);
+
+        Timeline timeline = new Timeline();
+
+        KeyFrame keyFrame = new KeyFrame(
+                Duration.seconds(1.1),
+                new KeyValue(dropShadow.radiusProperty(), 15)
+        );
+
+        timeline.getKeyFrames().add(keyFrame);
+        timeline.setAutoReverse(true);
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
+
+        StackPane.setAlignment(gameTitle, Pos.TOP_LEFT);
+        StackPane.setMargin(gameTitle, new Insets(180,0,0,150));
+        root.getChildren().add(gameTitle);
 
         VBox button = new VBox(20);
         button.setAlignment(Pos.CENTER_LEFT);
@@ -84,7 +142,7 @@ public class MainMenuWindow extends Application {
         for (Map.Entry<String, Runnable> entry : buttonActions.entrySet()) {
             String langKey = entry.getKey();
             Button buttonN = new Button(LanguageManager.getString(langKey));
-            //buttonN.setFont(font);
+            buttonN.setFont(isCurrentLanguageEnglish() ? enFont : uaFont);
             buttonN.getStyleClass().add("main-menu-button");
             buttonN.setOnAction(e -> {
                 AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
@@ -97,7 +155,9 @@ public class MainMenuWindow extends Application {
 
         LanguageManager.addLanguageChangeListener(() -> {
             for (Map.Entry<String, Button> entry : menuButtons.entrySet()) {
-                entry.getValue().setText(LanguageManager.getString(entry.getKey()));
+                Button btn = entry.getValue();
+                btn.setText(LanguageManager.getString(entry.getKey()));
+                btn.setFont(isCurrentLanguageEnglish() ? enFont : uaFont);
             }
         });
 
@@ -107,6 +167,16 @@ public class MainMenuWindow extends Application {
         AudioManager.getInstance().playBackgroundMusic("/music/background.mp3");
 
         primaryStage.show();
+    }
+
+    private boolean isCurrentLanguageEnglish() {
+        try{
+            String newGameText = LanguageManager.getString("menu.new").toLowerCase();
+            return newGameText.contains("new") || newGameText.contains("game");
+        }
+        catch (Exception e){
+            return false;
+        }
     }
 
     private void continueGame() {
