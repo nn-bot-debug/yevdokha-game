@@ -39,6 +39,17 @@ public class Kitchen extends Place {
     public Kitchen() {
         super(IMAGE_PATH);
 
+        if (this.getRoot() instanceof StackPane) {
+            StackPane rootPane = (StackPane) this.getRoot();
+
+            rootPane.widthProperty().addListener((obs, old, newVal) ->
+                    System.out.println("ПОТОЧНА ШИРИНА ВІКНА: " + newVal)
+            );
+            rootPane.heightProperty().addListener((obs, old, newVal) ->
+                    System.out.println("ПОТОЧНА ВИСОТА ВІКНА: " + newVal)
+            );
+        }
+
         this.animationCanvas = new AnimationCanvas();
         this.roomContentLayer.getChildren().add(animationCanvas);
 
@@ -250,8 +261,22 @@ public class Kitchen extends Place {
         breadView.setFitWidth(180);
         breadView.setPreserveRatio(true);
 
-        breadView.setTranslateX(540);
-        breadView.setTranslateY(170);
+        if (this.getRoot() instanceof StackPane) {
+            StackPane rootPane = (StackPane) this.getRoot();
+
+            rootPane.widthProperty().addListener((obs, oldVal, newVal) -> {
+                double currentWidth = newVal.doubleValue();
+                breadView.setTranslateX(currentWidth * (540.0 / 1536.0));
+            });
+
+            rootPane.heightProperty().addListener((obs, oldVal, newVal) -> {
+                double currentHeight = newVal.doubleValue();
+                breadView.setTranslateY(currentHeight * (170.0 / 960.0));
+            });
+        } else {
+            breadView.setTranslateX(540);
+            breadView.setTranslateY(170);
+        }
 
         ColorAdjust darkenEffect = new ColorAdjust();
         darkenEffect.setBrightness(-0.25);
