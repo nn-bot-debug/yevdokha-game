@@ -17,6 +17,11 @@ public class InventoryState {
         }
     }
 
+    public static boolean hasItem(String itemName) {
+        return items.stream()
+                .anyMatch(item -> item.getName().equalsIgnoreCase(itemName));
+    }
+
     public static void removeItem(String itemName) {
         items.removeIf(item -> item.getName().equals(itemName));
     }
