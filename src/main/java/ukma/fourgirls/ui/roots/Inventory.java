@@ -13,7 +13,6 @@ import javafx.util.Duration;
 import ukma.fourgirls.domain.Item;
 import ukma.fourgirls.state.InventoryState;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -22,8 +21,6 @@ public class Inventory {
     private final HBox inventoryBoard;
     private final StackPane window;
     private static final double BOARD_HEIGHT = 170;
-
-    private final List<StackPane> cells = new ArrayList<>();
 
     public Inventory() {
         this.inventoryBoard = createBoard();
@@ -115,8 +112,8 @@ public class Inventory {
         inventoryBoard.setAlignment(Pos.CENTER_LEFT);
         inventoryBoard.getStyleClass().add("inventory-board");
 
-// inventoryBoard.setSpacing(0);
-        inventoryBoard.setPadding(new Insets(4, 0, 0, 49));
+        inventoryBoard.setSpacing(12);
+        inventoryBoard.setPadding(new Insets(4, 0, 0, 45));
 
         inventoryBoard.setMaxWidth(480);
         inventoryBoard.setMaxHeight(BOARD_HEIGHT);
