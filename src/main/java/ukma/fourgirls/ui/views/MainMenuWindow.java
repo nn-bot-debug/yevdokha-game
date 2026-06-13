@@ -1,20 +1,27 @@
 package ukma.fourgirls.ui.views;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import ukma.fourgirls.core.AudioManager;
 import ukma.fourgirls.core.LanguageManager;
-import ukma.fourgirls.domain.Item;
 import ukma.fourgirls.ui.animation.MenuAnimationCanvas;
 import ukma.fourgirls.core.SceneManager;
+
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -51,6 +58,42 @@ public class MainMenuWindow extends Application {
 
         MenuAnimationCanvas animationCanvas = new MenuAnimationCanvas();
         root.getChildren().add(animationCanvas);
+
+        Label gameTitle = new Label("Побачиш мої чари?");
+
+        try {
+            Font titleFont = Font.loadFont(getClass().getResourceAsStream("/fonts/Epoch_YP_Demo.ttf"), 50);
+            gameTitle.setFont(titleFont);
+        }
+        catch (Exception e) {
+            gameTitle.setFont(Font.font("Arial", 20));
+
+        }
+
+        gameTitle.setTextFill(Color.web("#828f86"));
+
+        DropShadow dropShadow = new DropShadow();
+        dropShadow.setColor(Color.web("#404d42"));
+        dropShadow.setRadius(0.3);
+        dropShadow.setSpread(0.5);
+
+        gameTitle.setEffect(dropShadow);
+
+        Timeline timeline = new Timeline();
+
+        KeyFrame keyFrame = new KeyFrame(
+                Duration.seconds(1.1),
+                new KeyValue(dropShadow.radiusProperty(), 15)
+        );
+
+        timeline.getKeyFrames().add(keyFrame);
+        timeline.setAutoReverse(true);
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
+
+        StackPane.setAlignment(gameTitle, Pos.TOP_LEFT);
+        StackPane.setMargin(gameTitle, new Insets(180,0,0,150));
+        root.getChildren().add(gameTitle);
 
         VBox button = new VBox(20);
         button.setAlignment(Pos.CENTER_LEFT);
