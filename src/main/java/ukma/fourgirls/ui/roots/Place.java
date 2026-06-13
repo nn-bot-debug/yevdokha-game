@@ -10,6 +10,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
 import ukma.fourgirls.core.AudioManager;
+import ukma.fourgirls.core.LanguageManager;
 import ukma.fourgirls.core.SceneManager;
 import ukma.fourgirls.state.GameState;
 import ukma.fourgirls.ui.CameraController;
@@ -21,7 +22,8 @@ public abstract class Place {
     protected final StackPane root;
     protected final StackPane roomContentLayer;
     protected final ImageView roomView;
-    private Font font;
+    private Font enFont;
+    private Font ukFont;
     protected final Inventory inventory;
 
     public Place(String imagePath) {
@@ -29,9 +31,15 @@ public abstract class Place {
         rootPane.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/buttons.css")).toExternalForm());
 
         try {
-            font = Font.loadFont(getClass().getResourceAsStream("/fonts/Creepster-Regular.ttf"), 22);
+            enFont = Font.loadFont(getClass().getResourceAsStream("/fonts/Creepster-Regular.ttf"), 22);
         } catch (Exception e) {
-            font = Font.font("Arial", 24);
+            enFont = Font.font("Arial", 24);
+        }
+        try {
+            ukFont = Font.loadFont(getClass().getResourceAsStream("/fonts/Epoch_YP_Demo.ttf"), 22);
+        }
+        catch (Exception e) {
+            ukFont = Font.font("Arial", 24);
         }
 
         this.roomView = setupRoomImage(imagePath);
@@ -63,7 +71,6 @@ public abstract class Place {
         this.root = rootPane;
     }
 
-
     public void setBackground(String imagePath) {
         try {
             var stream = getClass().getResourceAsStream(imagePath);
@@ -84,9 +91,28 @@ public abstract class Place {
     }
 
     private Button createBackButton() {
-        Button backButton = new Button("Back to Menu");
-        backButton.setFont(font);
+        Button backButton = new Button();
         backButton.getStyleClass().add("back-button");
+
+        LanguageManager.addLanguageChangeListener(()->{
+            String translated = LanguageManager.getString("button.back");
+            backButton.setText(translated);
+            if("Назад до меню".equals(translated)){
+                backButton.setFont(Font.font(ukFont.getFamily(), 18));
+            }
+            else{
+                backButton.setFont(Font.font(enFont.getFamily(), 20));
+            }
+        });
+
+        String currentLan = LanguageManager.getString("button.back");
+        backButton.setText(currentLan);
+        if("Назад до меню".equals(currentLan)){
+            backButton.setFont(Font.font(ukFont.getFamily(), 18));
+        }
+        else{
+            backButton.setFont(Font.font(enFont.getFamily(), 20));
+        }
 
         backButton.setOnAction(e -> {
             if (ukma.fourgirls.state.GameState.isCutsceneActive) {
