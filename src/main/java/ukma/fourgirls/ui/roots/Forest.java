@@ -22,6 +22,7 @@ public class Forest extends Place{
     private final Rectangle blackOverlay;
     private CharacterView actorView;
     private CharacterView lisovukView;
+    private final Map<String, Runnable> actions;
 
     public Forest() {
         super(NORMAL_FOREST);
@@ -32,47 +33,31 @@ public class Forest extends Place{
         blackOverlay.setFill(Color.BLACK);
         blackOverlay.setOpacity(1.0);
         blackOverlay.setMouseTransparent(true);
-
         this.root.getChildren().add(blackOverlay);
+
+        actorView = new CharacterView((StackPane) this.getRoot());
+        lisovukView = new CharacterView((StackPane) this.getRoot());
+
+        actions = new HashMap<>();
+        initBaseActions();
     }
 
     @Override
     public void onEnter() {
         CameraController.setPanningEnabled(true);
-        this.startForestMeetingCutscene();
+        if (ukma.fourgirls.state.InventoryState.hasItem("Горщик зі смолою")) {
+            this.executeHealingPhase();
+        } else {
+            this.executeIntroPhase();
+        }
     }
 
-    private void startForestMeetingCutscene() {
-        actorView = new CharacterView((StackPane) this.getRoot());
-        lisovukView = new CharacterView((StackPane) this.getRoot());
-
-        Map<String, Runnable> actions = new HashMap<>();
-
-        FadeTransition fadeInForest = new FadeTransition(Duration.seconds(0.5), blackOverlay);
-        fadeInForest.setFromValue(1.0);
-        fadeInForest.setToValue(0.0);
-        fadeInForest.play();
-
-        actions.put("showSadYevdokha", () -> {
-            if (lisovukView != null) lisovukView.hide();
-            if (actorView != null) {
-                actorView.setPositionSide(true);
-                actorView.setCharacterSprite("/images/Zasmuchena_evdoha.png");
-            }
-        });
-
-        actions.put("showLisovuk", () -> {
-            if (actorView != null) actorView.hide();
-            if (lisovukView != null) {
-                lisovukView.setPositionSide(false);
-                lisovukView.setCharacterSprite("/images/Lisovuk.png");
-            }
-        });
-
-        actions.put("hideActor", () -> {
-            if (actorView != null) actorView.hide();
-            if (lisovukView != null) lisovukView.hide();
-        });
+    /**
+     * Перше прибуття до лісу та знайомство з Лісовиком
+     */
+    private void executeIntroPhase() {
+        this.setBackground(NORMAL_FOREST);
+        this.playFadeIn();
 
         actions.put("show_feature_tutorial", () -> {
             ukma.fourgirls.ui.views.TutorialOverlay tutorial = new ukma.fourgirls.ui.views.TutorialOverlay((StackPane) this.getRoot());
@@ -82,7 +67,6 @@ public class Forest extends Place{
         actions.put("enable_eye_feature_button", () -> {
             Button eyeButton = new Button();
             eyeButton.getStyleClass().add("eye-feature-button");
-
             StackPane.setAlignment(eyeButton, Pos.TOP_RIGHT);
             StackPane.setMargin(eyeButton, new javafx.geometry.Insets(20, 20, 0, 0));
 
@@ -91,7 +75,6 @@ public class Forest extends Place{
                 this.setBackground(MAGIC_FOREST);
                 StoryRunner.playScene("/story/chapter2.json", "forest_meeting", (StackPane) this.getRoot(), actions, null);
             });
-
             ((StackPane) this.getRoot()).getChildren().add(eyeButton);
         });
 
@@ -117,16 +100,62 @@ public class Forest extends Place{
             ukma.fourgirls.core.NotificationManager.showNotification(this.root, "Ви отримали предмет: Порожній горщик");
 
             blackOverlay.toFront();
-            javafx.animation.FadeTransition fadeOut = new javafx.animation.FadeTransition(javafx.util.Duration.seconds(1.2), blackOverlay);
+            FadeTransition fadeOut = new FadeTransition(Duration.seconds(1.2), blackOverlay);
             fadeOut.setFromValue(0.0);
             fadeOut.setToValue(1.0);
-            fadeOut.setOnFinished(e -> {
-                ukma.fourgirls.core.SceneManager.getInstance().switchToCachedRoom("Tree", Tree::new);
-            });
+            fadeOut.setOnFinished(e -> ukma.fourgirls.core.SceneManager.getInstance().switchToCachedRoom("Tree", Tree::new));
             fadeOut.play();
         });
 
         StoryRunner.playScene("/story/chapter2.json", "forest_intro_scene", (StackPane) this.getRoot(), actions, null);
+    }
+
+    /**
+     * Повернення зі смолою
+     */
+    private void executeHealingPhase() {
+        this.setBackground(MAGIC_FOREST);
+        this.playFadeIn();
+
+        actions.put("finish_lisovuk_quest_line", () -> {
+            ukma.fourgirls.state.InventoryState.removeItem("Горщик зі смолою");
+            ukma.fourgirls.core.NotificationManager.showNotification(this.root, "Смолу використано. Шлях углиб лісу відкрито!");
+            this.enableNavigation();
+        });
+
+        StoryRunner.playScene("/story/chapter2.json", "lisovuk_healing_and_prophecy", (StackPane) this.getRoot(), actions, null);
+    }
+
+    private void initBaseActions() {
+        actions.put("showSadYevdokha", () -> {
+            if (lisovukView != null) lisovukView.hide();
+            if (actorView != null) {
+                actorView.setPositionSide(true);
+                actorView.setCharacterSprite("/images/Zasmuchena_evdoha.png");
+            }
+        });
+
+        actions.put("showLisovuk", () -> {
+            if (actorView != null) actorView.hide();
+            if (lisovukView != null) {
+                lisovukView.setPositionSide(false);
+                lisovukView.setCharacterSprite("/images/Lisovuk.png");
+            }
+        });
+
+        actions.put("hideActor", () -> {
+            if (actorView != null) actorView.hide();
+            if (lisovukView != null) lisovukView.hide();
+        });
+    }
+
+    private void playFadeIn() {
+        blackOverlay.setOpacity(1.0);
+        blackOverlay.toFront();
+        FadeTransition fadeIn = new FadeTransition(Duration.seconds(0.5), blackOverlay);
+        fadeIn.setFromValue(1.0);
+        fadeIn.setToValue(0.0);
+        fadeIn.play();
     }
 
     public void enableNavigation() {
