@@ -1,9 +1,15 @@
 package ukma.fourgirls.ui.roots;
 
+import javafx.animation.FadeTransition;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import ukma.fourgirls.core.StatNotification;
+import javafx.util.Duration;
 import ukma.fourgirls.logic.StoryRunner;
+import ukma.fourgirls.state.GameState;
 import ukma.fourgirls.ui.CameraController;
 import ukma.fourgirls.ui.CharacterView;
 
@@ -13,11 +19,21 @@ import java.util.Map;
 public class Forest extends Place{
     private static final String NORMAL_FOREST = "/images/forest.png";
     private static final String MAGIC_FOREST = "/images/image-forest.png";
+    private final Rectangle blackOverlay;
     private CharacterView actorView;
     private CharacterView lisovukView;
 
     public Forest() {
         super(NORMAL_FOREST);
+
+        blackOverlay = new Rectangle();
+        blackOverlay.widthProperty().bind(this.root.widthProperty());
+        blackOverlay.heightProperty().bind(this.root.heightProperty());
+        blackOverlay.setFill(Color.BLACK);
+        blackOverlay.setOpacity(1.0);
+        blackOverlay.setMouseTransparent(true);
+
+        this.root.getChildren().add(blackOverlay);
     }
 
     @Override
@@ -31,6 +47,11 @@ public class Forest extends Place{
         lisovukView = new CharacterView((StackPane) this.getRoot());
 
         Map<String, Runnable> actions = new HashMap<>();
+
+        FadeTransition fadeInForest = new FadeTransition(Duration.seconds(0.5), blackOverlay);
+        fadeInForest.setFromValue(1.0);
+        fadeInForest.setToValue(0.0);
+        fadeInForest.play();
 
         actions.put("showSadYevdokha", () -> {
             if (lisovukView != null) lisovukView.hide();
@@ -67,13 +88,33 @@ public class Forest extends Place{
 
             eyeButton.setOnAction(e -> {
                 ((StackPane) this.getRoot()).getChildren().remove(eyeButton);
-
                 this.setBackground(MAGIC_FOREST);
-
                 StoryRunner.playScene("/story/chapter2.json", "forest_meeting", (StackPane) this.getRoot(), actions, null);
             });
 
             ((StackPane) this.getRoot()).getChildren().add(eyeButton);
+        });
+
+        actions.put("setupKarmaListener", () -> {
+            GameState.setKarmaListener((currentKarma, addedPoints) ->
+                    StatNotification.show((StackPane) this.getRoot(), currentKarma, addedPoints)
+            );
+        });
+
+        actions.put("choice_say_name", () -> {
+            GameState.changeKarma(1);
+            StoryRunner.playScene("/story/chapter2.json", "lisovuk_quest_start", (StackPane) this.getRoot(), actions, null);
+        });
+
+        actions.put("choice_stay_silent", () -> {
+            GameState.changeKarma(-1);
+            StoryRunner.playScene("/story/chapter2.json", "lisovuk_quest_start", (StackPane) this.getRoot(), actions, null);
+        });
+
+        actions.put("give_empty_pot", () -> {
+            ukma.fourgirls.domain.Item pot = new ukma.fourgirls.domain.Item("Порожній горщик", "/images/empty_pot.png");
+            ukma.fourgirls.state.InventoryState.addItem(pot);
+            ukma.fourgirls.core.NotificationManager.showNotification(this.root, "Ви отримали предмет: Порожній горщик");
         });
 
         StoryRunner.playScene("/story/chapter2.json", "forest_intro_scene", (StackPane) this.getRoot(), actions, null);

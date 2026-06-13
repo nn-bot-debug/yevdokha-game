@@ -1,13 +1,10 @@
 package ukma.fourgirls.ui.roots;
 
 import javafx.animation.FadeTransition;
-import javafx.geometry.Pos;
-import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
-import ukma.fourgirls.core.AudioManager;
 import ukma.fourgirls.core.SceneManager;
 import ukma.fourgirls.logic.StoryRunner;
 import ukma.fourgirls.ui.CameraController;
@@ -72,11 +69,21 @@ public class Yard extends Place {
 
         actions.put("enable_papyrus_pickup", () -> {
             // Тут ти потім налаштуєш клік по папірусу через InventoryManager, як у ChildRoom!
-            this.enableNavigation();
+            System.out.println("Папірус піднято по сюжету.");
         });
 
         actions.put("go_to_forest_automatically", () -> {
-            SceneManager.getInstance().switchToCachedRoom("Forest", Forest::new);
+            blackOverlay.toFront();
+
+            FadeTransition fadeToBlack = new FadeTransition(Duration.seconds(1.2), blackOverlay);
+            fadeToBlack.setFromValue(0.0);
+            fadeToBlack.setToValue(1.0);
+
+            fadeToBlack.setOnFinished(e -> {
+                SceneManager.getInstance().switchToCachedRoom("Forest", Forest::new);
+            });
+
+            fadeToBlack.play();
         });
 
         StoryRunner.playScene("/story/chapter2.json", "yard_raven_scene", (StackPane) this.getRoot(), actions, null);

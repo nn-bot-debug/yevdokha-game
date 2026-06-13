@@ -13,7 +13,7 @@
         "type": "action",
         "actionId": "show_yard_view"
       },
-      { "type": "action", "actionId": "showSadYevdokha" },
+      { "type": "action", "actionId": "showHappyYevdokha" },
       {
         "type": "dialogue",
         "character": "Євдоха",
@@ -110,7 +110,59 @@
         "text": [
           "Хто ти?"
         ]
+      },
+      { "type": "action", "actionId": "setupKarmaListener" },
+      {
+        "type": "choice",
+        "options": [
+          {
+            "text": "Євдоха!",
+            "actionId": "choice_say_name"
+          },
+          {
+            "text": "Мовчати",
+            "actionId": "choice_stay_silent"
+          }
+        ]
       }
+    ],
+
+    "lisovuk_quest_start": [
+      { "type": "action", "actionId": "showLisovuk" },
+      {
+        "type": "dialogue",
+        "character": "Лісовик",
+        "text": [
+          "....",
+          "Ти виглядаєш вразливою... Але зараз мені потрібна допомога як ніколи.",
+          "Сам я вже старий, мене заїдають комахи. Відчуваю, що з кожним заходом сонця я втрачаю свої сили."
+        ]
+      },
+      { "type": "action", "actionId": "showSadYevdokha" },
+      {
+        "type": "dialogue",
+        "character": "Євдоха",
+        "text": [
+          "Чим я можу тобі допомогти?"
+        ]
+      },
+      { "type": "action", "actionId": "hideActor" },
+      { "type": "action", "actionId": "showLisovuk" },
+      {
+        "type": "dialogue",
+        "character": "Лісовик",
+        "text": [
+          "Було б добре, якби ти змогла дістати для мене смоли. Мені потрібно зовсім трішки.",
+          "Недалеко звідси є дерево, від якого я живився раніше, але там засіли комахи. ",
+          "За законами лісу, я не можу вигнати їх звідти. Та й смоли просто так вони не дадуть.",
+          "Щось вони в мене просили..... А я старий, вже все забуваю.",
+          "Тримай цей горщик, заповни його наполовину.",
+          "Шлях до дерева знайдеш якщо будеш триматися праворуч.",
+          "Якщо допоможеш мені, я в боргу не залишусь."
+        ]
+      },
+      { "type": "action", "actionId": "hideActor" },
+      { "type": "action", "actionId": "give_empty_pot" }
     ]
   }
 }
