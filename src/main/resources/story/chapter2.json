@@ -1,6 +1,7 @@
 {
   "scenes": {
     "yard_raven_scene": [
+      { "type": "action", "actionId": "hideActor" },
       {
         "type": "dialogue",
         "text": [
@@ -12,28 +13,30 @@
         "type": "action",
         "actionId": "show_yard_view"
       },
+      { "type": "action", "actionId": "showSadYevdokha" },
       {
         "type": "dialogue",
         "character": "Євдоха",
-        "portrait": "/images/sadyevdokha.png",
         "text": [
           "Тато? Де ти, татку? Я вже відчинила двері, можеш заходити."
         ]
       },
+      { "type": "action", "actionId": "hideActor" },
       {
         "type": "dialogue",
         "text": [
           "Та обернувшись, Євдоха нікого не побачила. Тільки крук із покоцаним дзьобом та червоними очима сидів на паркані та нагло витріщався на дівчинку."
         ]
       },
+      { "type": "action", "actionId": "showSadYevdokha" },
       {
         "type": "dialogue",
         "character": "Євдоха",
-        "portrait": "/images/sadyevdokha.png",
         "text": [
           "Чого тобі?"
         ]
       },
+      { "type": "action", "actionId": "hideActor" },
       {
         "type": "dialogue",
         "text": [
@@ -45,6 +48,68 @@
       {
         "type": "action",
         "actionId": "enable_papyrus_pickup"
+      },
+      { "type": "action", "actionId": "showHappyYevdokha" },
+      {
+        "type": "dialogue",
+        "character": "Євдоха",
+        "text": [
+          "Це лист від батька! Магія справді існує!Треба скоріш йти до лісу!"
+        ]
+      },
+      { "type": "action", "actionId": "hideActor" },
+      {"type": "action", "actionId": "go_to_forest_automatically"}
+    ],
+
+    "forest_intro_scene": [
+      {
+        "type": "dialogue",
+        "text": [
+          "В лісі Євдоху зустрів непроглядний туман.",
+          "Гілки з листям повіює вітерець, і в цьому танці, сосни немов шепотіли.",
+          "Раптом шепіт стає розбірливим, дівчинка чітко чує слова."
+        ]
+      },
+      {
+        "type": "dialogue",
+        "character": "Шепіт",
+        "text": [
+          "Побач....Почуй....Прийми"
+        ]
+      },
+      { "type": "action", "actionId": "show_feature_tutorial" },
+      { "type": "action", "actionId": "enable_eye_feature_button" }
+    ],
+
+    "forest_meeting": [
+      {
+        "type": "dialogue",
+        "text": [
+          "В тумані Євдоха бачить те саме створіння, що накликало грозу."
+        ]
+      },
+      { "type": "action", "actionId": "showLisovuk" },
+      {
+        "type": "dialogue",
+        "character": "Лісовик",
+        "text": [
+          "..."
+        ]
+      },
+      { "type": "action", "actionId": "hideActor" },
+      {
+        "type": "dialogue",
+        "text": [
+          "Він стояв та дивився дівчинці прямо в очі, його погляд немов проходив крізь неї, але відірватись було неможливим. Гілки кружляли вимальовуючи руки та криві пальці. Мох де-не-де пом’якшував силует. Але роги змушували зайвий раз не рухатись."
+        ]
+      },
+      { "type": "action", "actionId": "showLisovuk" },
+      {
+        "type": "dialogue",
+        "character": "Лісовик",
+        "text": [
+          "Хто ти?"
+        ]
       }
     ]
   }
