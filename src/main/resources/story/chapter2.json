@@ -197,7 +197,7 @@
           "Чи не могли б ви знайти собі інше дерево?"
         ]
       },
-      { "type": "action", "actionId": "showAnt" },
+      { "type": "action", "actionId": "showAntRyadovuy" },
       {
         "type": "dialogue",
         "character": "Рядовий \"Лапка\"",
@@ -212,7 +212,7 @@
           "Дівчинка кивнула головою."
         ]
       },
-      { "type": "action", "actionId": "showAnt" },
+      { "type": "action", "actionId": "showAntRyadovuy" },
       {
         "type": "dialogue",
         "character": "Рядовий \"Лапка\"",
@@ -238,7 +238,7 @@
           "А якщо я вирішу це все? Ви зможете покинути це дерево?"
         ]
       },
-      { "type": "action", "actionId": "showAnt" },
+      { "type": "action", "actionId": "showAntRyadovuy" },
       {
         "type": "dialogue",
         "character": "Рядовий \"Лапка\"",
@@ -281,7 +281,7 @@
     ],
 
     "ant_rescue_success": [
-      { "type": "action", "actionId": "showAnt" },
+      { "type": "action", "actionId": "showAntBrother" },
       {
         "type": "dialogue",
         "character": "Брат рядового",

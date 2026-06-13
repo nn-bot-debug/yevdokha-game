@@ -102,17 +102,31 @@ public class ChildRoom extends Place {
         Image drawingImg = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/drawing.png")));
         ImageView drawingView = new ImageView(drawingImg);
 
-        drawingView.setFitWidth(160);
+        drawingView.setFitWidth(220);
         drawingView.setPreserveRatio(true);
 
         // 3D Трансформація
-        Rotate tiltX = new Rotate(-70, Rotate.X_AXIS);
+        Rotate tiltX = new Rotate(-65, Rotate.X_AXIS);
         Rotate rotateY = new Rotate(15, Rotate.Y_AXIS);
         Rotate rotateZ = new Rotate(-25, Rotate.Z_AXIS);
         drawingView.getTransforms().addAll(tiltX, rotateY, rotateZ);
 
-        drawingView.setTranslateX(-230);
-        drawingView.setTranslateY(340);
+        drawingView.setTranslateX(-180);
+        drawingView.setTranslateY(320);
+
+        if (this.getRoot() instanceof StackPane) {
+            StackPane rootPane = (StackPane) this.getRoot();
+
+            rootPane.widthProperty().addListener((obs, oldVal, newVal) -> {
+                double currentWidth = newVal.doubleValue();
+                drawingView.setTranslateX(currentWidth * (-180.0 / 1536.0));
+            });
+
+            rootPane.heightProperty().addListener((obs, oldVal, newVal) -> {
+                double currentHeight = newVal.doubleValue();
+                drawingView.setTranslateY(currentHeight * (320.0 / 960.0));
+            });
+        }
 
         ColorAdjust darkenEffect = new ColorAdjust();
         darkenEffect.setBrightness(-0.15);

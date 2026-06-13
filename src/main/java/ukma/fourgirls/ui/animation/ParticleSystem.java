@@ -61,4 +61,6 @@ public class ParticleSystem {
 
     public List<Particle> getDustParticles() { return dustParticles; }
     public List<Particle> getSmokeParticles() { return smokeParticles; }
+    public double getCandleX() { return CANDLE_X; }
+    public double getCandleY() { return CANDLE_Y; }
 }

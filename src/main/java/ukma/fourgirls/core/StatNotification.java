@@ -38,7 +38,7 @@ public final class StatNotification {
         var textLabel = new Label();
 
         String sign = addedPoints > 0 ? "+" : "";
-        textLabel.setText("Доля змінилась: " + sign + addedPoints + " карма");
+        textLabel.setText("Доля змінилась: " + sign + addedPoints + " подих лісу");
 
         if (addedPoints > 0) {
             textLabel.getStyleClass().add("stat-text-plus");
