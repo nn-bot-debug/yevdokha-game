@@ -41,7 +41,7 @@ public class InstructionsScreen {
         }
 
         try {
-            Image bgImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/notebook.png")));
+            Image bgImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/canvas/notebook.png")));
             BackgroundImage backgroundImage = new BackgroundImage(
                     bgImage,
                     BackgroundRepeat.NO_REPEAT,

@@ -11,7 +11,7 @@
       {
         "type": "dialogue",
         "character": "Євдоха",
-        "portrait": "/images/sadyevdokha.png",
+        "portrait": "/images/characters/sadyevdokha.png",
         "text": [
           "Останнім часом мама зовсім засмучена, сподіваюсь мій малюнок підійме їй настрій."
         ]
@@ -29,7 +29,7 @@
       {
         "type": "dialogue",
         "character": "Євдоха",
-        "portrait": "/images/sadyevdokha.png",
+        "portrait": "/images/characters/sadyevdokha.png",
         "text": [
           "Зазвичай мама в такий час вже прокинулась. Піду до неї в кімнату. "
         ]
@@ -61,7 +61,7 @@
       {
         "type": "dialogue",
         "character": "Євдоха",
-        "portrait": "/images/sadyevdokha.png",
+        "portrait": "/images/characters/sadyevdokha.png",
         "text": [
           "Мабуть мама перебрала із чарами. Вона сама казала, це може бути шкідливо... ",
           "І кому ж мені тепер показати малюнок... "
@@ -112,7 +112,7 @@
       {
         "type": "dialogue",
         "character": "Євдоха",
-        "portrait": "/images/scaredYevdokha.png",
+        "portrait": "/images/characters/scaredYevdokha.png",
         "text": [
           "Ах!"
         ]

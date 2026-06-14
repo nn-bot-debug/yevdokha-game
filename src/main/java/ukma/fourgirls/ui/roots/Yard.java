@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Yard extends Place {
-    private static final String IMAGE_PATH = "/images/yard.png";
+    private static final String IMAGE_PATH = "/images/canvas/yard.png";
     private final Rectangle blackOverlay;
     private CharacterView actorView;
 
@@ -51,14 +51,14 @@ public class Yard extends Place {
         actions.put("showSadYevdokha", () -> {
             if (actorView != null) {
                 actorView.setPositionSide(true);
-                actorView.setCharacterSprite("/images/Zasmuchena_evdoha.png");
+                actorView.setCharacterSprite("/images/characters/Zasmuchena_evdoha.png");
             }
         });
 
         actions.put("showHappyYevdokha", () -> {
             if (actorView != null) {
                 actorView.setPositionSide(true);
-                actorView.setCharacterSprite("/images/happy_Yevdokha.png");
+                actorView.setCharacterSprite("/images/characters/happy_Yevdokha.png");
             }
         });
 

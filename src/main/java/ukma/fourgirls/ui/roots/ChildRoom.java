@@ -17,8 +17,8 @@ import java.util.Map;
 import java.util.Objects;
 
 public class ChildRoom extends Place {
-    private static final String INTRO_IMAGE_PATH = "/images/Yevdokha_drawing.png";
-    private static final String GAMEPLAY_IMAGE_PATH = "/images/Yevdokha_room.png";
+    private static final String INTRO_IMAGE_PATH = "/images/canvas/Yevdokha_drawing.png";
+    private static final String GAMEPLAY_IMAGE_PATH = "/images/canvas/Yevdokha_room.png";
     private ImageView interactiveDrawing;
 
     public ChildRoom() {
@@ -39,7 +39,7 @@ public class ChildRoom extends Place {
                     this.roomContentLayer.getChildren().add(interactiveDrawing);
                 }
 
-                Item yevdokhaDrawing = new Item("Малюнок", "/images/drawing.png");
+                Item yevdokhaDrawing = new Item("Малюнок", "/images/objects/drawing.png");
                 InventoryManager.setupPickupAction(
                         session,
                         this.interactiveDrawing,
@@ -67,7 +67,7 @@ public class ChildRoom extends Place {
                     "Завдання: Підніміть малюнок зі столу\nПідказка: щоб підняти річ, натисніть на неї ЛКМ)"
             );
 
-            Item yevdokhaDrawing = new Item("Малюнок", "/images/drawing.png");
+            Item yevdokhaDrawing = new Item("Малюнок", "/images/objects/drawing.png");
             InventoryManager.setupPickupAction(
                     session,
                     this.getInteractiveDrawing(),
@@ -111,7 +111,7 @@ public class ChildRoom extends Place {
 
     private ImageView createInteractiveDrawing() {
         Image drawingImg = new Image(Objects.requireNonNull(
-                getClass().getResourceAsStream("/images/drawing.png")));
+                getClass().getResourceAsStream("/images/objects/drawing.png")));
         ImageView drawingView = new ImageView(drawingImg);
 
         drawingView.setFitWidth(220);

@@ -57,7 +57,7 @@ public class MainMenuWindow extends Application {
         }
 
         try{
-            Image backgroundImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/MainMenuBackground.jpg")));
+            Image backgroundImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/canvas/MainMenuBackground.jpg")));
             BackgroundImage backgroundImageB = new BackgroundImage(
                     backgroundImage,
                     BackgroundRepeat.NO_REPEAT,

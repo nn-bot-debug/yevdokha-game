@@ -19,12 +19,12 @@ import java.util.Map;
 import java.util.Objects;
 
 public class MomRoom extends Place {
-    private static final String IMAGE_PATH = "/images/mother_room.png";
-    private static final String SECOND_IMAGE_PATH = "/images/drawing.png";
-    private static final String SCARY_MOM_PATH = "/images/scary_mom_screamer.jpeg";
+    private static final String IMAGE_PATH = "/images/canvas/mother_room.png";
+    private static final String SECOND_IMAGE_PATH = "/images/objects/drawing.png";
+    private static final String SCARY_MOM_PATH = "/images/canvas/scary_mom_screamer.jpeg";
 
-    private static final String CORNER_PATH = "/images/corner.png";
-    private static final String BROOCH_PATH = "/images/brooch.png";
+    private static final String CORNER_PATH = "/images/canvas/corner.png";
+    private static final String BROOCH_PATH = "/images/objects/brooch.png";
 
     private final Rectangle blackOverlay;
     private final ImageView momView;
@@ -83,7 +83,7 @@ public class MomRoom extends Place {
         this.removeBlackOverlay();
         this.root.getChildren().removeAll(momView, drawingView, scaryMomView);
 
-        this.setBackground("/images/part_of_mom_room.png");
+        this.setBackground("/images/canvas/part_of_mom_room.png");
 
         actorView = new CharacterView((StackPane) this.getRoot());
         ratView = new CharacterView((StackPane) this.getRoot());
@@ -98,19 +98,19 @@ public class MomRoom extends Place {
         actions.put("showRat", () -> {
             if (actorView != null) actorView.hide();
             ratView.setPositionSide(false);
-            ratView.setCharacterSprite("/images/rat_with_key.png");
+            ratView.setCharacterSprite("/images/characters/rat_with_key.png");
         });
 
         actions.put("showSadYevdokha", () -> {
             if (ratView != null) ratView.hide();
             actorView.setPositionSide(true);
-            actorView.setCharacterSprite("/images/Zasmuchena_evdoha.png");
+            actorView.setCharacterSprite("/images/characters/Zasmuchena_evdoha.png");
         });
 
         actions.put("showHappyYevdokha", () -> {
             if (ratView != null) ratView.hide();
             actorView.setPositionSide(true);
-            actorView.setCharacterSprite("/images/happy_Yevdokha.png");
+            actorView.setCharacterSprite("/images/characters/happy_Yevdokha.png");
         });
 
         actions.put("hideAllActors", () -> {
@@ -167,7 +167,7 @@ public class MomRoom extends Place {
 
         actions.put("give_key", () -> {
             this.setBackground(IMAGE_PATH);
-            session.addItem(new ukma.fourgirls.domain.Item("Ключ від дверей", "/images/key.png"));
+            session.addItem(new ukma.fourgirls.domain.Item("Ключ від дверей", "/images/objects/key.png"));
             NotificationManager.showNotification(this.root, "Ви отримали ключ від дверей");
 
             session.unlockLocation("Corridor");

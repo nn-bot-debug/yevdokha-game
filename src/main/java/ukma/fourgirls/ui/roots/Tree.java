@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Tree extends Place{
-    private static final String IMAGE_PATH = "/images/forest.png";
+    private static final String IMAGE_PATH = "/images/canvas/forest.png";
     private final Rectangle blackOverlay;
     private CharacterView actorView;
     private CharacterView antView;
@@ -56,7 +56,7 @@ public class Tree extends Place{
             if (antView != null) antView.hide();
             if (actorView != null) {
                 actorView.setPositionSide(true);
-                actorView.setCharacterSprite("/images/Zasmuchena_evdoha.png");
+                actorView.setCharacterSprite("/images/characters/Zasmuchena_evdoha.png");
             }
         });
 
@@ -64,7 +64,7 @@ public class Tree extends Place{
             if (antView != null) antView.hide();
             if (actorView != null) {
                 actorView.setPositionSide(true);
-                actorView.setCharacterSprite("/images/happy_Yevdokha.png");
+                actorView.setCharacterSprite("/images/characters/happy_Yevdokha.png");
             }
         });
 
@@ -72,7 +72,7 @@ public class Tree extends Place{
             if (actorView != null) actorView.hide();
             if (antView != null) {
                 antView.setPositionSide(false);
-                antView.setCharacterSprite("/images/ant-ryadovuy.png");
+                antView.setCharacterSprite("/images/characters/ant-ryadovuy.png");
             }
         });
 
@@ -80,7 +80,7 @@ public class Tree extends Place{
             if (actorView != null) actorView.hide();
             if (antView != null) {
                 antView.setPositionSide(false);
-                antView.setCharacterSprite("/images/ant-brother.png");
+                antView.setCharacterSprite("/images/characters/ant-brother.png");
             }
         });
 
@@ -133,7 +133,7 @@ public class Tree extends Place{
             fadeOut.setToValue(1.0);
             fadeOut.setOnFinished(e -> {
                 session.removeItem("Порожній горщик");
-                session.addItem(new ukma.fourgirls.domain.Item("Горщик зі смолою", "/images/full_pot.png"));
+                session.addItem(new ukma.fourgirls.domain.Item("Горщик зі смолою", "/images/objects/full_pot.png"));
 
                 LocationRegistry.switchTo("Forest");
             });

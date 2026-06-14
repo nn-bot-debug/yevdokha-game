@@ -18,8 +18,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Forest extends Place{
-    private static final String NORMAL_FOREST = "/images/forest.png";
-    private static final String MAGIC_FOREST = "/images/image-forest.png";
+    private static final String NORMAL_FOREST = "/images/canvas/forest.png";
+    private static final String MAGIC_FOREST = "/images/canvas/image-forest.png";
     private final Rectangle blackOverlay;
     private CharacterView actorView;
     private CharacterView lisovukView;
@@ -103,7 +103,7 @@ public class Forest extends Place{
         });
 
         actions.put("give_empty_pot", () -> {
-            ukma.fourgirls.domain.Item pot = new ukma.fourgirls.domain.Item("Порожній горщик", "/images/empty_pot.png");
+            ukma.fourgirls.domain.Item pot = new ukma.fourgirls.domain.Item("Порожній горщик", "/images/objects/empty_pot.png");
             session.addItem(pot);
             ukma.fourgirls.core.NotificationManager.showNotification(this.root, "Ви отримали предмет: Порожній горщик");
 
@@ -139,7 +139,7 @@ public class Forest extends Place{
             if (lisovukView != null) lisovukView.hide();
             if (actorView != null) {
                 actorView.setPositionSide(true);
-                actorView.setCharacterSprite("/images/Zasmuchena_evdoha.png");
+                actorView.setCharacterSprite("/images/characters/Zasmuchena_evdoha.png");
             }
         });
 
@@ -147,7 +147,7 @@ public class Forest extends Place{
             if (actorView != null) actorView.hide();
             if (lisovukView != null) {
                 lisovukView.setPositionSide(false);
-                lisovukView.setCharacterSprite("/images/Lisovuk.png");
+                lisovukView.setCharacterSprite("/images/characters/Lisovuk.png");
             }
         });
 

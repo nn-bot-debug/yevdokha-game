@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Corridor extends Place {
-    private static final String IMAGE_PATH = "/images/corridor.png";
+    private static final String IMAGE_PATH = "/images/canvas/corridor.png";
     private final Rectangle blackOverlay;
 
     public Corridor() {

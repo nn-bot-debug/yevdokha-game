@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public class Kitchen extends Place {
-    private static final String IMAGE_PATH = "/images/kitchen.png";
+    private static final String IMAGE_PATH = "/images/canvas/kitchen.png";
     private final ImageView interactiveBread;
     private final AnimationCanvas animationCanvas;
     private final Rectangle flashOverlay;
@@ -66,7 +66,7 @@ public class Kitchen extends Place {
                 "Завдання: Знайдіть щось поїсти на кухні."
         );
 
-        Item bread = new Item("Зацвілий хліб", "/images/bread.png");
+        Item bread = new Item("Зацвілий хліб", "/images/objects/bread.png");
         Node breadNode = this.getInteractiveBread();
 
         InventoryManager.setupPickupAction(
@@ -98,13 +98,13 @@ public class Kitchen extends Place {
         actions.put("showScaredSprite", () -> {
             ratView.hide();
             actorView.setPositionSide(true);
-            actorView.setCharacterSprite("/images/scaredYevdokhaFull.png");
+            actorView.setCharacterSprite("/images/characters/scaredYevdokhaFull.png");
         });
 
         actions.put("showSadYevdokhaSprite", () -> {
             ratView.hide();
             actorView.setPositionSide(true);
-            actorView.setCharacterSprite("/images/Zasmuchena_evdoha.png");
+            actorView.setCharacterSprite("/images/characters/Zasmuchena_evdoha.png");
         });
 
         actions.put("hideActorsForWhisper", () -> {
@@ -125,20 +125,20 @@ public class Kitchen extends Place {
         );
 
         actions.put("triggerScreamerSequence", () -> {
-            this.setBackground("/images/rain_in_kitchen.png");
+            this.setBackground("/images/canvas/rain_in_kitchen.png");
             AudioManager.getInstance().buttonSound("/music/window.wav");
             FadeTransition fade = new FadeTransition(Duration.millis(60), flashOverlay);
             fade.setFromValue(1.0);
             fade.setToValue(0.0);
             fade.setOnFinished(event ->
                     this.triggerLightningFlash(() ->
-                            this.setBackground("/images/window_monster.png"))
+                            this.setBackground("/images/canvas/window_monster.png"))
             );
             fade.play();
         });
 
         actions.put("showFloorView", () -> {
-            this.setBackground("/images/kitchen_floor.png");
+            this.setBackground("/images/canvas/kitchen_floor.png");
             this.animationCanvas.setRainActive(false);
 
             for (Node topNode : this.root.getChildren()) {
@@ -155,23 +155,23 @@ public class Kitchen extends Place {
         });
 
         actions.put("spawnRatNearBread", () ->
-                this.setBackground("/images/kitchen_with_rat.png")
+                this.setBackground("/images/canvas/kitchen_with_rat.png")
         );
 
         actions.put("moveRatToDoor", () ->
-                this.setBackground("/images/rat_near_door.png")
+                this.setBackground("/images/canvas/rat_near_door.png")
         );
 
         actions.put("playRatSqueak", () -> {
             if (actorView != null) actorView.hide();
-            this.setBackground("/images/kitchen_floor.png");
+            this.setBackground("/images/canvas/kitchen_floor.png");
             AudioManager.getInstance().buttonSound("/music/mouse_pisk.wav");
             ratView.setPositionSide(false);
-            ratView.setCharacterSprite("/images/scary_rat.png");
+            ratView.setCharacterSprite("/images/characters/scary_rat.png");
         });
 
         actions.put("riseFromFloorAndHint", () -> {
-            this.setBackground("/images/rain_in_kitchen.png");
+            this.setBackground("/images/canvas/rain_in_kitchen.png");
 
             for (Node topNode : this.root.getChildren()) {
                 if (topNode instanceof javafx.scene.control.ScrollPane sp) {
@@ -208,7 +208,7 @@ public class Kitchen extends Place {
 
     public void startStormEffects() {
         animationCanvas.setRainActive(true);
-        this.setBackground("/images/rain_in_kitchen.png");
+        this.setBackground("/images/canvas/rain_in_kitchen.png");
     }
 
     public void triggerLightningFlash(Runnable onFlashComplete) {
@@ -238,7 +238,7 @@ public class Kitchen extends Place {
 
     private ImageView createInteractiveBread() {
         Image breadImg = new Image(Objects.requireNonNull(
-                getClass().getResourceAsStream("/images/bread.png")));
+                getClass().getResourceAsStream("/images/objects/bread.png")));
         ImageView breadView = new ImageView(breadImg);
 
         breadView.setFitWidth(180);
