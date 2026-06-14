@@ -115,7 +115,7 @@ public class FirstPuzzle extends StackPane {
         if (session.hasItem("Ключ")) {
             secondsLeft = 80;
         } else if (session.hasItem("Брошка")) {
-            secondsLeft = 15;
+            secondsLeft = 40;
         } else {
             secondsLeft = 60;
         }
@@ -207,7 +207,7 @@ public class FirstPuzzle extends StackPane {
                 ukma.fourgirls.core.StatNotification.show(this, currentKarma, addedPoints);
                 var notification = this.getChildren().get(this.getChildren().size() - 1);
                 StackPane.setAlignment(notification, Pos.TOP_CENTER);
-                StackPane.setMargin(notification, new Insets(40, 0, 0, 0));
+                StackPane.setMargin(notification, new Insets(60, 0, 0, 0));
                 notification.setTranslateX(0);
                 notification.toFront();
             });
@@ -304,7 +304,7 @@ public class FirstPuzzle extends StackPane {
         if (!hasLostOnce) {
             hasLostOnce = true;
             session.changeKarma(-2);
-            resultTitle.setText("Час вийшов! Замок заклинило. Ви втратили 2 подихи вітру.");
+            resultTitle.setText("Час вийшов! Замок заклинило.");
         } else {
             resultTitle.setText("Час вийшов! Замок заклинило.");
         }
@@ -326,7 +326,7 @@ public class FirstPuzzle extends StackPane {
         if (session.hasItem("Ключ")) {
             secondsLeft = 80;
         } else if (session.hasItem("Брошка")) {
-            secondsLeft = 15;
+            secondsLeft = 40;
         } else {
             secondsLeft = 60;
         }
