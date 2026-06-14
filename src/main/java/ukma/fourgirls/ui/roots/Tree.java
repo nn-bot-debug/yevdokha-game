@@ -16,13 +16,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Tree extends Place{
-    private static final String IMAGE_PATH = "/images/canvas/forest.png";
+    private static final String NORMAL_TREE = "/images/canvas/tree.png";
+    private static final String MAGIC_TREE = "/images/canvas/image-tree.png";
+
     private final Rectangle blackOverlay;
     private CharacterView actorView;
     private CharacterView antView;
+    Map<String, Runnable> actions = new HashMap<>();
 
     public Tree() {
-        super(IMAGE_PATH);
+        super(NORMAL_TREE);
         this.getRoot().getStylesheets().add(getClass().getResource("/css/settings.css").toExternalForm());
 
         blackOverlay = new Rectangle();
@@ -38,6 +41,7 @@ public class Tree extends Place{
     @Override
     public void onEnter() {
         CameraController.setPanningEnabled(true);
+        this.setBackground(NORMAL_TREE);
         this.startTreeCutscene();
     }
 
@@ -45,7 +49,7 @@ public class Tree extends Place{
         actorView = new CharacterView((StackPane) this.getRoot());
         antView = new CharacterView((StackPane) this.getRoot());
 
-        Map<String, Runnable> actions = new HashMap<>();
+        actions.clear();
 
         javafx.animation.FadeTransition fadeIn = new javafx.animation.FadeTransition(javafx.util.Duration.seconds(1.5), blackOverlay);
         fadeIn.setFromValue(1.0);
@@ -103,6 +107,7 @@ public class Tree extends Place{
                     AudioManager.getInstance().fadeOutAndStop(eyeTrack, 1.5);
 
                 ((StackPane) this.getRoot()).getChildren().remove(eyeButton);
+                this.setBackground(MAGIC_TREE);
                 StoryRunner.playScene(session, "/story/chapter2.json", "ant_colony_dialogue", (StackPane) this.getRoot(), actions, null);
             });
             ((StackPane) this.getRoot()).getChildren().add(eyeButton);
