@@ -78,9 +78,13 @@ public class Corridor extends Place {
 
         NotificationManager.showNotification(this.root, "Головоломка розпочалася!");
 
-        // TODO: Твій виклик менеджера головоломок, наприклад:
-        // PuzzleManager.getInstance().startDoorPuzzle(this.root);
-        wentOut();
+        ukma.fourgirls.ui.puzzles.FirstPuzzle gradientPuzzle = new ukma.fourgirls.ui.puzzles.FirstPuzzle(session, () -> {
+            this.root.getChildren().removeIf(node -> node instanceof ukma.fourgirls.ui.puzzles.FirstPuzzle);
+            wentOut();
+        });
+
+        this.root.getChildren().add(gradientPuzzle);
+        gradientPuzzle.toFront();
     }
 
     private void startIntroCutscene() {
