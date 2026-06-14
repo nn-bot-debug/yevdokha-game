@@ -6,9 +6,9 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import ukma.fourgirls.core.AudioManager;
+import ukma.fourgirls.core.LocationRegistry;
 import ukma.fourgirls.core.StatNotification;
 import ukma.fourgirls.logic.StoryRunner;
-import ukma.fourgirls.state.GameState;
 import ukma.fourgirls.ui.CameraController;
 import ukma.fourgirls.ui.CharacterView;
 
@@ -16,13 +16,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Tree extends Place{
-    private static final String IMAGE_PATH = "/images/forest.png";
+    private static final String NORMAL_TREE = "/images/canvas/tree.png";
+    private static final String MAGIC_TREE = "/images/canvas/image-tree.png";
+
     private final Rectangle blackOverlay;
     private CharacterView actorView;
     private CharacterView antView;
+    Map<String, Runnable> actions = new HashMap<>();
 
     public Tree() {
-        super(IMAGE_PATH);
+        super(NORMAL_TREE);
         this.getRoot().getStylesheets().add(getClass().getResource("/css/settings.css").toExternalForm());
 
         blackOverlay = new Rectangle();
@@ -38,6 +41,7 @@ public class Tree extends Place{
     @Override
     public void onEnter() {
         CameraController.setPanningEnabled(true);
+        this.setBackground(NORMAL_TREE);
         this.startTreeCutscene();
     }
 
@@ -45,7 +49,7 @@ public class Tree extends Place{
         actorView = new CharacterView((StackPane) this.getRoot());
         antView = new CharacterView((StackPane) this.getRoot());
 
-        Map<String, Runnable> actions = new HashMap<>();
+        actions.clear();
 
         javafx.animation.FadeTransition fadeIn = new javafx.animation.FadeTransition(javafx.util.Duration.seconds(1.5), blackOverlay);
         fadeIn.setFromValue(1.0);
@@ -56,7 +60,7 @@ public class Tree extends Place{
             if (antView != null) antView.hide();
             if (actorView != null) {
                 actorView.setPositionSide(true);
-                actorView.setCharacterSprite("/images/Zasmuchena_evdoha.png");
+                actorView.setCharacterSprite("/images/characters/Zasmuchena_evdoha.png");
             }
         });
 
@@ -64,7 +68,7 @@ public class Tree extends Place{
             if (antView != null) antView.hide();
             if (actorView != null) {
                 actorView.setPositionSide(true);
-                actorView.setCharacterSprite("/images/happy_Yevdokha.png");
+                actorView.setCharacterSprite("/images/characters/happy_Yevdokha.png");
             }
         });
 
@@ -72,7 +76,7 @@ public class Tree extends Place{
             if (actorView != null) actorView.hide();
             if (antView != null) {
                 antView.setPositionSide(false);
-                antView.setCharacterSprite("/images/ant-ryadovuy.png");
+                antView.setCharacterSprite("/images/characters/ant-ryadovuy.png");
             }
         });
 
@@ -80,7 +84,7 @@ public class Tree extends Place{
             if (actorView != null) actorView.hide();
             if (antView != null) {
                 antView.setPositionSide(false);
-                antView.setCharacterSprite("/images/ant-brother.png");
+                antView.setCharacterSprite("/images/characters/ant-brother.png");
             }
         });
 
@@ -103,14 +107,15 @@ public class Tree extends Place{
                     AudioManager.getInstance().fadeOutAndStop(eyeTrack, 1.5);
 
                 ((StackPane) this.getRoot()).getChildren().remove(eyeButton);
-                StoryRunner.playScene("/story/chapter2.json", "ant_colony_dialogue", (StackPane) this.getRoot(), actions, null);
+                this.setBackground(MAGIC_TREE);
+                StoryRunner.playScene(session, "/story/chapter2.json", "ant_colony_dialogue", (StackPane) this.getRoot(), actions, null);
             });
             ((StackPane) this.getRoot()).getChildren().add(eyeButton);
             eyeButton.toFront();
         });
 
         actions.put("trigger_root_vision", () -> {
-            StoryRunner.playScene("/story/chapter2.json", "ant_rescue_start", (StackPane) this.getRoot(), actions, null);
+            StoryRunner.playScene(session, "/story/chapter2.json", "ant_rescue_start", (StackPane) this.getRoot(), actions, null);
         });
 
         actions.put("start_ant_rescue_puzzle", () -> {
@@ -123,7 +128,7 @@ public class Tree extends Place{
         actions.put("enable_resin_planning", () -> {
             System.out.println("Почався таймер підготовки. Гравець планує збір смоли.");
             // Тут буде запуск збору смоли.
-            StoryRunner.playScene("/story/chapter2.json", "resin_collection_success", (StackPane) this.getRoot(), actions, null);
+            StoryRunner.playScene(session, "/story/chapter2.json", "resin_collection_success", (StackPane) this.getRoot(), actions, null);
         });
 
         actions.put("go_back_to_forest_with_resin", () -> {
@@ -132,20 +137,20 @@ public class Tree extends Place{
             fadeOut.setFromValue(0.0);
             fadeOut.setToValue(1.0);
             fadeOut.setOnFinished(e -> {
-                ukma.fourgirls.state.InventoryState.removeItem("Порожній горщик");
-                ukma.fourgirls.state.InventoryState.addItem(new ukma.fourgirls.domain.Item("Горщик зі смолою", "/images/full_pot.png"));
+                session.removeItem("Порожній горщик");
+                session.addItem(new ukma.fourgirls.domain.Item("Горщик зі смолою", "/images/objects/full_pot.png"));
 
-                ukma.fourgirls.core.SceneManager.getInstance().switchToCachedRoom("Forest", Forest::new);
+                LocationRegistry.switchTo("Forest");
             });
             fadeOut.play();
         });
 
-        StoryRunner.playScene("/story/chapter2.json", "resin_tree_intro", (StackPane) this.getRoot(), actions, null);
+        StoryRunner.playScene(session, "/story/chapter2.json", "resin_tree_intro", (StackPane) this.getRoot(), actions, null);
     }
 
 
     private void onPuzzleFinished(int livesLeft, Map<String, Runnable> actions) {
-        GameState.setKarmaListener((currentKarma, addedPoints) ->
+        session.setKarmaListener((currentKarma, addedPoints) ->
                 StatNotification.show((StackPane) this.getRoot(), currentKarma, addedPoints)
         );
 
@@ -156,9 +161,9 @@ public class Tree extends Place{
             karmaChange = 1;
         }
         if (karmaChange != 0) {
-            GameState.changeKarma(karmaChange);
+            session.changeKarma(karmaChange);
         }
 
-        StoryRunner.playScene("/story/chapter2.json", "ant_rescue_success", (StackPane) this.getRoot(), actions, null);
+        StoryRunner.playScene(session, "/story/chapter2.json", "ant_rescue_success", (StackPane) this.getRoot(), actions, null);
     }
 }

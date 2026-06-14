@@ -13,7 +13,7 @@ public class SaveData {
     public boolean drawingPickedUp;
 
     public List<String> inventoryItemNames;
-
+    public boolean momRoomRatScenePlayed;
     public String currentRoomId;
     public String currentDialogNodeId;
 }

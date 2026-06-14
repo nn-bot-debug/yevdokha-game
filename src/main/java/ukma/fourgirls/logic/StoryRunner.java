@@ -7,6 +7,7 @@ import ukma.fourgirls.core.ChoiceManager;
 import ukma.fourgirls.domain.story.ChoiceOption;
 import ukma.fourgirls.domain.story.StoryData;
 import ukma.fourgirls.domain.story.StoryEvent;
+import ukma.fourgirls.state.GameSession;
 
 import javafx.animation.Animation;
 import java.io.InputStream;
@@ -18,10 +19,10 @@ import java.util.Objects;
 
 public class StoryRunner {
 
-    public static void playScene(String jsonFilePath, String sceneId, StackPane roomRoot, Map<String, Runnable> actions, Map<String, Animation> animations) {
+    public static void playScene(GameSession session, String jsonFilePath, String sceneId, StackPane roomRoot, Map<String, Runnable> actions, Map<String, Animation> animations) {
 
-        ukma.fourgirls.state.GameState.activeSceneId = sceneId;
-        ukma.fourgirls.state.GameState.isCutsceneActive = true;
+        session.setActiveSceneId(sceneId);
+        session.setCutsceneActive(true);
 
         InputStream inputStream = StoryRunner.class.getResourceAsStream(jsonFilePath);
         if (inputStream == null) {
@@ -87,8 +88,8 @@ public class StoryRunner {
         }
 
         sequence.execute(() -> {
-            ukma.fourgirls.state.GameState.activeSceneId = "";
-            ukma.fourgirls.state.GameState.isCutsceneActive = false;
+            session.setActiveSceneId("");
+            session.setCutsceneActive(false);
         });
 
         sequence.play();

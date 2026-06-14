@@ -5,7 +5,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
-import ukma.fourgirls.core.SceneManager;
+import ukma.fourgirls.core.LocationRegistry;
 import ukma.fourgirls.logic.StoryRunner;
 import ukma.fourgirls.ui.CameraController;
 import ukma.fourgirls.ui.CharacterView;
@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Yard extends Place {
-    private static final String IMAGE_PATH = "/images/yard.png";
+    private static final String IMAGE_PATH = "/images/canvas/yard.png";
     private final Rectangle blackOverlay;
     private CharacterView actorView;
 
@@ -51,14 +51,14 @@ public class Yard extends Place {
         actions.put("showSadYevdokha", () -> {
             if (actorView != null) {
                 actorView.setPositionSide(true);
-                actorView.setCharacterSprite("/images/Zasmuchena_evdoha.png");
+                actorView.setCharacterSprite("/images/characters/Zasmuchena_evdoha.png");
             }
         });
 
         actions.put("showHappyYevdokha", () -> {
             if (actorView != null) {
                 actorView.setPositionSide(true);
-                actorView.setCharacterSprite("/images/happy_Yevdokha.png");
+                actorView.setCharacterSprite("/images/characters/happy_Yevdokha.png");
             }
         });
 
@@ -68,25 +68,26 @@ public class Yard extends Place {
         });
 
         actions.put("enable_papyrus_pickup", () -> {
-            // Тут ти потім налаштуєш клік по папірусу через InventoryManager, як у ChildRoom!
             System.out.println("Папірус піднято по сюжету.");
         });
 
         actions.put("go_to_forest_automatically", () -> {
+            session.lockLocation("ChildRoom");
+            session.lockLocation("Kitchen");
+            session.lockLocation("MomRoom");
+            session.lockLocation("Corridor");
+            session.lockLocation("Yard");
             blackOverlay.toFront();
-
             FadeTransition fadeToBlack = new FadeTransition(Duration.seconds(1.2), blackOverlay);
             fadeToBlack.setFromValue(0.0);
             fadeToBlack.setToValue(1.0);
-
-            fadeToBlack.setOnFinished(e -> {
-                SceneManager.getInstance().switchToCachedRoom("Forest", Forest::new);
-            });
-
+            fadeToBlack.setOnFinished(e ->
+                    LocationRegistry.switchTo("Forest")
+            );
             fadeToBlack.play();
         });
 
-        StoryRunner.playScene("/story/chapter2.json", "yard_raven_scene", (StackPane) this.getRoot(), actions, null);
+        StoryRunner.playScene(session, "/story/chapter2.json", "yard_raven_scene", (StackPane) this.getRoot(), actions, null);
     }
 
     public void enableNavigation() {

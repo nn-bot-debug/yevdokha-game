@@ -1,6 +1,6 @@
 /* BACK TO MENU */
 .back-button {
-    -fx-background-image: url('/images/buttonBackground.jpeg');
+    -fx-background-image: url('/images/objects/buttonBackground.jpeg');
     -fx-text-fill: #a4bfa7;
     -fx-border-color: #2e261b;
     -fx-border-width: 1px;
