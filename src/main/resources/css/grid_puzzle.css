@@ -1,0 +1,86 @@
+﻿.grid-puzzle-overlay {
+    -fx-background-color: rgba(10, 15, 10, 0.94);
+    -fx-border-color: #1a2e1a;
+    -fx-border-width: 5px;
+}
+
+.grid-title-container {
+    -fx-background-color: rgba(255, 253, 245, 0.85);
+    -fx-border-color: #3d2b1f;
+    -fx-border-width: 1.5px;
+    -fx-border-radius: 6px;
+    -fx-padding: 10px 25px 10px 25px;
+    -fx-background-radius: 6px;
+}
+
+.grid-title {
+    -fx-font-family: "Georgia";
+    -fx-font-weight: bold;
+    -fx-font-size: 20px;
+    -fx-fill: #140d0a;
+    -fx-letter-spacing: 0.5px;
+    -fx-effect: dropshadow(three-pass-box, rgba(255, 255, 255, 0.9), 2, 0, 1, 1);
+}
+
+.grid-hint-label {
+    -fx-font-family: "Georgia";
+    -fx-font-weight: bold;
+    -fx-font-size: 18px;
+    -fx-text-fill: #bda37e;
+    -fx-min-width: 45px;
+    -fx-min-height: 45px;
+    -fx-alignment: center;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.8), 3, 0, 0, 0);
+}
+
+.grid-cell {
+    -fx-min-width: 45px;
+    -fx-max-width: 45px;
+    -fx-min-height: 45px;
+    -fx-max-height: 45px;
+    -fx-background-color: #2e2822;
+    -fx-border-color: #1a1613;
+    -fx-border-width: 2px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-cursor: hand;
+    -fx-font-family: "Georgia";
+    -fx-font-weight: bold;
+    -fx-text-fill: #8c765c;
+}
+
+.grid-cell:hover {
+    -fx-background-color: #423b34;
+    -fx-border-color: #8c765c;
+}
+
+.grid-cell-safe {
+    -fx-background-color: #1b3d1b;
+    -fx-border-color: #2e6b2e;
+    -fx-text-fill: #a3ffa3;
+}
+
+.grid-cell-exploded {
+    -fx-background-color: #521818;
+    -fx-border-color: #9c2e2e;
+    -fx-text-fill: #ff9999;
+}
+
+.grid-lives {
+    -fx-font-family: "Georgia";
+    -fx-font-weight: bold;
+    -fx-font-size: 22px;
+    -fx-fill: #ff4444;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.8), 3, 0, 0, 0);
+}
+
+.grid-hint-label {
+    -fx-font-family: "Georgia";
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-text-fill: #bda37e;
+    -fx-min-width: 45px;
+    -fx-min-height: 55px;
+    -fx-alignment: bottom-center;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.8), 3, 0, 0, 0);
+}

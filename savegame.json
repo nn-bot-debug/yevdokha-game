@@ -1,16 +1,15 @@
 {
-  "karmaBalance": 2,
-  "unlockedLocations": [],
-  "inventoryUnlocked": true,
-  "momRoomVisited": true,
-  "kitchenStormFinished": true,
-  "childRoomIntroPlayed": true,
-  "drawingPickedUp": true,
-  "inventoryItemNames": [
-    "Малюнок",
-    "Ключ від дверей"
+  "karmaBalance": 1,
+  "unlockedLocations": [
+    "ChildRoom"
   ],
-  "momRoomRatScenePlayed": true,
+  "inventoryUnlocked": false,
+  "momRoomVisited": false,
+  "kitchenStormFinished": false,
+  "childRoomIntroPlayed": false,
+  "drawingPickedUp": false,
+  "inventoryItemNames": [],
+  "momRoomRatScenePlayed": false,
   "currentRoomId": "Forest",
   "currentDialogNodeId": ""
 }
