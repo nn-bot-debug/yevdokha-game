@@ -1,6 +1,6 @@
 {
   "scenes": {
-    "yard_raven_scene": [
+    "yard_raven_scene_part1": [
       { "type": "action", "actionId": "hideActor" },
       {
         "type": "dialogue",
@@ -9,10 +9,7 @@
           "Та попри це, небо ще й досі було під в'язкою ковдрою майже чорних хмар."
         ]
       },
-      {
-        "type": "action",
-        "actionId": "show_yard_view"
-      },
+      { "type": "action", "actionId": "show_yard_view" },
       { "type": "action", "actionId": "showHappyYevdokha" },
       {
         "type": "dialogue",
@@ -48,7 +45,10 @@
       {
         "type": "action",
         "actionId": "enable_papyrus_pickup"
-      },
+      }
+    ],
+
+    "yard_raven_scene_part2": [
       { "type": "action", "actionId": "showHappyYevdokha" },
       {
         "type": "dialogue",

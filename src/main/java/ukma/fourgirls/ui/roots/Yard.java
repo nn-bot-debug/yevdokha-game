@@ -7,6 +7,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import ukma.fourgirls.core.LocationRegistry;
 import ukma.fourgirls.logic.StoryRunner;
+import ukma.fourgirls.logic.puzzles.PoemPuzzleOverlay;
 import ukma.fourgirls.ui.CameraController;
 import ukma.fourgirls.ui.CharacterView;
 
@@ -68,7 +69,14 @@ public class Yard extends Place {
         });
 
         actions.put("enable_papyrus_pickup", () -> {
-            System.out.println("Папірус піднято по сюжету.");
+            var puzzleOverlay = new PoemPuzzleOverlay();
+
+            puzzleOverlay.setOnPuzzleSolved(() -> {
+                StoryRunner.playScene(session, "/story/chapter2.json", "yard_raven_scene_part2", (StackPane) this.getRoot(), actions, null);
+            });
+
+            StackPane rootPane = (StackPane) this.getRoot();
+            rootPane.getChildren().add(puzzleOverlay);
         });
 
         actions.put("go_to_forest_automatically", () -> {
@@ -87,7 +95,7 @@ public class Yard extends Place {
             fadeToBlack.play();
         });
 
-        StoryRunner.playScene(session, "/story/chapter2.json", "yard_raven_scene", (StackPane) this.getRoot(), actions, null);
+        StoryRunner.playScene(session, "/story/chapter2.json", "yard_raven_scene_part1", (StackPane) this.getRoot(), actions, null);
     }
 
     public void enableNavigation() {
