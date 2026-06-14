@@ -2,8 +2,10 @@ package ukma.fourgirls.ui.puzzles;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -14,6 +16,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import ukma.fourgirls.state.GameSession;
+import ukma.fourgirls.core.AudioManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,13 +51,17 @@ public class FirstPuzzle extends StackPane {
     private final Text resultTitle;
     private final Button resultButton;
     private boolean isGameActive = true;
+    private boolean hasLostOnce = false;
+
+    private final VBox mainLayout;
 
     public  FirstPuzzle(GameSession session, Runnable onWinCallback) {
         this.session = session;
         this.onWinCallback = onWinCallback;
 
         this.getStylesheets().addAll(
-                Objects.requireNonNull(getClass().getResource("/css/puzzle.css")).toExternalForm()
+                Objects.requireNonNull(getClass().getResource("/css/puzzle.css")).toExternalForm(),
+                Objects.requireNonNull(getClass().getResource("/css/settings.css")).toExternalForm()
         );
 
         try {
@@ -75,14 +82,15 @@ public class FirstPuzzle extends StackPane {
         dimOverlay.setStyle("-fx-background-color: rgba(10, 12, 15, 0.45);");
         this.getChildren().add(dimOverlay);
 
-        VBox mainLayout = new VBox();
+        mainLayout = new VBox();
         mainLayout.getStyleClass().add("gradient-puzzle-container");
+        mainLayout.setVisible(false);
 
         VBox topBox = new VBox(10);
         topBox.setAlignment(Pos.CENTER);
         topBox.setMargin(topBox, new javafx.geometry.Insets(20, 0, 0, 0));
 
-        hintText = new Text("Віднови розірваний градієнт, щоб відімкнути замок...");
+        hintText = new Text("Віднови градієнт, щоб відімкнути замок...");
         hintText.setFill(Color.web("#9ba89e"));
 
         try {
@@ -105,11 +113,11 @@ public class FirstPuzzle extends StackPane {
         mainLayout.getChildren().add(topBox);
 
         if (session.hasItem("Ключ")) {
-            secondsLeft = 120;
+            secondsLeft = 80;
         } else if (session.hasItem("Брошка")) {
-            secondsLeft = 60;
+            secondsLeft = 15;
         } else {
-            secondsLeft = 90;
+            secondsLeft = 60;
         }
         updateTimerDisplay();
 
@@ -161,7 +169,53 @@ public class FirstPuzzle extends StackPane {
 
         this.getChildren().add(mainLayout);
 
-        startTimer();
+        showInstructionOverlay();
+    }
+
+    private void showInstructionOverlay() {
+        VBox tutorialBox = new VBox(20);
+        tutorialBox.setAlignment(Pos.CENTER);
+        tutorialBox.setMaxWidth(500);
+        tutorialBox.setMaxHeight(380);
+        tutorialBox.setPadding(new Insets(30, 40, 30, 40));
+        tutorialBox.getStyleClass().add("settings-dialog");
+
+        Label titleLabel = new Label("Головоломка: Градієнтний замок ");
+        titleLabel.getStyleClass().add("settings-title");
+        titleLabel.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
+
+        Label descriptionLabel = new Label(
+                "Старі двері заклинило містичним магічним механізмом.\n\n" +
+                        "Перед тобою розірвані кольорові камені. Твоє завдання — міняти їх місцями так, " +
+                        "щоб вони утворили ідеальний плавний градієнт від найсвітлішого (ліворуч) до найтемнішого (праворуч).\n\n" +
+                        "Поспішай, механізм заблокується, коли час закінчиться!"
+        );
+        descriptionLabel.getStyleClass().add("settings-label");
+        descriptionLabel.setWrapText(true);
+        descriptionLabel.setStyle("-fx-font-size: 15px; -fx-text-alignment: center; -fx-line-spacing: 5;");
+
+        Button acceptButton = new Button("ПОЧАТИ");
+        acceptButton.getStyleClass().add("settings-button");
+        acceptButton.setPrefWidth(160);
+        acceptButton.setStyle("-fx-cursor: hand;");
+
+        acceptButton.setOnAction(e -> {
+            AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
+            this.getChildren().remove(tutorialBox);
+            mainLayout.setVisible(true);
+            session.setKarmaListener((currentKarma, addedPoints) -> {
+                ukma.fourgirls.core.StatNotification.show(this, currentKarma, addedPoints);
+                var notification = this.getChildren().get(this.getChildren().size() - 1);
+                StackPane.setAlignment(notification, Pos.TOP_CENTER);
+                StackPane.setMargin(notification, new Insets(40, 0, 0, 0));
+                notification.setTranslateX(0);
+                notification.toFront();
+            });
+            startTimer();
+        });
+
+        tutorialBox.getChildren().addAll(titleLabel, descriptionLabel, acceptButton);
+        this.getChildren().add(tutorialBox);
     }
 
     private void startTimer() {
@@ -215,6 +269,7 @@ public class FirstPuzzle extends StackPane {
         isGameActive = false;
         timeline.stop();
         timerText.setFill(Color.LIGHTGREEN);
+        hintText.setFill(Color.LIGHTGREEN);
 
         for (Rectangle rect : rectangles) {
             rect.setStroke(Color.LIGHTGREEN);
@@ -238,6 +293,7 @@ public class FirstPuzzle extends StackPane {
         timeline.stop();
         timerText.setText("00:00");
         timerText.setFill(Color.RED);
+        hintText.setFill(Color.RED);
 
         for (Rectangle rect : rectangles) {
             rect.setStyle("-fx-cursor: default;");
@@ -245,8 +301,13 @@ public class FirstPuzzle extends StackPane {
         if (firstSelectedRectangle != null)
             firstSelectedRectangle.setStroke(Color.TRANSPARENT);
 
-        session.changeKarma(-1);
-        resultTitle.setText("Час вийшов! Замок заклинило.");
+        if (!hasLostOnce) {
+            hasLostOnce = true;
+            session.changeKarma(-2);
+            resultTitle.setText("Час вийшов! Замок заклинило. Ви втратили 2 подихи вітру.");
+        } else {
+            resultTitle.setText("Час вийшов! Замок заклинило.");
+        }
         resultTitle.getStyleClass().removeAll("puzzle-text-win");
         resultTitle.getStyleClass().add("puzzle-text-lose");
 
@@ -259,14 +320,15 @@ public class FirstPuzzle extends StackPane {
     private void restartPuzzle() {
         isGameActive = true;
         resultBox.setVisible(false);
-        timerText.setFill(Color.web("#9ba89e"));
+        hintText.setFill(Color.web("#9ba89e"));
+        timerText.setFill(Color.web("#f87171"));
 
         if (session.hasItem("Ключ")) {
-            secondsLeft = 120;
+            secondsLeft = 80;
         } else if (session.hasItem("Брошка")) {
-            secondsLeft = 60;
+            secondsLeft = 15;
         } else {
-            secondsLeft = 90;
+            secondsLeft = 60;
         }
         updateTimerDisplay();
 
