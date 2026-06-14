@@ -11,9 +11,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 import ukma.fourgirls.domain.Item;
-import ukma.fourgirls.state.InventoryState;
+import ukma.fourgirls.state.GameSession;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -21,11 +20,11 @@ public class Inventory {
     private final StackPane container;
     private final HBox inventoryBoard;
     private final StackPane window;
+    private final GameSession session;
     private static final double BOARD_HEIGHT = 170;
 
-    private final List<StackPane> cells = new ArrayList<>();
-
-    public Inventory() {
+    public Inventory(GameSession session) {
+        this.session = session;
         this.inventoryBoard = createBoard();
         this.window = createWindow();
 
@@ -42,7 +41,7 @@ public class Inventory {
     }
 
     private void setupStateListener() {
-        InventoryState.getItems().addListener((ListChangeListener<Item>) change -> {
+        session.getInventoryItems().addListener((ListChangeListener<Item>) change -> {
             updateUI();
         });
 
@@ -52,7 +51,7 @@ public class Inventory {
     private void updateUI() {
 
         inventoryBoard.getChildren().clear();
-        List<Item> currentItems = InventoryState.getItems();
+        List<Item> currentItems = session.getInventoryItems();
 
         for(Item item : currentItems){
             try {
@@ -70,11 +69,17 @@ public class Inventory {
                 Image image = new Image(imgStream);
                 ImageView icon = new ImageView(image);
 
-                icon.setFitWidth(70);
-                icon.setFitHeight(65);
+                icon.setFitWidth(58);
+                icon.setFitHeight(58);
                 icon.setPreserveRatio(true);
+                icon.setSmooth(true);
 
-                inventoryBoard.getChildren().add(icon);
+                StackPane cell = new StackPane(icon);
+                cell.setPrefSize(70, 70);
+                cell.setMaxSize(70, 70);
+                StackPane.setAlignment(icon, Pos.CENTER);
+
+                inventoryBoard.getChildren().add(cell);
             }
             catch (Exception e) {
                 System.err.println("Помилка завантаження іконки (" + item.getName() + "): " + e.getMessage());
@@ -82,7 +87,12 @@ public class Inventory {
                 Label fallbackLabel = new Label(item.getName());
                 fallbackLabel.setStyle("-fx-text-fill: white; -fx-font-size: 12px; -fx-text-alignment: center;");
                 fallbackLabel.setWrapText(true);
-                inventoryBoard.getChildren().add(fallbackLabel);
+
+                StackPane cell = new StackPane(fallbackLabel);
+                cell.setPrefSize(70, 70);
+                StackPane.setAlignment(fallbackLabel, Pos.CENTER);
+
+                inventoryBoard.getChildren().add(cell);
             }
         }
     }
@@ -92,7 +102,7 @@ public class Inventory {
         window.getStyleClass().add("inventory-window");
 
         window.setPrefSize(340, 120);
-        window.setMaxWidth(340);
+        window.setMaxWidth(300);
         window.setMaxHeight(120);
 
         window.setTranslateY(50);
@@ -104,8 +114,8 @@ public class Inventory {
         inventoryBoard.setAlignment(Pos.CENTER_LEFT);
         inventoryBoard.getStyleClass().add("inventory-board");
 
-// inventoryBoard.setSpacing(0);
-        inventoryBoard.setPadding(new Insets(4, 0, 0, 57));
+        inventoryBoard.setSpacing(12);
+        inventoryBoard.setPadding(new Insets(4, 0, 0, 45));
 
         inventoryBoard.setMaxWidth(480);
         inventoryBoard.setMaxHeight(BOARD_HEIGHT);

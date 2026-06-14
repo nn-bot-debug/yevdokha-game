@@ -7,6 +7,7 @@ import ukma.fourgirls.core.ChoiceManager;
 import ukma.fourgirls.domain.story.ChoiceOption;
 import ukma.fourgirls.domain.story.StoryData;
 import ukma.fourgirls.domain.story.StoryEvent;
+import ukma.fourgirls.state.GameSession;
 
 import javafx.animation.Animation;
 import java.io.InputStream;
@@ -18,7 +19,10 @@ import java.util.Objects;
 
 public class StoryRunner {
 
-    public static void playScene(String jsonFilePath, String sceneId, StackPane roomRoot, Map<String, Runnable> actions, Map<String, Animation> animations) {
+    public static void playScene(GameSession session, String jsonFilePath, String sceneId, StackPane roomRoot, Map<String, Runnable> actions, Map<String, Animation> animations) {
+
+        session.setActiveSceneId(sceneId);
+        session.setCutsceneActive(true);
 
         InputStream inputStream = StoryRunner.class.getResourceAsStream(jsonFilePath);
         if (inputStream == null) {
@@ -43,8 +47,11 @@ public class StoryRunner {
             switch (event.type) {
 
                 case "dialogue":
-                    if (event.character != null && event.portrait != null) {
-                        Image portrait = new Image(Objects.requireNonNull(StoryRunner.class.getResourceAsStream(event.portrait)));
+                    if (event.character != null && !event.character.isEmpty()) {
+                        Image portrait = null;
+                        if (event.portrait != null && !event.portrait.isEmpty()) {
+                            portrait = new Image(Objects.requireNonNull(StoryRunner.class.getResourceAsStream(event.portrait)));
+                        }
                         sequence.addDialogue(event.character, portrait, event.text.toArray(new String[0]));
                     } else {
                         sequence.addDialogue(event.text.toArray(new String[0]));
@@ -79,6 +86,11 @@ public class StoryRunner {
                     break;
             }
         }
+
+        sequence.execute(() -> {
+            session.setActiveSceneId("");
+            session.setCutsceneActive(false);
+        });
 
         sequence.play();
     }

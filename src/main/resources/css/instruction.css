@@ -1,19 +1,19 @@
 .instruction-title-left{
-    -fx-text-fill: #4c663d;
+    -fx-text-fill: #022e01;
     -fx-font-weight: bold;
 }
 
 .instruction-text-left{
-    -fx-text-fill: #4c663d;
+    -fx-text-fill: #022e01;
     -fx-font-weight: bold;
 }
 
 .instruction-title-right{
-    -fx-text-fill: #4c663d;
+    -fx-text-fill: #022e01;
     -fx-font-weight: bold;
 }
 
 .instruction-text-right{
-    -fx-text-fill: #4c663d;
+    -fx-text-fill: #022e01;
     -fx-font-weight: bold;
 }

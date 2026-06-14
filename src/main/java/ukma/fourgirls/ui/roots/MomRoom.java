@@ -7,26 +7,35 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
+import ukma.fourgirls.core.InventoryManager;
 import ukma.fourgirls.core.NotificationManager;
 import ukma.fourgirls.core.StatNotification;
 import ukma.fourgirls.logic.StoryRunner;
-import ukma.fourgirls.state.GameState;
-import ukma.fourgirls.state.InventoryState;
 import ukma.fourgirls.ui.CameraController;
+import ukma.fourgirls.ui.CharacterView;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 public class MomRoom extends Place {
-    private static final String IMAGE_PATH = "/images/mother_room.png";
-    private static final String SECOND_IMAGE_PATH = "/images/drawing.png";
-    private static final String SCARY_MOM_PATH = "/images/scary_mom_screamer.jpeg";
+    private static final String IMAGE_PATH = "/images/canvas/mother_room.png";
+    private static final String SECOND_IMAGE_PATH = "/images/objects/drawing.png";
+    private static final String SCARY_MOM_PATH = "/images/canvas/scary_mom_screamer.jpeg";
+
+    private static final String CORNER_PATH = "/images/canvas/corner.png";
+    private static final String BROOCH_PATH = "/images/objects/brooch.png";
 
     private final Rectangle blackOverlay;
     private final ImageView momView;
     private final ImageView drawingView;
     private final ImageView scaryMomView;
+    private ImageView cornerView;
+    private ImageView broochView;
+    private Rectangle whiteFlash;
+
+    private CharacterView actorView;
+    private CharacterView ratView;
 
     public MomRoom() {
         super(IMAGE_PATH);
@@ -41,10 +50,138 @@ public class MomRoom extends Place {
         CameraController.setPanningEnabled(false);
 
         momView = createCinematicView(IMAGE_PATH, 1.5);
-        drawingView = createCinematicView(SECOND_IMAGE_PATH, 1.3);
+        drawingView = createCinematicView(SECOND_IMAGE_PATH, 0.7);
         scaryMomView = createCinematicView(SCARY_MOM_PATH, 1.5);
 
-        this.startCutscene();
+        cornerView = createCinematicView(CORNER_PATH, 1.0);
+        broochView = createCinematicView(BROOCH_PATH, 1.0);
+
+        whiteFlash = new Rectangle();
+        whiteFlash.widthProperty().bind(this.root.widthProperty());
+        whiteFlash.heightProperty().bind(this.root.heightProperty());
+        whiteFlash.setFill(Color.WHITE);
+        whiteFlash.setOpacity(0.0);
+        whiteFlash.setMouseTransparent(true);
+    }
+
+    @Override
+    public void onEnter() {
+        if (!session.isMomRoomVisited()) {
+            session.setMomRoomVisited(true);
+            this.startCutscene();
+        } else if (session.isKitchenStormFinished() && !session.isMomRoomRatScenePlayed()) {
+            this.startRatKeyCutscene();
+        } else {
+            this.removeBlackOverlay();
+            this.finalizeCutscene();
+        }
+    }
+
+    public void startRatKeyCutscene() {
+        session.setMomRoomRatScenePlayed(true);
+        CameraController.setPanningEnabled(true);
+        this.removeBlackOverlay();
+        this.root.getChildren().removeAll(momView, drawingView, scaryMomView);
+
+        this.setBackground("/images/canvas/part_of_mom_room.png");
+
+        actorView = new CharacterView((StackPane) this.getRoot());
+        ratView = new CharacterView((StackPane) this.getRoot());
+
+        session.setKarmaListener((currentKarma, addedPoints) ->
+                StatNotification.show((StackPane) this.getRoot(), currentKarma, addedPoints)
+        );
+
+        Map<String, Runnable> actions = new HashMap<>();
+        Map<String, Animation> animations = new HashMap<>();
+
+        actions.put("showRat", () -> {
+            if (actorView != null) actorView.hide();
+            ratView.setPositionSide(false);
+            ratView.setCharacterSprite("/images/characters/rat_with_key.png");
+        });
+
+        actions.put("showSadYevdokha", () -> {
+            if (ratView != null) ratView.hide();
+            actorView.setPositionSide(true);
+            actorView.setCharacterSprite("/images/characters/Zasmuchena_evdoha.png");
+        });
+
+        actions.put("showHappyYevdokha", () -> {
+            if (ratView != null) ratView.hide();
+            actorView.setPositionSide(true);
+            actorView.setCharacterSprite("/images/characters/happy_Yevdokha.png");
+        });
+
+        actions.put("hideAllActors", () -> {
+            if (actorView != null) actorView.hide();
+            if (ratView != null) ratView.hide();
+        });
+
+        actions.put("choice_ask_for_key", () -> {
+            session.changeKarma(1);
+            StoryRunner.playScene(session, "/story/chapter1.json", "ask_for_a_key", (StackPane) this.getRoot(), actions, animations);
+        });
+
+        actions.put("choice_take_by_force", () -> {
+            session.changeKarma(-1);
+            StoryRunner.playScene(session, "/story/chapter1.json", "take_key_from_rat", (StackPane) this.getRoot(), actions, animations);
+        });
+
+        actions.put("show_corner_flash", () -> {
+            this.setBackground(CORNER_PATH);
+
+            broochView.setFitWidth(150);
+            broochView.setPreserveRatio(true);
+            broochView.setTranslateX(100);
+            broochView.setTranslateY(100);
+
+            if (!this.roomContentLayer.getChildren().contains(broochView)) {
+                this.roomContentLayer.getChildren().add(broochView);
+            }
+
+            if (!this.root.getChildren().contains(whiteFlash)) {
+                this.root.getChildren().add(whiteFlash);
+            }
+        });
+
+        actions.put("enable_brooch_pickup", () -> {
+            broochView.setStyle("-fx-cursor: hand;");
+            broochView.setPickOnBounds(true);
+
+            ukma.fourgirls.domain.Item broochItem = new ukma.fourgirls.domain.Item("Брошка", BROOCH_PATH);
+            InventoryManager.setupPickupAction(
+                    session,
+                    broochView,
+                    broochItem,
+                    (StackPane) this.getRoot(),
+                    "Ви підняли брошку! Тепер вона у вашому інвентарі.",
+                    this::onBroochPickedUp
+            );
+        });
+
+        actions.put("give_brooch", () -> {
+            session.addItem(new ukma.fourgirls.domain.Item("Брошка", BROOCH_PATH));
+            NotificationManager.showNotification(this.root, "Ви отримали нову річ: Брошка");
+        });
+
+        actions.put("give_key", () -> {
+            this.setBackground(IMAGE_PATH);
+            session.addItem(new ukma.fourgirls.domain.Item("Ключ від дверей", "/images/objects/key.png"));
+            NotificationManager.showNotification(this.root, "Ви отримали ключ від дверей");
+
+            session.unlockLocation("Corridor");
+            this.finalizeCutscene();
+        });
+
+        actions.put("door_interaction_brooch", () -> {
+            NotificationManager.showNotification(this.root, "Двері відімкнено!\n Через ваш вибір часу на головоломку стало менше (-1.5 хв).");
+            this.finalizeCutscene();
+        });
+
+        animations.put("lightning_pause", getLightningAnimation());
+
+        StoryRunner.playScene(session, "/story/chapter1.json", "mom_room_rat_key", (StackPane) this.getRoot(), actions, animations);
     }
 
     public void startCutscene() {
@@ -64,29 +201,29 @@ public class MomRoom extends Place {
 
         actions.put("setupKarmaAndOverlay", () -> {
             this.removeBlackOverlay();
-            GameState.setKarmaListener((currentKarma, addedPoints) -> StatNotification.show((StackPane) this.getRoot(), currentKarma, addedPoints));
+            session.setKarmaListener((currentKarma, addedPoints) -> StatNotification.show((StackPane) this.getRoot(), currentKarma, addedPoints));
         });
 
         actions.put("choice_put_near_mom", () -> {
-            InventoryState.removeItem("Малюнок");
-            GameState.changeKarma(-1);
+            session.removeItem("Малюнок");
+            session.changeKarma(-1);
             this.hideDrawingView();
-            StoryRunner.playScene("/story/chapter1.json", "mom_room_scary_sequence", (StackPane) this.getRoot(), actions, animations);
+            StoryRunner.playScene(session, "/story/chapter1.json", "mom_room_scary_sequence", (StackPane) this.getRoot(), actions, animations);
         });
 
         actions.put("choice_hide_in_pocket", () -> {
-            GameState.changeKarma(1);
+            session.changeKarma(1);
             this.hideDrawingView();
-            StoryRunner.playScene("/story/chapter1.json", "mom_room_hide_sequence", (StackPane) this.getRoot(), actions, animations);
+            StoryRunner.playScene(session, "/story/chapter1.json", "mom_room_hide_sequence", (StackPane) this.getRoot(), actions, animations);
         });
 
         actions.put("goToKitchenHint", () -> {
-            GameState.unlockLocation("Kitchen");
+            session.unlockLocation("Kitchen");
             this.finalizeCutscene();
             NotificationManager.showNotification(this.root, "Нове завдання: Знайдіть їжу на кухні");
         });
 
-        StoryRunner.playScene("/story/chapter1.json", "mom_room_first_visit", (StackPane) this.getRoot(), actions, animations);
+        StoryRunner.playScene(session, "/story/chapter1.json", "mom_room_first_visit", (StackPane) this.getRoot(), actions, animations);
     }
 
     // --- МЕТОДИ ДЛЯ КЕРУВАННЯ СЦЕНОЮ З КОНТРОЛЕРА ---
@@ -117,10 +254,23 @@ public class MomRoom extends Place {
         this.root.getChildren().remove(blackOverlay);
     }
 
-    // Відновлює звичайний режим гри
     public void finalizeCutscene() {
         CameraController.setPanningEnabled(true);
         setupNavigation("MomRoom");
+    }
+
+    private Animation getLightningAnimation() {
+        FadeTransition flashIn = new FadeTransition(Duration.seconds(0.1), whiteFlash);
+        flashIn.setFromValue(0.0);
+        flashIn.setToValue(1.0);
+
+        FadeTransition flashOut = new FadeTransition(Duration.seconds(0.3), whiteFlash);
+        flashOut.setFromValue(1.0);
+        flashOut.setToValue(0.0);
+
+        PauseTransition pause = new PauseTransition(Duration.seconds(2.0));
+
+        return new SequentialTransition(flashIn, flashOut, pause);
     }
 
     public Animation getPart1Animation() {
@@ -165,5 +315,13 @@ public class MomRoom extends Place {
 
     public void hideDrawingView() {
         this.root.getChildren().remove(drawingView);
+    }
+
+    private void onBroochPickedUp() {
+        this.setBackground(IMAGE_PATH);
+
+        session.unlockLocation("Corridor");
+        this.root.getChildren().remove(whiteFlash);
+        setupNavigation("MomRoom");
     }
 }

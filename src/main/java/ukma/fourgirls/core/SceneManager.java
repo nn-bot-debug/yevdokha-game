@@ -2,6 +2,9 @@ package ukma.fourgirls.core;
 
 import javafx.scene.Parent;
 import javafx.stage.Stage;
+import ukma.fourgirls.state.GameSession;
+import ukma.fourgirls.state.SaveData;
+import ukma.fourgirls.ui.roots.Place;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,23 +12,26 @@ import java.util.function.Supplier;
 
 public class SceneManager {
 
-    private static SceneManager instance;
-
     private Stage primaryStage;
     private Parent mainMenuRoot;
+    private final GameSession session = new GameSession();
 
-    private final Map<String, Parent> cachedRooms = new HashMap<>();
+    private final Map<String, Place> cachedRooms = new HashMap<>();
 
     private SceneManager() {}
 
     public static SceneManager getInstance() {
-        if (instance == null) {
-            instance = new SceneManager();
-        }
-        return instance;
+        return InstanceHolder.INSTANCE;
+    }
+
+    private static class InstanceHolder {
+        private static final SceneManager INSTANCE = new SceneManager();
     }
 
     public void init(Stage stage) {
+        if (stage == null) {
+            System.err.println("Error: Stage cannot be null during SceneManager initialization!");
+        }
         this.primaryStage = stage;
     }
 
@@ -36,25 +42,32 @@ public class SceneManager {
     // --- МЕТОДИ ПЕРЕМИКАННЯ ЕКРАНІВ ---
 
     public void switchToMainMenu() {
-        if (primaryStage != null && primaryStage.getScene() != null && mainMenuRoot != null) {
-            primaryStage.getScene().setRoot(mainMenuRoot);
+        if (mainMenuRoot != null) {
+            switchToRoot(mainMenuRoot);
+        } else {
+            System.err.println("Error: Main menu is not set! Please call setMainMenuRoot() first.");
         }
     }
 
     public void switchToRoot(Parent newRoot) {
         if (primaryStage != null && primaryStage.getScene() != null) {
             primaryStage.getScene().setRoot(newRoot);
+        } else {
+            System.err.println("Error: primaryStage or Scene has not been initialized yet!");
         }
     }
 
     /**
-     * @param roomKey Унікальний ідентифікатор кімнати (наприклад, "MomRoom")
-     * @param roomCreator Логіка створення кімнати, якщо її немає в кеші
+     * @param roomKey Unique identifier for the room (e.g., "MomRoom")
+     * @param roomCreator Logic for creating the room if it is not in the cache
      */
-    public void switchToCachedRoom(String roomKey, Supplier<Parent> roomCreator) {
+    public void switchToCachedRoom(String roomKey, Supplier<Place> roomCreator) {
         if (primaryStage != null && primaryStage.getScene() != null) {
-            Parent roomRoot = cachedRooms.computeIfAbsent(roomKey, k -> roomCreator.get());
-            primaryStage.getScene().setRoot(roomRoot);
+            var room = cachedRooms.computeIfAbsent(roomKey, e -> roomCreator.get());
+            primaryStage.getScene().setRoot(room.getRoot());
+            room.onEnter();
+        } else {
+            System.err.println("Error: Cannot switch to room " + roomKey + " without primaryStage!");
         }
     }
 
@@ -62,6 +75,25 @@ public class SceneManager {
         cachedRooms.clear();
     }
 
-    public double getWidth() { return primaryStage.getWidth(); }
-    public double getHeight() { return primaryStage.getHeight(); }
+    public GameSession getSession() {
+        return session;
+    }
+
+    public void resetSession() {
+        session.reset();
+        clearCache();
+    }
+
+    public void loadSession(SaveData data) {
+        session.loadFrom(data);
+        clearCache();
+    }
+
+    public double getWidth() {
+        return primaryStage != null ? primaryStage.getWidth() : 0;
+    }
+
+    public double getHeight() {
+        return primaryStage != null ? primaryStage.getHeight() : 0;
+    }
 }

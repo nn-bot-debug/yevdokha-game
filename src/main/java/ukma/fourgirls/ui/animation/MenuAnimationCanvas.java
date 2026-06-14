@@ -7,7 +7,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Scale;
 
-public class MenuAnimationCanvas extends  Pane{
+public class MenuAnimationCanvas extends  Pane {
     private static final double VIRTUAL_WIDTH = 2048;
     private static final double VIRTUAL_HEIGHT = 1152;
 
@@ -21,8 +21,10 @@ public class MenuAnimationCanvas extends  Pane{
         gc = canvas.getGraphicsContext2D();
         this.particleSystem = new ParticleSystem();
 
+        particleSystem.setCandleLocation(1510, 553);
+
         scaleTransform = new Scale(1, 1, 0, 0);
-        canvas.getTransforms().add(scaleTransform);
+        canvas.getTransforms().add(canvas.getTransforms().size(), scaleTransform);
         this.getChildren().add(canvas);
 
         AnimationTimer timer = new AnimationTimer() {
@@ -54,7 +56,7 @@ public class MenuAnimationCanvas extends  Pane{
         super.layoutChildren();
         double currentWidth = getWidth();
         double currentHeight = getHeight();
-        if (currentWidth <= 0 || currentHeight <= 0) return;
+        if (currentWidth < 300 || currentHeight < 300) return;
 
         double scaleX = currentWidth / VIRTUAL_WIDTH;
         double scaleY = currentHeight / VIRTUAL_HEIGHT;
@@ -63,7 +65,20 @@ public class MenuAnimationCanvas extends  Pane{
         scaleTransform.setX(scale);
         scaleTransform.setY(scale);
 
-        canvas.setLayoutX((currentWidth - scale * VIRTUAL_WIDTH) / 2);
-        canvas.setLayoutY((currentHeight - scale * VIRTUAL_HEIGHT) / 2);
+        double canvasX = (currentWidth - scale * VIRTUAL_WIDTH) / 2;
+        double canvasY = (currentHeight - scale * VIRTUAL_HEIGHT) / 2;
+
+        canvas.setLayoutX(canvasX);
+        canvas.setLayoutY(canvasY);
+
+        if (scale > 0) {
+            double screenCandleX = currentWidth * (1175.0 / 1536.0);
+            double virtualX = (screenCandleX - canvasX) / scale;
+
+            double screenCandleY = currentHeight * (460.0 / 960.0);
+            double virtualY = (screenCandleY - canvasY) / scale;
+
+            particleSystem.setCandleLocation(virtualX, virtualY);
+        }
     }
 }

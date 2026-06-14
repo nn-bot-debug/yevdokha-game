@@ -9,6 +9,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import ukma.fourgirls.core.AudioManager;
+import ukma.fourgirls.core.LanguageManager;
 import ukma.fourgirls.core.SceneManager;
 import ukma.fourgirls.ui.animation.AnimationCanvas;
 
@@ -17,7 +18,8 @@ import java.util.Objects;
 public class InstructionsScreen {
 
     private final StackPane root;
-    private Font font;
+    private Font btnFont;
+    private Font textFont;
 
     public InstructionsScreen() {
         this.root = new StackPane();
@@ -26,14 +28,20 @@ public class InstructionsScreen {
         this.root.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/instruction.css")).toExternalForm());
 
         try {
-            font = Font.loadFont(getClass().getResourceAsStream("/Creepster-Regular.ttf"), 22);
+            btnFont = Font.loadFont(getClass().getResourceAsStream("/fonts/Creepster-Regular.ttf"), 22);
         }
         catch (Exception e) {
-            font = Font.font("Arial", 24);
+            btnFont = Font.font("Arial", 24);
+        }
+        try {
+            textFont = Font.loadFont(getClass().getResourceAsStream("/fonts/Epoch_YP_Demo.ttf"), 22);
+        }
+        catch (Exception e) {
+            textFont = Font.font("Arial", 24);
         }
 
         try {
-            Image bgImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/notebook.png")));
+            Image bgImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/canvas/notebook.png")));
             BackgroundImage backgroundImage = new BackgroundImage(
                     bgImage,
                     BackgroundRepeat.NO_REPEAT,
@@ -52,29 +60,29 @@ public class InstructionsScreen {
 
         StackPane uiLayer = new StackPane();
 
-        HBox textContainer = new HBox(210);
+        HBox textContainer = new HBox(140);
         textContainer.setAlignment(Pos.CENTER);
-        textContainer.setPadding(new Insets(260, 210, 260, 210));
+        textContainer.setPadding(new Insets(250, 0, 250, 140));
 
         VBox leftPage = new VBox(20);
         leftPage.setAlignment(Pos.TOP_LEFT);
-        leftPage.setPrefWidth(600);
+        leftPage.setPrefWidth(616);
 
-        Label leftTitle = new Label("Керування та інтерфейс");
-        leftTitle.setFont(Font.font(font.getFamily(), 34));
+        Label leftTitle = new Label("          Керування та інтерфейс");
+        leftTitle.setFont(Font.font(textFont.getFamily(), 35));
         leftTitle.setAlignment(Pos.CENTER);
         leftTitle.getStyleClass().add("instruction-title-left");
 
         Label leftText = new Label(
-                     "• Озирання (Панорама):" +
-                        "Просто рухайте курсор миші вліво або вправо, щоб оглянути поточну кімнату" +
-                        "• Взаємодія з предметами:" +
-                        "Наводьте мишу на об'єкти. Якщо курсор змінюється на вказівний палець, ви можете натиснути на предмет, щоб підібрати його" +
-                        "• Меню навігації:" +
-                        "У верхньому правому кутку екрана знаходиться панель переміщення. Перемикайтеся між відкритими кімнатами будинку одним кліком."
+                     "• Озирання (Панорама):\n" +
+                        "Просто рухайте курсор миші вліво або вправо, щоб оглянути поточну кімнату\n\n" +
+                        "• Взаємодія з предметами:\n" +
+                        "Наводьте мишу на об'єкти. Якщо курсор змінюється на вказівний палець, ви можете натиснути на предмет, щоб підібрати його\n\n" +
+                        "• Меню навігації:\n" +
+                        "У верхньому правому кутку екрана знаходиться панель переміщення. Перемикайтеся між відкритими кімнатами одним кліком"
         );
 
-        leftText.setFont(Font.font(font.getFamily(), 24));
+        leftText.setFont(Font.font(textFont.getFamily(), 25));
         leftText.getStyleClass().add("instruction-text-left");
         leftText.setWrapText(true);
 
@@ -82,22 +90,22 @@ public class InstructionsScreen {
 
         VBox rightPage = new VBox(20);
         rightPage.setAlignment(Pos.TOP_LEFT);
-        rightPage.setPrefWidth(600);
+        rightPage.setPrefWidth(700);
 
-        Label rightTitle = new Label("Інвентар та поради");
-        rightTitle.setFont(Font.font(font.getFamily(), 34));
+        Label rightTitle = new Label("\n              Інвентар та поради");
+        rightTitle.setFont(Font.font(textFont.getFamily(), 35));
         rightTitle.setAlignment(Pos.CENTER);
         rightTitle.getStyleClass().add("instruction-title-right");
 
         Label rightText = new Label(
-                "• Сховище речей (Інвентар):" +
-                        "У нижній частині екрана розташована прихована панель. Наведіть курсор миші на самий низ екрана, щоб висунути інвентар та переглянути ваші речі" +
-                        "• Підказки:" +
-                        "Звуки мають значення. Слідкуйте за атмосферою та змінами навколо." +
+                "• Сховище речей (Інвентар):\n" +
+                        "У нижній частині екрана розташована прихована панель. Наведіть курсор миші на низ екрана, щоб висунути інвентар та переглянути ваші речі\n\n" +
+                        "• Підказки:\n" +
+                        "Звуки мають значення. Слідкуйте за атмосферою та змінами навколо\n\n" +
                         "Будьте готові до несподіваних і лякаючих поворотів..."
         );
 
-        rightText.setFont(Font.font(font.getFamily(), 24));
+        rightText.setFont(Font.font(textFont.getFamily(), 25));
         rightText.getStyleClass().add("instruction-text-left");
         rightText.setWrapText(true);
 
@@ -110,15 +118,32 @@ public class InstructionsScreen {
         VBox bottomContainer = new VBox();
         bottomContainer.setAlignment(Pos.TOP_LEFT);
         bottomContainer.setPadding(new Insets(14, 0, 0, 14));
-
-        Button backButton = new Button("Back to Menu");
-        backButton.setFont(font);
+        Button backButton = new Button();
         backButton.getStyleClass().add("back-button");
         backButton.setOnAction(e -> {
             AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
             SceneManager.getInstance().switchToMainMenu();
         });
 
+        LanguageManager.addLanguageChangeListener(()->{
+            String translated = LanguageManager.getString("button.back");
+            backButton.setText(translated);
+            if("Назад до меню".equals(translated)){
+                backButton.setFont(Font.font(textFont.getFamily(), 18));
+            }
+            else{
+                backButton.setFont(Font.font(btnFont.getFamily(), 20));
+            }
+        });
+
+        String currentLan = LanguageManager.getString("button.back");
+        backButton.setText(currentLan);
+        if("Назад до меню".equals(currentLan)){
+            backButton.setFont(Font.font(textFont.getFamily(), 18));
+        }
+        else{
+            backButton.setFont(Font.font(btnFont.getFamily(), 20));
+        }
 
         bottomContainer.getChildren().add(backButton);
         root.getChildren().add(uiLayer);

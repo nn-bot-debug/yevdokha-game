@@ -1,0 +1,16 @@
+{
+  "karmaBalance": 2,
+  "unlockedLocations": [],
+  "inventoryUnlocked": true,
+  "momRoomVisited": true,
+  "kitchenStormFinished": true,
+  "childRoomIntroPlayed": true,
+  "drawingPickedUp": true,
+  "inventoryItemNames": [
+    "Малюнок",
+    "Брошка"
+  ],
+  "momRoomRatScenePlayed": true,
+  "currentRoomId": "Forest",
+  "currentDialogNodeId": ""
+}

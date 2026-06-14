@@ -10,8 +10,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
 import ukma.fourgirls.core.AudioManager;
+import ukma.fourgirls.core.LanguageManager;
+import ukma.fourgirls.core.LocationRegistry;
+import ukma.fourgirls.core.NotificationManager;
+import ukma.fourgirls.core.SaveManager;
 import ukma.fourgirls.core.SceneManager;
-import ukma.fourgirls.state.GameState;
+import ukma.fourgirls.state.GameSession;
 import ukma.fourgirls.ui.CameraController;
 import ukma.fourgirls.ui.NavigationPanel;
 
@@ -21,18 +25,27 @@ public abstract class Place {
     protected final StackPane root;
     protected final StackPane roomContentLayer;
     protected final ImageView roomView;
-    private Font font;
+    protected final GameSession session;
+    private Font enFont;
+    private Font ukFont;
     protected final Inventory inventory;
+    private NavigationPanel currentNavPanel;
 
     public Place(String imagePath) {
+        this.session = SceneManager.getInstance().getSession();
         StackPane rootPane = new StackPane();
-
         rootPane.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/buttons.css")).toExternalForm());
 
         try {
-            font = Font.loadFont(getClass().getResourceAsStream("/Creepster-Regular.ttf"), 22);
+            enFont = Font.loadFont(getClass().getResourceAsStream("/fonts/Creepster-Regular.ttf"), 22);
         } catch (Exception e) {
-            font = Font.font("Arial", 24);
+            enFont = Font.font("Arial", 24);
+        }
+
+        try {
+            ukFont = Font.loadFont(getClass().getResourceAsStream("/fonts/Epoch_YP_Demo.ttf"), 22);
+        } catch (Exception e) {
+            ukFont = Font.font("Arial", 24);
         }
 
         this.roomView = setupRoomImage(imagePath);
@@ -54,9 +67,9 @@ public abstract class Place {
 
         rootPane.getChildren().addAll(scrollPane, backButton);
 
-        this.inventory = new Inventory();
+        this.inventory = new Inventory(session);
         this.inventory.attachTo(rootPane);
-        this.inventory.setVisible(GameState.isInventoryUnlocked());
+        this.inventory.setVisible(session.isInventoryUnlocked());
 
         CameraController.enableMousePanning(rootPane, scrollPane);
         javafx.application.Platform.runLater(() -> scrollPane.setHvalue(0.5));
@@ -64,21 +77,58 @@ public abstract class Place {
         this.root = rootPane;
     }
 
+    public void setBackground(String imagePath) {
+        try {
+            var stream = getClass().getResourceAsStream(imagePath);
+            if (stream != null) {
+                this.roomView.setImage(new Image(stream));
+            } else {
+                System.err.println("Background file not found: " + imagePath);
+            }
+        } catch (Exception e) {
+            System.err.println("Could not load background: " + e.getMessage());
+        }
+    }
+
+    public void onEnter() {}
+
     public Parent getRoot() {
         return root;
     }
 
     private Button createBackButton() {
-        Button backButton = new Button("Back to Menu");
-        backButton.setFont(font);
-
+        Button backButton = new Button();
         backButton.getStyleClass().add("back-button");
 
+        LanguageManager.addLanguageChangeListener(() -> updateBackButtonText(backButton));
+        updateBackButtonText(backButton);
+
         backButton.setOnAction(e -> {
+            if (session.isCutsceneActive()) {
+                AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
+                NotificationManager.showNotification(
+                        this.root,
+                        "Ви не можете вийти в меню під час розмови чи важливої події!"
+                );
+                return;
+            }
+
             AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
+            SaveManager.saveGame(session, this.getClass().getSimpleName(), "");
             SceneManager.getInstance().switchToMainMenu();
         });
         return backButton;
+    }
+
+    private void updateBackButtonText(Button backButton) {
+        String translated = LanguageManager.getString("button.back");
+        backButton.setText(translated);
+
+        if ("Назад до меню".equals(translated)) {
+            backButton.setFont(Font.font(ukFont.getFamily(), 18));
+        } else {
+            backButton.setFont(Font.font(enFont.getFamily(), 20));
+        }
     }
 
     private ImageView setupRoomImage(String imagePath) {
@@ -89,47 +139,27 @@ public abstract class Place {
     }
 
     protected void setupNavigation(String currentRoomName) {
+        if (currentNavPanel != null) {
+            currentNavPanel.detachFrom(this.root);
+        }
+
         NavigationPanel navPanel = new NavigationPanel();
 
-        if (!"MomRoom".equals(currentRoomName) && GameState.isUnlocked("MomRoom")) {
-            navPanel.addNavigationTarget("Кімната матері", () ->
-            {
-                AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
-                SceneManager.getInstance().switchToCachedRoom("MomRoom", () -> new MomRoom().getRoot());
+        for (LocationRegistry.Location location : LocationRegistry.navigationLocations()) {
+            if (!location.getId().equals(currentRoomName) && session.isUnlocked(location.getId())) {
+                navPanel.addNavigationTarget(location.getDisplayName(), () -> {
+                    AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
+                    LocationRegistry.switchTo(location.getId());
+                });
             }
-            );
-        }
-
-        if (!"Kitchen".equals(currentRoomName) && GameState.isUnlocked("Kitchen")) {
-            navPanel.addNavigationTarget("Кухня", () ->
-{
-                AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
-    ukma.fourgirls.ui.roots.Kitchen kitchen = new ukma.fourgirls.ui.roots.Kitchen();
-    ukma.fourgirls.core.SceneManager.getInstance().switchToRoot(kitchen.getRoot());
-            });
-        }
-
-        if (!"ChildRoom".equals(currentRoomName) && GameState.isUnlocked("ChildRoom")) {
-            navPanel.addNavigationTarget("Дитяча кімната", () ->
-            {
-                AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
-                SceneManager.getInstance().switchToCachedRoom("ChildRoom", () -> new ChildRoom().getRoot());
-            }
-            );
-        }
-
-        if (GameState.isUnlocked("Street")) {
-            navPanel.addNavigationTarget("Вийти на вулицю", () -> {
-                AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
-                //TODO: Логіка виходу на вулицю
-            });
         }
 
         navPanel.attachTo(this.root);
+        this.currentNavPanel = navPanel;
     }
 
     public void showInventoryUI() {
-        GameState.unlockInventory();
+        session.unlockInventory();
         this.inventory.setVisible(true);
     }
 }
