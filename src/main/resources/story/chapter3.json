@@ -279,16 +279,6 @@
     ],
     "mavka-dinner-scene": [
       {
-        "type": "action",
-        "actionId": "dinner"
-      },
-      {
-        "type": "action",
-        "actionId": "dinner-scene"
-      }
-    ],
-    "mavka-dinner-scene": [
-      {
         "type": "dialogue",
         "text": [
           "Після роботи над прикрасою на Євдоху чекала смачна вечеря.",

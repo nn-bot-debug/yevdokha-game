@@ -120,7 +120,7 @@ public class Lake extends Place {
 
                     System.out.println("Головоломку кулона завершено! Результат успіху: " + isWin);
 
-                    // StoryRunner.playScene(session, "/story/chapter3.json", "mavky-thanks-scene", (StackPane) this.getRoot(), actions, null);
+                    StoryRunner.playScene(session, "/story/chapter3.json", "mavka-dinner-scene", (StackPane) this.getRoot(), actions, null);
                 });
 
                 ((StackPane) this.getRoot()).getChildren().add(puzzle);

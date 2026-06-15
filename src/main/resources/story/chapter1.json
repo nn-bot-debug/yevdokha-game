@@ -292,6 +292,7 @@
         ]
       },
       { "type": "action", "actionId": "hideActorsForWhisper" },
+      { "type": "action", "actionId": "play-scary-laugh" },
       {
         "type": "dialogue",
         "character": "Шепіт",

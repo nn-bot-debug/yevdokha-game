@@ -243,28 +243,13 @@ public class FourthPuzzle extends StackPane {
     }
 
     private void finish() {
-        int karmaChange = 0;
-        if (lives == 0) {
-            karmaChange = -1;
-        } else if (lives == 1) {
-            karmaChange = 0;
-        } else if (lives == 2) {
-            karmaChange = 1;
-        } else if (lives == 3) {
-            karmaChange = 2;
-        }
-
         var parent = this.getParent();
         if (parent instanceof StackPane sp) {
             sp.getChildren().remove(this);
         }
 
-        if (karmaChange != 0) {
-            session.changeKarma(karmaChange);
-        }
-
         if (onPuzzleSolved != null) {
-            onPuzzleSolved.accept(karmaChange);
+            onPuzzleSolved.accept(this.lives);
         }
     }
 
