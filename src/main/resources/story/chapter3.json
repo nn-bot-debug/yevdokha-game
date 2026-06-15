@@ -274,6 +274,16 @@
       },
       {
         "type": "action",
+        "actionId": "start_pendant_puzzle"
+      }
+    ],
+    "mavka-dinner-scene": [
+      {
+        "type": "action",
+        "actionId": "dinner"
+      },
+      {
+        "type": "action",
         "actionId": "dinner-scene"
       }
     ],

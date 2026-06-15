@@ -95,3 +95,75 @@
     -fx-padding: 8 15 8 15;
     -fx-pref-width: 180px;
 }
+
+/* Контейнер шифратора прикраси */
+.pendant-bg-container {
+    -fx-background-color: rgba(11, 19, 16, 0.98);
+    -fx-background-radius: 20px;
+    -fx-border-color: #418545;
+    -fx-border-width: 3px;
+    -fx-border-radius: 20px;
+}
+
+/* Головний заголовок */
+.pendant-title {
+    -fx-font-family: "Verdana";
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #a7f3d0;
+    -fx-effect: dropshadow(three-pass-box, #34d399, 10, 0, 0, 0);
+}
+
+/* Базовий стиль кам'яного слоту-барабану */
+.pendant-slot {
+    -fx-font-family: "Segoe UI Historic";
+    -fx-font-size: 64px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+    -fx-alignment: center;
+    -fx-pref-width: 140px;
+    -fx-pref-height: 140px;
+    -fx-background-color: #0f172a;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-width: 3px;
+}
+
+/* Стилі слотів при збігу з ціллю (смарагдовий спалах) */
+.pendant-slot-correct {
+    -fx-background-color: #064e3b;
+    -fx-border-color: #34d399;
+    -fx-text-fill: #34d399;
+    -fx-effect: dropshadow(three-pass-box, #34d399, 25, 0, 0, 0);
+}
+
+/* Панель відображення цілі */
+.pendant-target-box {
+    -fx-background-color: rgba(15, 23, 42, 0.6);
+    -fx-padding: 12px 25px;
+    -fx-background-radius: 10px;
+    -fx-border-color: #334155;
+    -fx-border-width: 1px;
+    -fx-border-radius: 10px;
+}
+
+/* Кнопки обертання */
+.pendant-control-button {
+    -fx-background-color: #1e293b;
+    -fx-border-color: #475569;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-text-fill: #e2e8f0;
+    -fx-font-family: "Verdana";
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 12px 22px;
+    -fx-cursor: hand;
+}
+
+.pendant-control-button:hover {
+    -fx-background-color: #334155;
+    -fx-border-color: #34d399;
+    -fx-text-fill: #ffffff;
+    -fx-effect: dropshadow(three-pass-box, rgba(52, 211, 153, 0.3), 10, 0, 0, 0);
+}

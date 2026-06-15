@@ -74,7 +74,7 @@ public class DeeperForest extends Place {
             if (actorView != null) actorView.hide();
             if (bludView != null) {
                 bludView.setPositionSide(false);
-                 bludView.setCharacterSprite("/images/characters/blud.png");
+                bludView.setCharacterSprite("/images/characters/blud.png");
             }
         });
 
@@ -145,13 +145,14 @@ public class DeeperForest extends Place {
     }
 
     private void playFadeOutToLake(){
-
         blackOverlay.toFront();
+        ukma.fourgirls.core.AudioManager.getInstance().fadeOutBackgroundMusic(1.5);
         FadeTransition fadeOut = new FadeTransition(Duration.seconds(1.5), blackOverlay);
         fadeOut.setFromValue(0.0);
         fadeOut.setToValue(1.0);
 
         fadeOut.setOnFinished(e -> {
+            actions.clear();
             LocationRegistry.switchTo("Lake");
         });
         fadeOut.play();
