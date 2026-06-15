@@ -145,8 +145,8 @@
         "actionId": "hideActor"
       },
       {
-        "type": "action",
-        "actionId": "lake-scene"
+        "type": "action", 
+        "actionId": "start_maze_with_timer" 
       }
     ],
     "blud-agreement-scene": [
@@ -162,7 +162,7 @@
       },
       {
         "type": "action",
-        "actionId": "lake-scene"
+        "actionId": "start_maze_no_timer"
       }
     ],
     "lake-meeting-scene": [
