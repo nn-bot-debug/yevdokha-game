@@ -13,6 +13,7 @@ import ukma.fourgirls.logic.StoryRunner;
 import ukma.fourgirls.state.GameSession;
 import ukma.fourgirls.ui.CameraController;
 import ukma.fourgirls.ui.CharacterView;
+import ukma.fourgirls.ui.puzzles.PendantPuzzle;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -95,20 +96,21 @@ public class Lake extends Place {
                 eyeButton.toFront();
             });
 
-//            actions.put("setupKarmaListener", () -> {
-//                session.setKarmaListener((currentKarma, addedPoints) ->
-//                        ukma.fourgirls.core.StatNotification.show((StackPane) this.getRoot(), currentKarma, addedPoints));
-//            });
-//
-//            actions.put("choice_refuse_game", () -> {
-//                session.changeKarma(-1);
-//                StoryRunner.playScene(session, "/story/chapter3.json", "blud-rejection-scene", (StackPane) this.getRoot(), actions, null);
-//            });
-//
-//            actions.put("choice_accept_game", () -> {
-//                session.changeKarma(1);
-//                StoryRunner.playScene(session, "/story/chapter3.json", "blud-agreement-scene", (StackPane) this.getRoot(), actions, null);
-//            });
+            actions.put("start_pendant_puzzle", () -> {
+                ((StackPane) this.getRoot()).getChildren().removeIf(node -> node instanceof PendantPuzzle);
+
+                PendantPuzzle puzzle = new PendantPuzzle(session, (isWin) -> {
+                    ((StackPane) this.getRoot()).getChildren().removeIf(node -> node instanceof PendantPuzzle);
+
+                    System.out.println("Головоломку кулона завершено! Результат успіху: " + isWin);
+
+                    // StoryRunner.playScene(session, "/story/chapter3.json", "mavky-thanks-scene", (StackPane) this.getRoot(), actions, null);
+                });
+
+                ((StackPane) this.getRoot()).getChildren().add(puzzle);
+                StackPane.setAlignment(puzzle, Pos.CENTER);
+                puzzle.toFront();
+            });
 
             StoryRunner.playScene(session, "/story/chapter3.json", "lake-meeting-scene", (StackPane) this.getRoot(), actions, null);
             playFadeIn();

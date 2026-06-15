@@ -267,6 +267,10 @@
       {
         "type": "action",
         "actionId": "hideActor"
+      },
+      {
+        "type": "action",
+        "actionId": "start_pendant_puzzle"
       }
     ]
   }

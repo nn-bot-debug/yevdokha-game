@@ -192,8 +192,8 @@ public class PendantPuzzle extends StackPane {
     private void showInstructionOverlay() {
         VBox tutorialBox = new VBox(20);
         tutorialBox.setAlignment(Pos.CENTER);
-        tutorialBox.setMaxWidth(500);
-        tutorialBox.setMaxHeight(380);
+        tutorialBox.setMaxWidth(550);
+        tutorialBox.setMaxHeight(450);
         tutorialBox.setPadding(new Insets(30, 40, 30, 40));
         tutorialBox.getStyleClass().add("settings-dialog");
 
