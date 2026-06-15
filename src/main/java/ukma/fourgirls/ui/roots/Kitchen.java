@@ -112,6 +112,10 @@ public class Kitchen extends Place {
             ratView.hide();
         });
 
+        actions.put("play-scary-laugh", () -> {
+            AudioManager.getInstance().buttonSound("/music/scary-laugh.mp3");
+        });
+
         actions.put("triggerLightning", () ->
                 this.triggerLightningFlash(() ->
                         System.out.println("Спалах грози відбувся!"))

@@ -33,11 +33,16 @@ public class CharacterView {
             Image img = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
             spriteView.setImage(img);
 
-            if (imagePath.contains("ant-ryadovuy") || imagePath.contains("ant-brother") || imagePath.contains("blud")) {
+            if (imagePath.contains("blud")) {
+                spriteView.setFitWidth(720);
+                spriteView.setFitHeight(0);
+                this.bottomOffset = 40;
+
+            } else if (imagePath.contains("ant-ryadovuy") || imagePath.contains("ant-brother")) {
                 spriteView.setFitWidth(480);
                 spriteView.setFitHeight(0);
-
                 this.bottomOffset = 95;
+
             } else if (imagePath.contains("Lisovuk")) {
                 spriteView.setFitHeight(880);
                 spriteView.setFitWidth(0);
@@ -45,7 +50,6 @@ public class CharacterView {
             } else {
                 spriteView.setFitHeight(640);
                 spriteView.setFitWidth(0);
-
                 this.bottomOffset = 0;
             }
             if (!container.getChildren().contains(spriteView)) {
