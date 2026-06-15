@@ -8,6 +8,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import ukma.fourgirls.core.AudioManager;
+import ukma.fourgirls.core.LocationRegistry;
 import ukma.fourgirls.core.SceneManager;
 import ukma.fourgirls.core.StatNotification;
 import ukma.fourgirls.logic.StoryRunner;
@@ -112,13 +113,18 @@ public class DeeperForest extends Place {
             StoryRunner.playScene(session, "/story/chapter3.json", "blud-agreement-scene", (StackPane) this.getRoot(), actions, null);
         });
 
+        actions.put("lake-scene", this::playFadeOutToLake);
+      
+        actions.put("enable-lake-eye-button", () -> {
+            this.playFadeOutToLake();
+        });
+      
         actions.put("start_maze_with_timer", () -> {
             ((StackPane) this.getRoot()).getChildren().removeIf(node -> node instanceof ukma.fourgirls.ui.puzzles.MazePuzzle);
 
             ukma.fourgirls.ui.puzzles.MazePuzzle puzzle = new ukma.fourgirls.ui.puzzles.MazePuzzle(session, true, (result) -> {
                 ((StackPane) this.getRoot()).getChildren().removeIf(node -> node instanceof ukma.fourgirls.ui.puzzles.MazePuzzle);
-                // Після фіналу гри виходимо до озера
-                //StoryRunner.playScene(session, "/story/chapter3.json", "lake-arrival-scene", (StackPane) this.getRoot(), actions, null);
+                StoryRunner.playScene(session, "/story/chapter3.json", "lake-meeting-scene", (StackPane) this.getRoot(), actions, null);
             });
             ((StackPane) this.getRoot()).getChildren().add(puzzle);
             puzzle.toFront();
@@ -129,7 +135,7 @@ public class DeeperForest extends Place {
 
             ukma.fourgirls.ui.puzzles.MazePuzzle puzzle = new ukma.fourgirls.ui.puzzles.MazePuzzle(session, false, (result) -> {
                 ((StackPane) this.getRoot()).getChildren().removeIf(node -> node instanceof ukma.fourgirls.ui.puzzles.MazePuzzle);
-                //StoryRunner.playScene(session, "/story/chapter3.json", "lake-arrival-scene", (StackPane) this.getRoot(), actions, null);
+                StoryRunner.playScene(session, "/story/chapter3.json", "lake-meeting-scene", (StackPane) this.getRoot(), actions, null);
             });
             ((StackPane) this.getRoot()).getChildren().add(puzzle);
             puzzle.toFront();
@@ -137,6 +143,19 @@ public class DeeperForest extends Place {
 
         StoryRunner.playScene(session, "/story/chapter3.json", "blud-meeting-scene", (StackPane) this.getRoot(), actions, null);
         playFadeIn();
+    }
+
+    private void playFadeOutToLake(){
+
+        blackOverlay.toFront();
+        FadeTransition fadeOut = new FadeTransition(Duration.seconds(1.5), blackOverlay);
+        fadeOut.setFromValue(0.0);
+        fadeOut.setToValue(1.0);
+
+        fadeOut.setOnFinished(e -> {
+            LocationRegistry.switchTo("Lake");
+        });
+        fadeOut.play();
     }
 
     private void playFadeIn() {

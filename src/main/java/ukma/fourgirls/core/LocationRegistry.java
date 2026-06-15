@@ -20,6 +20,7 @@ public final class LocationRegistry {
         register("Forest", "Ліс", Forest::new, false);
         register("Tree", "Дерево", Tree::new, false);
         register("DeeperForest", "Глиб лісу", DeeperForest::new, false);
+        register("Lake", "Озеро з мавками", Lake::new, false);
     }
 
     private LocationRegistry() {}

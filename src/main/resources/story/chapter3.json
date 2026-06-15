@@ -145,8 +145,8 @@
         "actionId": "hideActor"
       },
       {
-        "type": "action",
-        "actionId": "start_maze_with_timer"
+        "type": "action", 
+        "actionId": "start_maze_with_timer" 
       }
     ],
     "blud-agreement-scene": [
@@ -163,6 +163,110 @@
       {
         "type": "action",
         "actionId": "start_maze_no_timer"
+      }
+    ],
+    "lake-meeting-scene": [
+      {
+        "type": "action",
+        "actionId": "play-melodia-sound"
+      },
+      {
+        "type": "action",
+        "actionId": "hideActor"
+      },
+      {
+        "type": "dialogue",
+        "text": [
+          "Блукаючи лісом, вже почало темніти, а дійшовши до озера, повний місяць осяював листя кущів і відбивався у кришталевій воді.",
+          "Дівчинка ледь чула прекрасний спів, який йшов ніби з її нутра.",
+          "І спів цей був настільки рідним їй та знайомим, що вона мимоволі згадала маму, яка співала їй колискові.",
+          "На жаль, зараз дівчинка бачить речі зовсім по іншому."
+        ]
+      },
+      {
+        "type": "action",
+        "actionId": "enable-lake-eye-button"
+      }
+      ],
+    "mavky-meeting-scene": [
+      {
+        "type": "dialogue",
+        "text": [
+          "І перед дівчам розкинулася наступна картина...",
+          "Чудові юні дівчата сиділи то там то сям, мерехтіли своїми хвостами, які відбивали місячне сяйво, роблячи бажання відвести погляд - неможливим.",
+          "Кожна, як на свято, гарнюща. Тягнули шиї до неба, а хвіст до води.",
+          "Раптом всі одночасно перевели погляд на Євдоху, ніби до цього її не було."
+        ]
+      },
+      {
+        "type": "action",
+        "actionId": "showMavka"
+      },
+      {
+        "type": "dialogue",
+        "character": "Мавка",
+        "text": [
+          "Дівча, ти загубилась?"
+        ]
+      },
+      {
+        "type": "action",
+        "actionId": "hideActor"
+      },
+      {
+        "type": "dialogue",
+        "text": [
+          "Мавка хоч і мала неземну вроду, та її посмішка лякала."
+        ]
+      },
+      {
+        "type": "action",
+        "actionId": "showScaredYevdokha"
+      },
+      {
+        "type": "dialogue",
+        "character": "Євдоха",
+        "text": [
+          "Так, я шукаю батька і вже дуже довго блукаю у лісі. Втомлена і голодна."
+        ]
+      },
+      {
+        "type": "action",
+        "actionId": "showMavka"
+      },
+      {
+        "type": "dialogue",
+        "character": "Мавка",
+        "text": [
+          "Можеш поки присісти, а ми тебе нагодуємо трохи згодом.",
+          "Проте нічого ж просто так не відбувається...",
+          "Якщо полагодиш мою прикрасу, я буду дуже вдячна!"
+        ]
+      },
+      {
+        "type": "action",
+        "actionId": "hideActor"
+      },
+      {
+        "type": "dialogue",
+        "text": [
+          "Всі як одна засміялися, і хоч дівочий сміх звучав лагідно, відчуття легкості та турботи Євдоха не мала."
+        ]
+      },
+      {
+        "type": "action",
+        "actionId": "showScaredYevdokha"
+      },
+      {
+        "type": "dialogue",
+        "character": "Євдоха",
+        "text": [
+          "Я можу спробувати..."
+        ]
+      },
+      {
+        "type": "action",
+        "actionId": "hideActor"
       }
     ]
   }
