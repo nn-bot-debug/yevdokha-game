@@ -111,6 +111,24 @@
       {
         "type": "action",
         "actionId": "hideActor"
+      },
+      {
+        "type": "action",
+        "actionId": "setupKarmaListener"
+      },
+      {
+        "type": "choice",
+        "prompt": "Що відповісти Блуду?",
+        "options": [
+          {
+            "text": "Ні, я не хочу!",
+            "actionId": "choice_refuse_game"
+          },
+          {
+            "text": "Добре..",
+            "actionId": "choice_accept_game"
+          }
+        ]
       }
     ]
   }
