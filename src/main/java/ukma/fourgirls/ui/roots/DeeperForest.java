@@ -104,12 +104,12 @@ public class DeeperForest extends Place {
 
         actions.put("choice_refuse_game", () -> {
             session.changeKarma(-1);
-            // StoryRunner.playScene(session, "/story/chapter3.json", "blud-angry-scene", (StackPane) this.getRoot(), actions, null);
+            StoryRunner.playScene(session, "/story/chapter3.json", "blud-rejection-scene", (StackPane) this.getRoot(), actions, null);
         });
 
         actions.put("choice_accept_game", () -> {
             session.changeKarma(1);
-            // StoryRunner.playScene(session, "/story/chapter3.json", "blud-game-start", (StackPane) this.getRoot(), actions, null);
+            StoryRunner.playScene(session, "/story/chapter3.json", "blud-agreement-scene", (StackPane) this.getRoot(), actions, null);
         });
 
         StoryRunner.playScene(session, "/story/chapter3.json", "blud-meeting-scene", (StackPane) this.getRoot(), actions, null);
