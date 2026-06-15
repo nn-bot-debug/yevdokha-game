@@ -129,6 +129,64 @@ public class Forest extends Place{
             session.removeItem("Горщик зі смолою");
             ukma.fourgirls.core.NotificationManager.showNotification(this.root, "Смолу використано. Шлях углиб лісу відкрито!");
             this.enableNavigation();
+
+/// Перехід до третьої частини
+
+            blackOverlay.toFront();
+            FadeTransition fadeOut = new FadeTransition(Duration.seconds(1.5), blackOverlay);
+            fadeOut.setFromValue(0.0);
+            fadeOut.setToValue(1.0);
+
+            fadeOut.setOnFinished(e -> {
+                this.setBackground(MAGIC_FOREST);
+                CameraController.setPanningEnabled(true);
+
+                actions.clear();
+                initBaseActions();
+
+                actions.put("play-sound-scary-laugh", () ->{
+                    AudioManager.getInstance().buttonSound("/music/scary-laugh.mp3");
+                });
+
+                actions.put("enable-blud-eye-button", () -> {
+                    Button eyeButton = new Button();
+                    eyeButton.getStyleClass().add("eye-feature-button");
+                    StackPane.setAlignment(eyeButton, Pos.TOP_RIGHT);
+                    StackPane.setMargin(eyeButton, new javafx.geometry.Insets(20, 20, 0, 0));
+
+                    eyeButton.setOnAction(event -> {
+                        ((StackPane) this.getRoot()).getChildren().remove(eyeButton);
+                        this.setBackground(MAGIC_FOREST);
+                        StoryRunner.playScene(session, "/story/chapter3.json", "blud-intro-scene", (StackPane) this.getRoot(), actions, null);
+                    });
+                    ((StackPane) this.getRoot()).getChildren().add(eyeButton);
+                    eyeButton.toFront();
+                });
+
+                actions.put("showBlud", () -> {
+                    if (actorView != null) actorView.hide();
+                    if (lisovukView != null) {
+                        lisovukView.setPositionSide(false);
+                      //  lisovukView.setCharacterSprite("/images/characters/?");
+                    }
+                });
+
+                actions.put("showScaredYevdokha", () -> {
+                    if (lisovukView != null) lisovukView.hide();
+                    if (actorView != null) {
+                        actorView.setPositionSide(true);
+                        actorView.setCharacterSprite("/images/characters/scaredYevdokhaFull.png");
+                    }
+                });
+
+                StoryRunner.playScene(session, "/story/chapter3.json", "blud-meeting-scene", (StackPane) this.getRoot(), actions, null);
+
+                FadeTransition fadeIn = new FadeTransition(Duration.seconds(1.0), blackOverlay);
+                fadeIn.setFromValue(1.0);
+                fadeIn.setToValue(0.0);
+                fadeIn.play();
+            });
+            fadeOut.play();
         });
 
         StoryRunner.playScene(session, "/story/chapter2.json", "lisovuk_healing_and_prophecy", (StackPane) this.getRoot(), actions, null);
