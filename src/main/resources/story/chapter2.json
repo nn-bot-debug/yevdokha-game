@@ -118,6 +118,7 @@
       { "type": "action", "actionId": "setupKarmaListener" },
       {
         "type": "choice",
+        "prompt": "Що відповісти Лісовику?",
         "options": [
           {
             "text": "Євдоха!",
