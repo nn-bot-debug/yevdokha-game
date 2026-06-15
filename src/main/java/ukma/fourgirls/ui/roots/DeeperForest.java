@@ -74,8 +74,7 @@ public class DeeperForest extends Place {
             if (actorView != null) actorView.hide();
             if (bludView != null) {
                 bludView.setPositionSide(false);
-                // Коли додасте спрайт Блуду, просто розкоментуй рядок нижче:
-                // bludView.setCharacterSprite("/images/characters/blud.png");
+                 bludView.setCharacterSprite("/images/characters/blud.png");
             }
         });
 
