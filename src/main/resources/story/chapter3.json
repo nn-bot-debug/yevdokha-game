@@ -190,6 +190,10 @@
     ],
     "mavky-meeting-scene": [
       {
+        "type": "action",
+        "actionId": "start"
+      },
+      {
         "type": "dialogue",
         "text": [
           "І перед дівчам розкинулася наступна картина...",
@@ -267,17 +271,13 @@
       {
         "type": "action",
         "actionId": "hideActor"
+      },
+      {
+        "type": "action",
+        "actionId": "dinner-scene"
       }
     ],
     "mavka-dinner-scene": [
-      {
-        "type": "action",
-        "actionId": "dinner"
-      },
-      {
-        "type": "action",
-        "actionId": "hideActor"
-      },
       {
         "type": "dialogue",
         "text": [

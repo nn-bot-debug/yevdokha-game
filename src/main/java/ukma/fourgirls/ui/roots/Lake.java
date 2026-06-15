@@ -85,13 +85,17 @@ public class Lake extends Place {
                 }
             });
 
-            actions.put("dinner", ()->{
+            actions.put("dinner-scene", () ->{
                 this.setBackground(LAKE_DINNER);
+                StoryRunner.playScene(session, "/story/chapter3.json", "mavka-dinner-scene", (StackPane) this.getRoot(), actions, null);
             });
 
             actions.put("play-melodia-sound", () -> {
                 AudioManager.getInstance().buttonSound("/music/Lake-scene-melody.mp3");
             });
+
+            actions.put("start", () ->{
+                this.setBackground(LAKE_MAVKY);});
 
             actions.put("enable-lake-eye-button", () -> {
                 Button eyeButton = new Button();
@@ -101,36 +105,18 @@ public class Lake extends Place {
 
                 eyeButton.setOnAction(event -> {
                     ((StackPane) this.getRoot()).getChildren().remove(eyeButton);
-                    this.setBackground(LAKE_MAVKY);
                     StoryRunner.playScene(session, "/story/chapter3.json", "mavky-meeting-scene", (StackPane) this.getRoot(), actions, null);
                 });
                 ((StackPane) this.getRoot()).getChildren().add(eyeButton);
                 eyeButton.toFront();
             });
 
-//            actions.put("setupKarmaListener", () -> {
-//                session.setKarmaListener((currentKarma, addedPoints) ->
-//                        ukma.fourgirls.core.StatNotification.show((StackPane) this.getRoot(), currentKarma, addedPoints));
-//            });
-//
-//            actions.put("choice_refuse_game", () -> {
-//                session.changeKarma(-1);
-//                StoryRunner.playScene(session, "/story/chapter3.json", "blud-rejection-scene", (StackPane) this.getRoot(), actions, null);
-//            });
-//
-//            actions.put("choice_accept_game", () -> {
-//                session.changeKarma(1);
-//                StoryRunner.playScene(session, "/story/chapter3.json", "blud-agreement-scene", (StackPane) this.getRoot(), actions, null);
-//            });
-
+            this.setBackground(LAKE);
             StoryRunner.playScene(session, "/story/chapter3.json", "lake-meeting-scene", (StackPane) this.getRoot(), actions, null);
-            playFadeIn();
-
-            StoryRunner.playScene(session, "/story/chapter3.json", "mavka-dinner-scene", (StackPane) this.getRoot(), actions, null);
             playFadeIn();
         }
 
-        private void playFadeIn() {
+    private void playFadeIn() {
             blackOverlay.setOpacity(1.0);
             blackOverlay.toFront();
             FadeTransition fadeIn = new FadeTransition(Duration.seconds(1.0), blackOverlay);
