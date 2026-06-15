@@ -112,6 +112,29 @@ public class DeeperForest extends Place {
             StoryRunner.playScene(session, "/story/chapter3.json", "blud-agreement-scene", (StackPane) this.getRoot(), actions, null);
         });
 
+        actions.put("start_maze_with_timer", () -> {
+            ((StackPane) this.getRoot()).getChildren().removeIf(node -> node instanceof ukma.fourgirls.ui.puzzles.MazePuzzle);
+
+            ukma.fourgirls.ui.puzzles.MazePuzzle puzzle = new ukma.fourgirls.ui.puzzles.MazePuzzle(session, true, (result) -> {
+                ((StackPane) this.getRoot()).getChildren().removeIf(node -> node instanceof ukma.fourgirls.ui.puzzles.MazePuzzle);
+                // Після фіналу гри виходимо до озера
+                //StoryRunner.playScene(session, "/story/chapter3.json", "lake-arrival-scene", (StackPane) this.getRoot(), actions, null);
+            });
+            ((StackPane) this.getRoot()).getChildren().add(puzzle);
+            puzzle.toFront();
+        });
+
+        actions.put("start_maze_no_timer", () -> {
+            ((StackPane) this.getRoot()).getChildren().removeIf(node -> node instanceof ukma.fourgirls.ui.puzzles.MazePuzzle);
+
+            ukma.fourgirls.ui.puzzles.MazePuzzle puzzle = new ukma.fourgirls.ui.puzzles.MazePuzzle(session, false, (result) -> {
+                ((StackPane) this.getRoot()).getChildren().removeIf(node -> node instanceof ukma.fourgirls.ui.puzzles.MazePuzzle);
+                //StoryRunner.playScene(session, "/story/chapter3.json", "lake-arrival-scene", (StackPane) this.getRoot(), actions, null);
+            });
+            ((StackPane) this.getRoot()).getChildren().add(puzzle);
+            puzzle.toFront();
+        });
+
         StoryRunner.playScene(session, "/story/chapter3.json", "blud-meeting-scene", (StackPane) this.getRoot(), actions, null);
         playFadeIn();
     }

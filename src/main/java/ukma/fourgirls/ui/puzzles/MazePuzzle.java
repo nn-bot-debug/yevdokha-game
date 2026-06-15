@@ -115,9 +115,6 @@ public class MazePuzzle extends StackPane{
 
         if (isTimed) {
             timerText.setText("00:50");
-        } else {
-            timerText.setText("Блукання (Час необмежений)");
-            timerText.setFill(Color.web("#60a5fa"));
         }
 
         topLayout.getChildren().addAll(hintText, timerText);
