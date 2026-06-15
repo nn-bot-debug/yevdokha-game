@@ -114,15 +114,15 @@ public class VentiliPuzzle extends StackPane {
         topBox.getChildren().addAll(hintText, timerText);
         mainLayout.getChildren().add(topBox);
 
-        secondsLeft = 25;
+        secondsLeft = 15;
         updateTimerDisplay();
 
         AnchorPane circuitPane = new AnchorPane();
         circuitPane.setPrefSize(920, 520);
-        circuitPane.getStyleClass().add("puzzle-ventili-frame"); // Наш новий напівпрозорий CSS клас
+        circuitPane.getStyleClass().add("puzzle-ventili-frame");
         circuitPane.setMaxSize(AnchorPane.USE_PREF_SIZE, AnchorPane.USE_PREF_SIZE);
 
-        // Стовпчик 1: Крантики-вентилі
+        // Крантики-вентилі
         VBox valvesBox = new VBox(22);
         valvesBox.setAlignment(Pos.CENTER);
         ToggleButton tvA = createValveButton("Вентиль А");
@@ -141,12 +141,12 @@ public class VentiliPuzzle extends StackPane {
         pipeC = createPipeLine(240, 210, 440, 280);
         pipeD = createPipeLine(240, 272, 440, 280);
 
-        pipeAnd1Out = createPipeLine(440, 120, 828, 228); // Верхня гілка йде прямо до фіналу
+        pipeAnd1Out = createPipeLine(440, 120, 828, 228);
 
-        pipeOrOut = createPipeLine(440, 280, 640, 380);  // Вихід з OR йде на вхід другого AND
-        pipeE = createPipeLine(240, 338, 640, 380);      // Вентиль Д йде на вхід другого AND
+        pipeOrOut = createPipeLine(440, 280, 640, 380);
+        pipeE = createPipeLine(240, 338, 640, 380);
 
-        pipeAnd2Out = createPipeLine(640, 380, 828, 228); // Вихід з другого AND йде до фіналу
+        pipeAnd2Out = createPipeLine(640, 380, 828, 228);
         pipeFinal = createPipeLine(828, 228, 910, 228);
 
         StackPane nodeAND1 = createVisualGate("AND", gateAND1 = new Circle(20), textAND1 = new Text("AND"), 420, 100);
@@ -155,7 +155,6 @@ public class VentiliPuzzle extends StackPane {
 
         StackPane nodeReceiver = createVisualGate("REC", mainReceiver = new Circle(28), textReceiver = new Text("*"), 800, 200);
 
-        // Збираємо до купи на AnchorPane
         circuitPane.getChildren().addAll(pipeA, pipeB, pipeC, pipeD, pipeE, pipeAnd1Out, pipeOrOut, pipeAnd2Out, pipeFinal);
         circuitPane.getChildren().addAll(valvesBox, nodeAND1, nodeOR, nodeAND2, nodeReceiver);
         mainLayout.getChildren().add(circuitPane);
@@ -167,7 +166,7 @@ public class VentiliPuzzle extends StackPane {
         tvD.setOnAction(e -> { valveD = tvD.isSelected(); updateHydraulics(); });
         tvE.setOnAction(e -> { valveE = tvE.isSelected(); updateHydraulics(); });
 
-        // --- ПАНЕЛЬ РЕЗУЛЬТАТУ ---
+        // Панель результату
         resultBox = new VBox(15);
         resultBox.getStyleClass().add("puzzle-result-box");
         VBox.setMargin(resultBox, new Insets(0, 0, 30, 0));
@@ -218,12 +217,11 @@ public class VentiliPuzzle extends StackPane {
     }
 
     /**
-     * ⚡ ПРОРАХУНОК БУЛЕВОЇ ЛОГІКИ ТА КОЛЬОРУ ТРУБ
+     * Прорахунок булевої логіки та колір труб
      */
     private void updateHydraulics() {
         if (!isGameActive) return;
 
-        // Рівень 1: Вентилі А та Б
         pipeA.setStroke(valveA ? RESIN_FLOW : EMPTY_PIPE);
         pipeB.setStroke(valveB ? RESIN_FLOW : EMPTY_PIPE);
 
@@ -232,7 +230,6 @@ public class VentiliPuzzle extends StackPane {
         textAND1.setFill(and1Open ? Color.rgb(20, 40, 20) : Color.WHITE);
         pipeAnd1Out.setStroke(and1Open ? RESIN_FLOW : EMPTY_PIPE);
 
-        // Рівень 2: Вентилі В (NOT) та Г
         boolean valveCFlow = !valveC;
         pipeC.setStroke(valveCFlow ? RESIN_FLOW : EMPTY_PIPE);
         pipeD.setStroke(valveD ? RESIN_FLOW : EMPTY_PIPE);
@@ -242,7 +239,6 @@ public class VentiliPuzzle extends StackPane {
         textOR.setFill(orOpen ? Color.rgb(20, 40, 20) : Color.WHITE);
         pipeOrOut.setStroke(orOpen ? RESIN_FLOW : EMPTY_PIPE);
 
-        // Рівень 3: Вхід від OR та нового Вентиля Д (AND 2)
         pipeE.setStroke(valveE ? RESIN_FLOW : EMPTY_PIPE);
 
         boolean and2Open = orOpen && valveE;
@@ -250,7 +246,7 @@ public class VentiliPuzzle extends StackPane {
         textAND2.setFill(and2Open ? Color.rgb(20, 40, 20) : Color.WHITE);
         pipeAnd2Out.setStroke(and2Open ? RESIN_FLOW : EMPTY_PIPE);
 
-        // Фінал: Перемога, якщо верхня гілка AND1 та нижня AND2 активні разом
+        // Фінал
         boolean puzzleSolved = and1Open && and2Open;
         pipeFinal.setStroke(puzzleSolved ? RESIN_FLOW : EMPTY_PIPE);
         mainReceiver.setFill(puzzleSolved ? Color.LIGHTGREEN : Color.rgb(130, 40, 40));
@@ -358,7 +354,7 @@ public class VentiliPuzzle extends StackPane {
 
         resultButton.setText("Прийняти долю");
         resultButton.setOnAction(e -> {
-            if (onFinishCallback != null) onFinishCallback.accept(0); // 0 означає невдачу, але сюжет рухається далі
+            if (onFinishCallback != null) onFinishCallback.accept(0);
         });
         resultBox.setVisible(true);
     }
