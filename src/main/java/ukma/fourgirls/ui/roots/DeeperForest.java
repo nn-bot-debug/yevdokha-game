@@ -74,7 +74,7 @@ public class DeeperForest extends Place {
             if (actorView != null) actorView.hide();
             if (bludView != null) {
                 bludView.setPositionSide(false);
-                bludView.setCharacterSprite("/images/characters/Blud.png");
+                bludView.setCharacterSprite("/images/characters/blud.png");
             }
         });
 
