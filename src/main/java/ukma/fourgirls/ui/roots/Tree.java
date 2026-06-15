@@ -131,8 +131,13 @@ public class Tree extends Place{
         });
 
         actions.put("enable_resin_planning", () -> {
-            System.out.println("Почався таймер підготовки. Гравець планує збір смоли.");
-            StoryRunner.playScene(session, "/story/chapter2.json", "resin_collection_success", (StackPane) this.getRoot(), actions, null);
+            ukma.fourgirls.ui.puzzles.VentiliPuzzle logicPuzzle = new ukma.fourgirls.ui.puzzles.VentiliPuzzle(session, (puzzleResult) -> {
+
+                this.root.getChildren().removeIf(node -> node instanceof ukma.fourgirls.ui.puzzles.VentiliPuzzle);
+                StoryRunner.playScene(session, "/story/chapter2.json", "resin_collection_success", (StackPane) this.getRoot(), actions, null);
+            });
+            this.root.getChildren().add(logicPuzzle);
+            logicPuzzle.toFront();
         });
 
         actions.put("go_back_to_forest_with_resin", () -> {
