@@ -50,3 +50,14 @@
 .puzzle-text-lose {
     -fx-fill: #e74c3c;
 }
+
+/* Рамка для схеми вентилів: напівпрозора, щоб було видно малюнок дерева */
+.puzzle-ventili-frame {
+    -fx-background-color: rgba(24, 20, 15, 0.75);
+    -fx-background-radius: 16px;
+    -fx-border-color: #5c4a3c;
+    -fx-border-radius: 16px;
+    -fx-border-width: 2px;
+    -fx-padding: 30;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.8), 25, 0, 0, 8);
+}
