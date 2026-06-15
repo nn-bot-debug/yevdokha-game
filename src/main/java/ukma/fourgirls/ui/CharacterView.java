@@ -38,6 +38,10 @@ public class CharacterView {
                 spriteView.setFitHeight(0);
 
                 this.bottomOffset = 95;
+            } else if (imagePath.contains("Lisovuk")) {
+                spriteView.setFitHeight(880);
+                spriteView.setFitWidth(0);
+                this.bottomOffset = -50;
             } else {
                 spriteView.setFitHeight(640);
                 spriteView.setFitWidth(0);

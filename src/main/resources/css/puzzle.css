@@ -1,0 +1,97 @@
+/* Загальний стиль для магічного замка градієнта */
+.gradient-puzzle-container {
+    -fx-alignment: center;
+    -fx-spacing: 25;
+}
+
+/* Стильна дерев'яно-бронзова рамка навколо плиток */
+.puzzle-lock-frame {
+    -fx-alignment: center;
+    -fx-spacing: 16;
+    -fx-background-color: rgba(25, 35, 35, 0.85);
+    -fx-background-radius: 12px;
+    -fx-border-color: #3c5050;
+    -fx-border-radius: 12px;
+    -fx-border-width: 2px;
+    -fx-padding: 20 30 20 30;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.7), 20, 0, 0, 5);
+}
+
+/* Панель результатів */
+.puzzle-result-box {
+    -fx-alignment: center;
+    -fx-spacing: 15;
+}
+
+.puzzle-action-button {
+    -fx-pref-width: 240px;
+    -fx-pref-height: 45px;
+    -fx-background-color: rgba(35, 50, 50, 0.9);
+    -fx-text-fill: #9ba89e;
+    -fx-border-color: #3c5050;
+    -fx-border-width: 2px;
+    -fx-background-radius: 6px;
+    -fx-border-radius: 6px;
+    -fx-font-family: "Verdana";
+    -fx-font-size: 16px;
+    -fx-cursor: hand;
+}
+
+.puzzle-action-button:hover {
+    -fx-background-color: rgba(50, 70, 70, 0.95);
+    -fx-border-color: #b28d94;
+    -fx-text-fill: #ffffff;
+}
+
+.puzzle-text-win {
+    -fx-fill: #32c16d;
+}
+
+.puzzle-text-lose {
+    -fx-fill: #e74c3c;
+}
+
+/* Рамка для схеми вентилів: напівпрозора, щоб було видно малюнок дерева */
+.puzzle-ventili-frame {
+    -fx-background-color: rgba(24, 20, 15, 0.75);
+    -fx-background-radius: 16px;
+    -fx-border-color: #5c4a3c;
+    -fx-border-radius: 16px;
+    -fx-border-width: 2px;
+    -fx-padding: 30;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.8), 25, 0, 0, 8);
+}
+
+
+/* Прозорі кнопки поверх стежок */
+.maze-path-button {
+    -fx-background-color: rgba(15, 23, 42, 0.85); /* Темний фон, щоб текст не зливався з лісом */
+    -fx-border-color: #34d399; /* Світло-зелена чітка рамка */
+    -fx-border-width: 2px;
+    -fx-border-radius: 8px;
+    -fx-text-fill: #e2e8f0; /* Світлий текст */
+    -fx-font-family: "Verdana";
+    -fx-font-size: 16px; /* Збільшили шрифт для читабельності */
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-pref-width: 200px; /* Трохи розширили */
+    -fx-pref-height: 50px;
+    -fx-effect: dropshadow(three-pass-box, rgba(52, 211, 153, 0.2), 8, 0, 0, 0);
+}
+
+.maze-path-button:hover {
+    -fx-background-color: rgba(52, 211, 153, 0.15);
+    -fx-border-color: #10b981;
+    -fx-text-fill: #ffffff;
+    -fx-effect: dropshadow(three-pass-box, #10b981, 15, 0, 0, 0);
+}
+
+/* Магічний орієнтир */
+.maze-counter-box {
+    -fx-background-color: rgba(15, 23, 42, 0.88);
+    -fx-border-color: #10b981;
+    -fx-border-width: 2px;
+    -fx-border-radius: 8px;
+    -fx-padding: 8 15 8 15;
+    -fx-pref-width: 180px;
+}

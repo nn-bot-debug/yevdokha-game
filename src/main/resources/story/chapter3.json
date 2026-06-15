@@ -1,0 +1,169 @@
+{
+  "scenes": {
+    "blud-meeting-scene": [
+      {
+        "type": "action",
+        "actionId": "hideActor"
+      },
+      {
+        "type": "dialogue",
+        "text": [
+          "Дівчинка рушала далі, ще глибше в ліс.",
+          "Чим більше вона віддалялась від галявини із самотнім деревом, тим страшнішими ставали сосни. Гілки ставали дедалі гострішими, стовбури подертими та хворобливими."
+        ]
+      },
+      {
+        "type": "action",
+        "actionId": "play-sound-scary-laugh"
+      },
+      {
+        "type": "action",
+        "actionId": "showScaredYevdokha"
+      },
+      {
+        "type": "dialogue",
+        "character": "Євдоха",
+        "text": [
+          "Я вже це чула... і мені не дуже подобається."
+        ]
+      },
+      {
+        "type": "action",
+        "actionId": "hideActor"
+      },
+      {
+        "type": "dialogue",
+        "text": [
+          "Євдоха йшла вже не так стрімко. ЇЇ кроки стали менш впевненими, дихання частішим, а тіло почав різати холод і передчуття чогось поганого.",
+          "Вона вирішила подивитись що ж з неї насміхається."
+        ]
+      },
+      {
+        "type": "action",
+        "actionId": "enable-blud-eye-button"
+      }
+    ],
+    "blud-intro-scene": [
+      {
+        "type": "dialogue",
+        "text": [
+          "Дівчинка побачила якусь темну хмару, що кружляла над землею. Це був наче згусток туману, морок якого відчувався не тільки тілом, а й подумки - ставало лячно."
+        ]
+      },
+      {
+        "type": "action",
+        "actionId": "showBlud"
+      },
+      {
+        "type": "dialogue",
+        "character": "Блуд",
+        "text": [
+          "Нареш-шті ти прийшла...Як же довго я тебе кликав.",
+          "Ти .... с-сама?"
+        ]
+      },
+      {
+        "type": "action",
+        "actionId": "showScaredYevdokha"
+      },
+      {
+        "type": "dialogue",
+        "character": "Євдоха",
+        "text": [
+          "Так..."
+        ]
+      },
+      {
+        "type": "action",
+        "actionId": "showBlud"
+      },
+      {
+        "type": "dialogue",
+        "character": "Блуд",
+        "text": [
+          "Хочу пограти з тобою у гру...",
+          "Любиш блукати одна?"
+        ]
+      },
+      {
+        "type": "action",
+        "actionId": "showScaredYevdokha"
+      },
+      {
+        "type": "dialogue",
+        "character": "Євдоха",
+        "text": [
+          "..."
+        ]
+      },
+      {
+        "type": "action",
+        "actionId": "showBlud"
+      },
+      {
+        "type": "dialogue",
+        "character": "Блуд",
+        "text": [
+          "Тобі потрібно буде блукати с-стежками, допоки ти не знайдеш озеро. Це дуже весела гра!",
+          "Зіграймо!"
+        ]
+      },
+      {
+        "type": "action",
+        "actionId": "hideActor"
+      },
+      {
+        "type": "action",
+        "actionId": "setupKarmaListener"
+      },
+      {
+        "type": "choice",
+        "prompt": "Що відповісти Блуду?",
+        "options": [
+          {
+            "text": "Ні, я не хочу!",
+            "actionId": "choice_refuse_game"
+          },
+          {
+            "text": "Добре..",
+            "actionId": "choice_accept_game"
+          }
+        ]
+      }
+    ],
+    "blud-rejection-scene": [
+      {
+        "type": "dialogue",
+        "text": [
+          "Це створіння стало розлюченим, повітря було наскрізь просочене гнівом та страхом.",
+          "Відповідь дівчинки йому не сподобалось...",
+          "Блуд закружляв у повітрі, здійнявся на найвищу гілку і став спостерігати за дівчинкою та її майбутніми кроками."
+        ]
+      },
+      {
+        "type": "action",
+        "actionId": "hideActor"
+      },
+      {
+        "type": "action",
+        "actionId": "start_maze_with_timer"
+      }
+    ],
+    "blud-agreement-scene": [
+      {
+        "type": "dialogue",
+        "text": [
+          " Блуд голосно засміявся, наче страх дівчинки для нього нічого не варті, а потім закружляв до найвищої гілки, щоб спостерігати за дівчинкою звисока, та водити її сотнями стежок."
+        ]
+      },
+      {
+        "type": "action",
+        "actionId": "hideActor"
+      },
+      {
+        "type": "action",
+        "actionId": "start_maze_no_timer"
+      }
+    ]
+  }
+}

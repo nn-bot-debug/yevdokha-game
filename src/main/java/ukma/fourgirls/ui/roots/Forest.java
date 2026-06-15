@@ -122,13 +122,23 @@ public class Forest extends Place{
      * Повернення зі смолою
      */
     private void executeHealingPhase() {
-        this.setBackground(MAGIC_FOREST);
+        this.setBackground(NORMAL_FOREST);
         this.playFadeIn();
 
         actions.put("finish_lisovuk_quest_line", () -> {
             session.removeItem("Горщик зі смолою");
             ukma.fourgirls.core.NotificationManager.showNotification(this.root, "Смолу використано. Шлях углиб лісу відкрито!");
             this.enableNavigation();
+
+            blackOverlay.toFront();
+            FadeTransition fadeOut = new FadeTransition(Duration.seconds(1.5), blackOverlay);
+            fadeOut.setFromValue(0.0);
+            fadeOut.setToValue(1.0);
+
+            fadeOut.setOnFinished(e -> {
+                LocationRegistry.switchTo("DeeperForest");
+            });
+            fadeOut.play();
         });
 
         StoryRunner.playScene(session, "/story/chapter2.json", "lisovuk_healing_and_prophecy", (StackPane) this.getRoot(), actions, null);
