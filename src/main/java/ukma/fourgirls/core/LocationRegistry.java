@@ -1,13 +1,6 @@
 package ukma.fourgirls.core;
 
-import ukma.fourgirls.ui.roots.ChildRoom;
-import ukma.fourgirls.ui.roots.Corridor;
-import ukma.fourgirls.ui.roots.Forest;
-import ukma.fourgirls.ui.roots.Kitchen;
-import ukma.fourgirls.ui.roots.MomRoom;
-import ukma.fourgirls.ui.roots.Place;
-import ukma.fourgirls.ui.roots.Tree;
-import ukma.fourgirls.ui.roots.Yard;
+import ukma.fourgirls.ui.roots.*;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -26,6 +19,7 @@ public final class LocationRegistry {
         register("Yard", "Подвір'я", Yard::new, true);
         register("Forest", "Ліс", Forest::new, false);
         register("Tree", "Дерево", Tree::new, false);
+        register("DeeperForest", "Глиб лісу", DeeperForest::new, false);
     }
 
     private LocationRegistry() {}
