@@ -6,11 +6,7 @@ import javafx.event.Event;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
@@ -22,28 +18,50 @@ import java.util.function.Consumer;
 
 public class FourthPuzzle extends StackPane {
 
-    private Consumer<Integer> onPuzzleSolved;
     private static final int SIZE = 10;
-    private int lives = 3;
+    private static final int MAX_LIVES = 3;
 
     private static final String CSS_PATH = Objects.requireNonNull(
             FourthPuzzle.class.getResource("/css/grid_puzzle.css")
     ).toExternalForm();
 
-    private final boolean[][] solution = new boolean[SIZE][SIZE]; // Справжній малюнок
-    private final boolean[][] playerGrid = new boolean[SIZE][SIZE]; // Те, що зафарбував гравець
-    private final Button[][] buttons = new Button[SIZE][SIZE];
+    private static final int[][] MAP = {
+            {1, 1, 1, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 1, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 1, 1, 1, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 1, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 1, 1, 1, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 1, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 1, 1, 1, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 1, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 1, 1},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    };
+
+    private final boolean[][] solution = new boolean[SIZE][SIZE];
+    private final boolean[][] playerGrid = new boolean[SIZE][SIZE];
+    private final Button[][]  cells = new Button[SIZE][SIZE];
+    private int lives = MAX_LIVES;
+    private boolean gameOver = false;
 
     private Text titleText;
     private Text livesText;
     private GridPane gridPane;
 
+    private Consumer<Integer> onPuzzleSolved;
+
     public FourthPuzzle() {
-        setupUI();
-        generateLevel();
+        buildSolution();
+        buildUI();
     }
 
-    private void setupUI() {
+    private void buildSolution() {
+        for (int r = 0; r < SIZE; r++)
+            for (int c = 0; c < SIZE; c++)
+                solution[r][c] = (MAP[r][c] == 1);
+    }
+
+    private void buildUI() {
         this.setOnMouseClicked(Event::consume);
         this.setOnMousePressed(Event::consume);
         this.setOnMouseReleased(Event::consume);
@@ -52,226 +70,186 @@ public class FourthPuzzle extends StackPane {
         this.getStyleClass().add("grid-puzzle-overlay");
         this.setAlignment(Pos.CENTER);
 
-        VBox mainContainer = new VBox(20);
-        mainContainer.setAlignment(Pos.CENTER);
-
-        titleText = new Text("Японський кросворд. Розгадайте малюнок коріння, щоб звільнити шлях.\nЦифри означають довжину блоків зафарбованих клітинок підряд.");
+        titleText = new Text("Японський кросворд\nЗафарбуйте клітинки, щоб намалювати ламану лінію");
         titleText.getStyleClass().add("grid-title");
         titleText.setTextAlignment(TextAlignment.CENTER);
 
-        livesText = new Text("Життя: ❤️❤️❤️");
-        livesText.getStyleClass().add("grid-lives");
+        HBox titleBox = new HBox(titleText);
+        titleBox.setAlignment(Pos.CENTER);
+        titleBox.getStyleClass().add("grid-title-container");
 
-        HBox titleWrapper = new HBox(titleText);
-        titleWrapper.setAlignment(Pos.CENTER);
-        titleWrapper.getStyleClass().add("grid-title-container");
-        titleWrapper.setMaxWidth(Region.USE_PREF_SIZE);
+        livesText = new Text();
+        livesText.getStyleClass().add("grid-lives");
+        refreshLives();
 
         gridPane = new GridPane();
         gridPane.setAlignment(Pos.CENTER);
-        gridPane.setHgap(4);
-        gridPane.setVgap(4);
+        gridPane.setHgap(3);
+        gridPane.setVgap(3);
+        buildGrid();
 
-        mainContainer.getChildren().addAll(titleWrapper, livesText, gridPane);
-        this.getChildren().add(mainContainer);
+        Label legend = new Label("✅ — правильна клітинка   ❌ — помилка");
+        legend.getStyleClass().add("grid-legend");
+
+        VBox card = new VBox(18, titleBox, livesText, gridPane, legend);
+        card.setAlignment(Pos.CENTER);
+        card.getStyleClass().add("grid-card");
+
+        this.getChildren().add(card);
     }
 
-    private void updateLivesDisplay() {
-        StringBuilder sb = new StringBuilder("Життя: ");
-        for (int i = 0; i < 3; i++) {
-            if (i < lives) sb.append("❤️");
-            else sb.append("🖤");
-        }
-        livesText.setText(sb.toString());
-    }
-
-    private void generateLevel() {
+    private void buildGrid() {
         gridPane.getChildren().clear();
+        gridPane.add(new Region(), 0, 0);
 
-        int[][] mapLayout = {
-                {0, 0, 1, 0, 0, 1, 1, 0, 0, 0},
-                {1, 0, 0, 0, 1, 0, 0, 0, 1, 0},
-                {0, 1, 1, 0, 0, 0, 1, 1, 0, 0},
-                {0, 0, 0, 0, 1, 0, 0, 0, 0, 1},
-                {1, 1, 0, 1, 1, 1, 0, 1, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 1, 1, 0},
-                {0, 1, 1, 1, 0, 1, 0, 0, 0, 0},
-                {0, 0, 0, 1, 0, 1, 1, 1, 1, 0},
-                {1, 1, 0, 0, 0, 0, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-        };
-
-        for (int r = 0; r < SIZE; r++) {
-            for (int c = 0; c < SIZE; c++) {
-                solution[r][c] = (mapLayout[r][c] == 1);
-                playerGrid[r][c] = false;
-            }
-        }
-
-        for (int r = 0; r <= SIZE; r++) {
-            for (int c = 0; c <= SIZE; c++) {
-                if (r == 0 && c == 0) {
-                    gridPane.add(new Region(), c, r);
-                } else if (r == 0) {
-                    String colHintText = getNonogramHintForCol(c - 1);
-                    Label hint = new Label(colHintText);
-                    hint.getStyleClass().add("grid-hint-label");
-                    hint.setStyle("-fx-alignment: bottom-center; -fx-text-alignment: center;"); // Щоб красиво вертикально лягало
-                    gridPane.add(hint, c, r);
-                } else if (c == 0) {
-                    String rowHintText = getNonogramHintForRow(r - 1);
-                    Label hint = new Label(rowHintText);
-                    hint.getStyleClass().add("grid-hint-label");
-                    gridPane.add(hint, c, r);
-                } else {
-                    int finalR = r - 1;
-                    int finalC = c - 1;
-                    Button cell = new Button();
-                    cell.getStyleClass().add("grid-cell");
-
-                    cell.setOnAction(e -> handleCellClick(finalR, finalC, cell));
-                    buttons[finalR][finalC] = cell;
-                    gridPane.add(cell, c, r);
-                }
-            }
-        }
-    }
-
-    private String getNonogramHintForRow(int r) {
-        List<Integer> blocks = new ArrayList<>();
-        int count = 0;
         for (int c = 0; c < SIZE; c++) {
-            if (solution[r][c]) {
-                count++;
-            } else if (count > 0) {
-                blocks.add(count);
-                count = 0;
-            }
+            Label hint = hintLabel(colHint(c));
+            hint.getStyleClass().add("grid-hint-col");
+            gridPane.add(hint, c + 1, 0);
         }
-        if (count > 0) blocks.add(count);
 
-        if (blocks.isEmpty()) return "0";
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < blocks.size(); i++) {
-            sb.append(blocks.get(i));
-            if (i < blocks.size() - 1) sb.append(" ");
-        }
-        return sb.toString();
-    }
-
-    private String getNonogramHintForCol(int c) {
-        List<Integer> blocks = new ArrayList<>();
-        int count = 0;
         for (int r = 0; r < SIZE; r++) {
-            if (solution[r][c]) {
+            Label hint = hintLabel(rowHint(r));
+            hint.getStyleClass().add("grid-hint-row");
+            gridPane.add(hint, 0, r + 1);
+
+            for (int c = 0; c < SIZE; c++) {
+                Button btn = new Button();
+                btn.getStyleClass().add("grid-cell");
+                final int fr = r, fc = c;
+                btn.setOnAction(e -> onCellClick(fr, fc, btn));
+                cells[r][c] = btn;
+                gridPane.add(btn, c + 1, r + 1);
+            }
+        }
+    }
+
+    private static Label hintLabel(String text) {
+        Label l = new Label(text);
+        l.getStyleClass().add("grid-hint-label");
+        return l;
+    }
+
+    private String rowHint(int r) {
+        return blocksToString(blocks(r, true), " ");
+    }
+
+    private String colHint(int c) {
+        return blocksToString(blocks(c, false), "\n");
+    }
+
+    private List<Integer> blocks(int idx, boolean isRow) {
+        List<Integer> result = new ArrayList<>();
+        int count = 0;
+        for (int i = 0; i < SIZE; i++) {
+            boolean filled = isRow ? solution[idx][i] : solution[i][idx];
+            if (filled) {
                 count++;
             } else if (count > 0) {
-                blocks.add(count);
+                result.add(count);
                 count = 0;
             }
         }
-        if (count > 0) blocks.add(count);
+        if (count > 0) result.add(count);
+        if (result.isEmpty()) result.add(0);
+        return result;
+    }
 
-        if (blocks.isEmpty()) return "0";
+    private static String blocksToString(List<Integer> blocks, String sep) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < blocks.size(); i++) {
+            if (i > 0) sb.append(sep);
             sb.append(blocks.get(i));
-            if (i < blocks.size() - 1) sb.append("\n"); // Вертикальний перенос цифр!
         }
         return sb.toString();
     }
 
-    private void handleCellClick(int r, int c, Button cell) {
-        if (lives <= 0) return;
+    private void onCellClick(int r, int c, Button btn) {
+        if (gameOver) return;
+        if (playerGrid[r][c]) return;
 
-        if (playerGrid[r][c]) {
-            playerGrid[r][c] = false;
-            cell.getStyleClass().remove("grid-cell-safe");
-            return;
-        }
+        playerGrid[r][c] = true;
 
         if (solution[r][c]) {
-            cell.getStyleClass().add("grid-cell-safe");
-            playerGrid[r][c] = true;
-            checkWinCondition();
+            btn.getStyleClass().add("grid-cell-filled");
+            checkWin();
         } else {
-            cell.getStyleClass().add("grid-cell-exploded");
             lives--;
-            updateLivesDisplay();
-            triggerExplosionShake(cell);
+            refreshLives();
+            btn.getStyleClass().add("grid-cell-wrong");
+            btn.setDisable(true);
+            shakeAndMaybeEnd();
         }
     }
 
-    private void triggerExplosionShake(Button faultyCell) {
+    private void checkWin() {
+        for (int r = 0; r < SIZE; r++)
+            for (int c = 0; c < SIZE; c++)
+                if (solution[r][c] && !playerGrid[r][c]) return;
+
+        gameOver = true;
+        this.setMouseTransparent(true);
+        titleText.setText("Ламану лінію намальовано! Шлях відкрито!");
+
+        PauseTransition pause = new PauseTransition(Duration.seconds(2));
+        pause.setOnFinished(e -> finish());
+        pause.play();
+    }
+
+    private void shakeAndMaybeEnd() {
         this.setDisable(true);
-        if (lives > 0) {
-            titleText.setText("Хибний вибір! Коріння чинить опір.");
+
+        boolean isGameOver = (lives <= 0);
+
+        if (isGameOver) {
+            gameOver = true;
+            titleText.setText("Життя вичерпано! Шлях залишається закритим…");
         } else {
-            titleText.setText("Життя вичерпано! Спробуйте пройти кросворд заново.");
+            titleText.setText("Хибний вибір! Залишилось " + lives + (lives == 1 ? " життя." : " життів."));
         }
 
-        TranslateTransition shake = new TranslateTransition(Duration.millis(50), gridPane);
+        TranslateTransition shake = new TranslateTransition(Duration.millis(45), gridPane);
         shake.setFromX(0);
-        shake.setByX(8);
+        shake.setByX(10);
         shake.setAutoReverse(true);
         shake.setCycleCount(6);
         shake.setOnFinished(e -> {
             gridPane.setTranslateX(0);
-            this.setDisable(false);
 
-            if (lives > 0) {
-                titleText.setText("Японський кросворд. Розгадайте малюнок коріння, щоб звільнить шлях.");
-                faultyCell.getStyleClass().remove("grid-cell-exploded");
+            if (isGameOver) {
+                // невелика пауза — потім завершуємо
+                PauseTransition wait = new PauseTransition(Duration.seconds(2));
+                wait.setOnFinished(ev -> finish());
+                wait.play();
             } else {
-                PauseTransition failPause = new PauseTransition(Duration.seconds(2));
-                failPause.setOnFinished(ev -> handleGameOver());
-                failPause.play();
+                this.setDisable(false);
+                titleText.setText("Японський кросворд\nЗафарбуйте клітинки, щоб намалювати ламану лінію");
             }
         });
         shake.play();
     }
 
-    private void handleGameOver() {
-        this.lives = 3;
-        updateLivesDisplay();
-        titleText.setText("Японський кросворд. Розгадайте малюнок коріння, щоб звільнить шлях.");
+    private void finish() {
+        // розрахунок нагороди:
+        // 0 життів → -1 подих лісу
+        // 1 життя  →  0 подихів лісу
+        // 2 життя  → +1 подих лісу
+        // (3 життя → +1, якщо колись знадобиться)
+        int reward = lives - 1;   // 0→-1, 1→0, 2→1, 3→2
 
-        // Повністю очищуємо ігрове поле для нової спроби
-        for (int r = 0; r < SIZE; r++) {
-            for (int c = 0; c < SIZE; c++) {
-                playerGrid[r][c] = false;
-                buttons[r][c].getStyleClass().removeAll("grid-cell-safe", "grid-cell-exploded");
-            }
-        }
-    }
-
-    private void checkWinCondition() {
-        for (int r = 0; r < SIZE; r++) {
-            for (int c = 0; c < SIZE; c++) {
-                if (solution[r][c] != playerGrid[r][c]) {
-                    return;
-                }
-            }
-        }
-
-        this.setMouseTransparent(true);
-        titleText.setText("Малюнок розгадано! Маленька мурашка врятована!");
-        PauseTransition pause = new PauseTransition(Duration.seconds(2));
-        pause.setOnFinished(e -> handleSuccess());
-        pause.play();
-    }
-
-    public void setOnPuzzleSolved(Consumer<Integer> onPuzzleSolved) {
-        this.onPuzzleSolved = onPuzzleSolved;
-    }
-
-    private void handleSuccess() {
         var parent = this.getParent();
-        if (parent instanceof StackPane stackPane) {
-            stackPane.getChildren().remove(this);
-        }
-        if (onPuzzleSolved != null) {
-            onPuzzleSolved.accept(Math.max(0, lives));
-        }
+        if (parent instanceof StackPane sp) sp.getChildren().remove(this);
+        if (onPuzzleSolved != null) onPuzzleSolved.accept(reward);
+    }
+
+    private void refreshLives() {
+        StringBuilder sb = new StringBuilder("Життя: ");
+        for (int i = 0; i < MAX_LIVES; i++)
+            sb.append(i < lives ? "❤️" : "🖤");
+        livesText.setText(sb.toString());
+    }
+
+    public void setOnPuzzleSolved(Consumer<Integer> callback) {
+        this.onPuzzleSolved = callback;
     }
 }

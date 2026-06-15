@@ -124,7 +124,7 @@ public class MainMenuWindow extends Application {
         Map<String, Runnable> buttonActions = new LinkedHashMap<>();
         buttonActions.put("menu.new", () -> {
             SceneManager.getInstance().resetSession();
-            LocationRegistry.switchTo("Tree");
+            LocationRegistry.switchTo("ChildRoom");
         });
         buttonActions.put("menu.continue", this::continueGame);
         buttonActions.put("menu.instruction", () -> SceneManager.getInstance().switchToRoot(new InstructionsScreen().getRoot()));

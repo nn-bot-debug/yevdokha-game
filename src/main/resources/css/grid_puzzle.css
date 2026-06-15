@@ -1,86 +1,94 @@
-﻿.grid-puzzle-overlay {
-    -fx-background-color: rgba(10, 15, 10, 0.94);
-    -fx-border-color: #1a2e1a;
-    -fx-border-width: 5px;
+﻿
+.grid-puzzle-overlay {
+    -fx-background-color: rgba(10, 15, 25, 0.88);
+    -fx-background-radius: 0;
+}
+
+.grid-card {
+    -fx-background-color: #0d1b2a;
+    -fx-background-radius: 16px;
+    -fx-border-color: #1e3a5f;
+    -fx-border-width: 2px;
+    -fx-border-radius: 16px;
+    -fx-effect: dropshadow(gaussian, rgba(0,120,255,0.35), 32, 0.4, 0, 0);
+    -fx-padding: 32px 40px;
 }
 
 .grid-title-container {
-    -fx-background-color: rgba(255, 253, 245, 0.85);
-    -fx-border-color: #3d2b1f;
-    -fx-border-width: 1.5px;
-    -fx-border-radius: 6px;
-    -fx-padding: 10px 25px 10px 25px;
-    -fx-background-radius: 6px;
+    -fx-background-color: #112240;
+    -fx-background-radius: 8px;
+    -fx-padding: 10px 20px;
 }
 
 .grid-title {
-    -fx-font-family: "Georgia";
+    -fx-fill: #ccd6f6;
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-font-size: 15px;
     -fx-font-weight: bold;
-    -fx-font-size: 20px;
-    -fx-fill: #140d0a;
-    -fx-letter-spacing: 0.5px;
-    -fx-effect: dropshadow(three-pass-box, rgba(255, 255, 255, 0.9), 2, 0, 1, 1);
-}
-
-.grid-hint-label {
-    -fx-font-family: "Georgia";
-    -fx-font-weight: bold;
-    -fx-font-size: 18px;
-    -fx-text-fill: #bda37e;
-    -fx-min-width: 45px;
-    -fx-min-height: 45px;
-    -fx-alignment: center;
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.8), 3, 0, 0, 0);
-}
-
-.grid-cell {
-    -fx-min-width: 45px;
-    -fx-max-width: 45px;
-    -fx-min-height: 45px;
-    -fx-max-height: 45px;
-    -fx-background-color: #2e2822;
-    -fx-border-color: #1a1613;
-    -fx-border-width: 2px;
-    -fx-border-radius: 4px;
-    -fx-background-radius: 4px;
-    -fx-cursor: hand;
-    -fx-font-family: "Georgia";
-    -fx-font-weight: bold;
-    -fx-text-fill: #8c765c;
-}
-
-.grid-cell:hover {
-    -fx-background-color: #423b34;
-    -fx-border-color: #8c765c;
-}
-
-.grid-cell-safe {
-    -fx-background-color: #1b3d1b;
-    -fx-border-color: #2e6b2e;
-    -fx-text-fill: #a3ffa3;
-}
-
-.grid-cell-exploded {
-    -fx-background-color: #521818;
-    -fx-border-color: #9c2e2e;
-    -fx-text-fill: #ff9999;
+    -fx-text-alignment: center;
 }
 
 .grid-lives {
-    -fx-font-family: "Georgia";
-    -fx-font-weight: bold;
-    -fx-font-size: 22px;
-    -fx-fill: #ff4444;
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.8), 3, 0, 0, 0);
+    -fx-fill: #e0e0e0;
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-font-size: 18px;
 }
 
 .grid-hint-label {
-    -fx-font-family: "Georgia";
+    -fx-font-family: "Segoe UI", monospace;
+    -fx-font-size: 12px;
     -fx-font-weight: bold;
-    -fx-font-size: 14px;
-    -fx-text-fill: #bda37e;
-    -fx-min-width: 45px;
-    -fx-min-height: 55px;
+    -fx-text-fill: #8892b0;
+    -fx-min-width: 36px;
+    -fx-min-height: 36px;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+}
+
+.grid-hint-col {
     -fx-alignment: bottom-center;
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.8), 3, 0, 0, 0);
+}
+
+.grid-hint-row {
+    -fx-alignment: center-right;
+    -fx-padding: 0 6px 0 0;
+}
+
+.grid-cell {
+    -fx-min-width: 36px;
+    -fx-min-height: 36px;
+    -fx-max-width: 36px;
+    -fx-max-height: 36px;
+    -fx-background-color: #1e2d40;
+    -fx-background-radius: 5px;
+    -fx-border-color: #2a4a6b;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-cursor: hand;
+    -fx-transition: background-color 0.15s;
+}
+
+.grid-cell:hover {
+    -fx-background-color: #274060;
+    -fx-border-color: #4a90d9;
+}
+
+/* correct */
+.grid-cell-filled {
+    -fx-background-color: #00b4d8;
+    -fx-border-color: #48cae4;
+    -fx-effect: dropshadow(gaussian, rgba(0,180,216,0.6), 8, 0.5, 0, 0);
+}
+
+/* wrong */
+.grid-cell-wrong {
+    -fx-background-color: #c1121f;
+    -fx-border-color: #e63946;
+    -fx-effect: dropshadow(gaussian, rgba(230,57,70,0.7), 10, 0.5, 0, 0);
+}
+
+.grid-legend {
+    -fx-text-fill: #495670;
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-font-size: 11px;
 }
