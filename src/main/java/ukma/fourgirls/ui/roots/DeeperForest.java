@@ -123,7 +123,7 @@ public class DeeperForest extends Place {
 
             ukma.fourgirls.ui.puzzles.MazePuzzle puzzle = new ukma.fourgirls.ui.puzzles.MazePuzzle(session, true, (result) -> {
                 ((StackPane) this.getRoot()).getChildren().removeIf(node -> node instanceof ukma.fourgirls.ui.puzzles.MazePuzzle);
-                StoryRunner.playScene(session, "/story/chapter3.json", "lake-meeting-scene", (StackPane) this.getRoot(), actions, null);
+                this.playFadeOutToLake();
             });
             ((StackPane) this.getRoot()).getChildren().add(puzzle);
             puzzle.toFront();
@@ -134,7 +134,7 @@ public class DeeperForest extends Place {
 
             ukma.fourgirls.ui.puzzles.MazePuzzle puzzle = new ukma.fourgirls.ui.puzzles.MazePuzzle(session, false, (result) -> {
                 ((StackPane) this.getRoot()).getChildren().removeIf(node -> node instanceof ukma.fourgirls.ui.puzzles.MazePuzzle);
-                StoryRunner.playScene(session, "/story/chapter3.json", "lake-meeting-scene", (StackPane) this.getRoot(), actions, null);
+                this.playFadeOutToLake();
             });
             ((StackPane) this.getRoot()).getChildren().add(puzzle);
             puzzle.toFront();
