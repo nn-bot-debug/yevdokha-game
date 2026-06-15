@@ -10,6 +10,9 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
+import ukma.fourgirls.core.NotificationManager;
+import ukma.fourgirls.core.StatNotification;
+import ukma.fourgirls.state.GameSession;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +23,7 @@ public class FourthPuzzle extends StackPane {
 
     private static final int SIZE = 10;
     private static final int MAX_LIVES = 3;
+    private final GameSession session;
 
     private static final String CSS_PATH = Objects.requireNonNull(
             FourthPuzzle.class.getResource("/css/grid_puzzle.css")
@@ -45,12 +49,13 @@ public class FourthPuzzle extends StackPane {
     private boolean gameOver = false;
 
     private Text titleText;
-    private Text livesText;
+    private HBox livesBox;
     private GridPane gridPane;
 
     private Consumer<Integer> onPuzzleSolved;
 
-    public FourthPuzzle() {
+    public FourthPuzzle(GameSession session) {
+        this.session = session;
         buildSolution();
         buildUI();
     }
@@ -70,6 +75,18 @@ public class FourthPuzzle extends StackPane {
         this.getStyleClass().add("grid-puzzle-overlay");
         this.setAlignment(Pos.CENTER);
 
+        String imgUrl = Objects.requireNonNull(
+                FourthPuzzle.class.getResource("/images/canvas/earth.png")
+        ).toExternalForm();
+        BackgroundImage bgImage = new BackgroundImage(
+                new javafx.scene.image.Image(imgUrl),
+                BackgroundRepeat.NO_REPEAT,
+                BackgroundRepeat.NO_REPEAT,
+                BackgroundPosition.CENTER,
+                new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, false, true)
+        );
+        this.setBackground(new Background(bgImage));
+
         titleText = new Text("Японський кросворд\nЗафарбуйте клітинки, щоб намалювати ламану лінію");
         titleText.getStyleClass().add("grid-title");
         titleText.setTextAlignment(TextAlignment.CENTER);
@@ -78,8 +95,8 @@ public class FourthPuzzle extends StackPane {
         titleBox.setAlignment(Pos.CENTER);
         titleBox.getStyleClass().add("grid-title-container");
 
-        livesText = new Text();
-        livesText.getStyleClass().add("grid-lives");
+        livesBox = new HBox(6);
+        livesBox.setAlignment(Pos.CENTER);
         refreshLives();
 
         gridPane = new GridPane();
@@ -88,10 +105,7 @@ public class FourthPuzzle extends StackPane {
         gridPane.setVgap(3);
         buildGrid();
 
-        Label legend = new Label("✅ — правильна клітинка   ❌ — помилка");
-        legend.getStyleClass().add("grid-legend");
-
-        VBox card = new VBox(18, titleBox, livesText, gridPane, legend);
+        VBox card = new VBox(18, titleBox, livesBox, gridPane);
         card.setAlignment(Pos.CENTER);
         card.getStyleClass().add("grid-card");
 
@@ -217,7 +231,6 @@ public class FourthPuzzle extends StackPane {
             gridPane.setTranslateX(0);
 
             if (isGameOver) {
-                // невелика пауза — потім завершуємо
                 PauseTransition wait = new PauseTransition(Duration.seconds(2));
                 wait.setOnFinished(ev -> finish());
                 wait.play();
@@ -230,23 +243,45 @@ public class FourthPuzzle extends StackPane {
     }
 
     private void finish() {
-        // розрахунок нагороди:
-        // 0 життів → -1 подих лісу
-        // 1 життя  →  0 подихів лісу
-        // 2 життя  → +1 подих лісу
-        // (3 життя → +1, якщо колись знадобиться)
-        int reward = lives - 1;   // 0→-1, 1→0, 2→1, 3→2
+        int karmaChange = 0;
+        if (lives == 0) {
+            karmaChange = -1;
+        } else if (lives == 1) {
+            karmaChange = 0;
+        } else if (lives == 2) {
+            karmaChange = 1;
+        } else if (lives == 3) {
+            karmaChange = 2;
+        }
 
         var parent = this.getParent();
-        if (parent instanceof StackPane sp) sp.getChildren().remove(this);
-        if (onPuzzleSolved != null) onPuzzleSolved.accept(reward);
+        if (parent instanceof StackPane sp) {
+            sp.getChildren().remove(this);
+        }
+
+        if (karmaChange != 0) {
+            session.changeKarma(karmaChange);
+        }
+
+        if (onPuzzleSolved != null) {
+            onPuzzleSolved.accept(karmaChange);
+        }
     }
 
     private void refreshLives() {
-        StringBuilder sb = new StringBuilder("Життя: ");
-        for (int i = 0; i < MAX_LIVES; i++)
-            sb.append(i < lives ? "❤️" : "🖤");
-        livesText.setText(sb.toString());
+        livesBox.getChildren().clear();
+        for (int i = 0; i < lives; i++) {
+            var url = FourthPuzzle.class.getResource("/images/canvas/heart.png");
+            if (url != null) {
+                javafx.scene.image.ImageView iv = new javafx.scene.image.ImageView(
+                        new javafx.scene.image.Image(url.toExternalForm())
+                );
+                iv.setFitWidth(50);
+                iv.setFitHeight(50);
+                iv.setPreserveRatio(true);
+                livesBox.getChildren().add(iv);
+            }
+        }
     }
 
     public void setOnPuzzleSolved(Consumer<Integer> callback) {

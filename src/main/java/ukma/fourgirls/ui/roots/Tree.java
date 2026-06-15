@@ -119,7 +119,7 @@ public class Tree extends Place{
         });
 
         actions.put("start_ant_rescue_puzzle", () -> {
-            var fourthPuzzle = new FourthPuzzle();
+            var fourthPuzzle = new FourthPuzzle(session);
 
             fourthPuzzle.setOnPuzzleSolved((livesLeft) -> {
                 System.out.println("Мурашка врятована з " + livesLeft + " життями. Переходимо до фінальних діалогів.");

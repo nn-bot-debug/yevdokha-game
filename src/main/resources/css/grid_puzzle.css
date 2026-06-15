@@ -1,11 +1,4 @@
-﻿
-.grid-puzzle-overlay {
-    -fx-background-color: rgba(10, 15, 25, 0.88);
-    -fx-background-radius: 0;
-}
-
-.grid-card {
-    -fx-background-color: #0d1b2a;
+﻿.grid-card {
     -fx-background-radius: 16px;
     -fx-border-color: #1e3a5f;
     -fx-border-width: 2px;
@@ -15,7 +8,6 @@
 }
 
 .grid-title-container {
-    -fx-background-color: #112240;
     -fx-background-radius: 8px;
     -fx-padding: 10px 20px;
 }
@@ -23,7 +15,7 @@
 .grid-title {
     -fx-fill: #ccd6f6;
     -fx-font-family: "Segoe UI", sans-serif;
-    -fx-font-size: 15px;
+    -fx-font-size: 20px;
     -fx-font-weight: bold;
     -fx-text-alignment: center;
 }
