@@ -162,6 +162,21 @@ public class MainMenuWindow extends Application {
         });
 
         root.getChildren().add(button);
+
+    Label authorsLabel = new Label("Бурмецька \nКазмірчук \nКорж \nСолтис");
+
+        try {
+            Font authorsFont = Font.loadFont(getClass().getResourceAsStream("/fonts/Epoch_YP_Demo.ttf"), 18);
+            authorsLabel.setFont(authorsFont);
+        }
+        catch (Exception e) {
+            gameTitle.setFont(Font.font("Arial", 20));
+        }
+        authorsLabel.setTextFill(Color.web("#828f86"));
+        StackPane.setAlignment(authorsLabel, Pos.BOTTOM_LEFT);
+        StackPane.setMargin(authorsLabel, new Insets(0,0,30,30));
+        root.getChildren().add(authorsLabel);
+
         primaryStage.setScene(mainScene);
 
         AudioManager.getInstance().playBackgroundMusic("/music/background.mp3");
