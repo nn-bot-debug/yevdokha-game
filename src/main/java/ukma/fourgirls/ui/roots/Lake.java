@@ -22,6 +22,7 @@ public class Lake extends Place {
 
         private static final String LAKE = "/images/canvas/Lake.png";
         private static final String LAKE_MAVKY = "/images/canvas/Lake-Mavky.png";
+        private static final String LAKE_DINNER = "/images/canvas/mavky-dinner-scene.png";
 
         private final Rectangle blackOverlay;
         private CharacterView actorView;
@@ -77,6 +78,18 @@ public class Lake extends Place {
                 }
             });
 
+            actions.put("showScaryMavka", () -> {
+                if (actorView != null) actorView.hide();
+                if (mavkaView != null) {
+                    mavkaView.setPositionSide(false);
+                    mavkaView.setCharacterSprite("/images/characters/scary-mavka.png");
+                }
+            });
+
+            actions.put("dinner", ()->{
+                this.setBackground(LAKE_DINNER);
+            });
+
             actions.put("play-melodia-sound", () -> {
                 ukma.fourgirls.core.AudioManager.getInstance().playBackgroundMusic("/music/Lake-scene-melody.mp3");
             });
@@ -113,6 +126,9 @@ public class Lake extends Place {
             });
 
             StoryRunner.playScene(session, "/story/chapter3.json", "lake-meeting-scene", (StackPane) this.getRoot(), actions, null);
+            playFadeIn();
+
+            StoryRunner.playScene(session, "/story/chapter3.json", "mavka-dinner-scene", (StackPane) this.getRoot(), actions, null);
             playFadeIn();
         }
 

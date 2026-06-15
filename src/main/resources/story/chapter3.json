@@ -145,8 +145,8 @@
         "actionId": "hideActor"
       },
       {
-        "type": "action", 
-        "actionId": "start_maze_with_timer" 
+        "type": "action",
+        "actionId": "start_maze_with_timer"
       }
     ],
     "blud-agreement-scene": [
@@ -187,7 +187,7 @@
         "type": "action",
         "actionId": "enable-lake-eye-button"
       }
-      ],
+    ],
     "mavky-meeting-scene": [
       {
         "type": "dialogue",
@@ -271,6 +271,42 @@
       {
         "type": "action",
         "actionId": "start_pendant_puzzle"
+      }
+    ],
+    "mavka-dinner-scene": [
+      {
+        "type": "action",
+        "actionId": "dinner"
+      },
+      {
+        "type": "action",
+        "actionId": "hideActor"
+      },
+      {
+        "type": "dialogue",
+        "text": [
+          "Після роботи над прикрасою на Євдоху чекала смачна вечеря.",
+          "Смажена риба з грибами та запеченою картоплею. Такої краси вона ще в житті не бачила і не куштувала.",
+          "Розпочавши їсти, до неї підсіло ще пару дівиць, які все завалювали Євдоху питаннями про її життя та про батька.",
+          "Євдоха чемно відповідала, або давала зрозуміти, що голодна та накидувалась на їжу.",
+          "Мавки радушно прийняли дівчинку, та для них не було в світі нічого кращого, ніж мірятись цінністю речей.",
+          "Хтось розповідав про золотий гребінець, хтось про найбільш унікальний колір волосся, а одна діва взагалі марила своїм перловим намистом."
+        ]
+      },
+      {
+        "type": "action",
+        "actionId": "showScaryMavka"
+      },
+      {
+        "type": "dialogue",
+        "character": "Мавка",
+        "text": [
+          "Ну а що ж у тебе найціннішого є?"
+        ]
+      },
+      {
+        "type": "action",
+        "actionId": "hideActor"
       }
     ]
   }

@@ -11,6 +11,7 @@ import ukma.fourgirls.core.StatNotification;
 import ukma.fourgirls.logic.StoryRunner;
 import ukma.fourgirls.ui.CameraController;
 import ukma.fourgirls.ui.CharacterView;
+import ukma.fourgirls.ui.puzzles.FourthPuzzle;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -105,7 +106,6 @@ public class Tree extends Place{
             eyeButton.setOnAction(e -> {
                 if (eyeTrack != null)
                     AudioManager.getInstance().fadeOutAndStop(eyeTrack, 1.5);
-
                 ((StackPane) this.getRoot()).getChildren().remove(eyeButton);
                 this.setBackground(MAGIC_TREE);
                 StoryRunner.playScene(session, "/story/chapter2.json", "ant_colony_dialogue", (StackPane) this.getRoot(), actions, null);
@@ -119,14 +119,18 @@ public class Tree extends Place{
         });
 
         actions.put("start_ant_rescue_puzzle", () -> {
-            System.out.println("Запуск Головоломки 3: Рятування мурахи з коренів.");
-            // ТИМЧАСОВА ЗАГЛУШКА ДЛЯ ТЕСТУ: Емулюємо, що гравець пройшов гру на 2 життя (+1 карма)
-            int simulatedLives = 2;
-            onPuzzleFinished(simulatedLives, actions);
+            var fourthPuzzle = new FourthPuzzle(session);
+
+            fourthPuzzle.setOnPuzzleSolved((livesLeft) -> {
+                System.out.println("Мурашка врятована з " + livesLeft + " життями. Переходимо до фінальних діалогів.");
+                this.onPuzzleFinished(livesLeft, actions);
+            });
+
+            StackPane rootPane = (StackPane) this.getRoot();
+            rootPane.getChildren().add(fourthPuzzle);
         });
 
         actions.put("enable_resin_planning", () -> {
-            System.out.println("Почався таймер підготовки. Гравець планує збір смоли.");
             ukma.fourgirls.ui.puzzles.VentiliPuzzle logicPuzzle = new ukma.fourgirls.ui.puzzles.VentiliPuzzle(session, (puzzleResult) -> {
 
                 this.root.getChildren().removeIf(node -> node instanceof ukma.fourgirls.ui.puzzles.VentiliPuzzle);
@@ -162,9 +166,14 @@ public class Tree extends Place{
         int karmaChange = 0;
         if (livesLeft == 0) {
             karmaChange = -1;
+        } else if (livesLeft == 1) {
+            karmaChange = 0;
         } else if (livesLeft == 2) {
             karmaChange = 1;
+        } else if (livesLeft == 3) {
+            karmaChange = 2;
         }
+
         if (karmaChange != 0) {
             session.changeKarma(karmaChange);
         }
