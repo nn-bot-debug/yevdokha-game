@@ -33,7 +33,7 @@ public class CharacterView {
             Image img = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
             spriteView.setImage(img);
 
-            if (imagePath.contains("ant-ryadovuy") || imagePath.contains("ant-brother")) {
+            if (imagePath.contains("ant-ryadovuy") || imagePath.contains("ant-brother") || imagePath.contains("Blud")) {
                 spriteView.setFitWidth(480);
                 spriteView.setFitHeight(0);
 

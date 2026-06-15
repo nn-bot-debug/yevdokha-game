@@ -77,7 +77,7 @@ public class Lake extends Place {
             });
 
             actions.put("play-melodia-sound", () -> {
-                AudioManager.getInstance().buttonSound("/music/Lake-scene-melody.mp3");
+                ukma.fourgirls.core.AudioManager.getInstance().playBackgroundMusic("/music/Lake-scene-melody.mp3");
             });
 
             actions.put("enable-lake-eye-button", () -> {

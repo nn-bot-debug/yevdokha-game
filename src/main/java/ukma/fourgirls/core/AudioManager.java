@@ -109,6 +109,36 @@ public class AudioManager {
         fadeTimeline.play();
     }
 
+    public void fadeOutBackgroundMusic(double durationSeconds) {
+        if (backgroundMusicPlayer == null) return;
+
+        double startVolume = backgroundMusicPlayer.getVolume();
+        int steps = 25;
+        double volumeStep = startVolume / steps;
+        double timeStep = durationSeconds / steps;
+
+        Timeline fadeTimeline = new Timeline();
+
+        for (int i = 0; i <= steps; i++) {
+            final double targetVolume = Math.max(0, startVolume - (i * volumeStep));
+            KeyFrame frame = new KeyFrame(
+                    Duration.seconds(i * timeStep),
+                    e -> backgroundMusicPlayer.setVolume(targetVolume)
+            );
+            fadeTimeline.getKeyFrames().add(frame);
+        }
+
+        fadeTimeline.setOnFinished(e -> {
+            if (backgroundMusicPlayer != null) {
+                backgroundMusicPlayer.stop();
+                backgroundMusicPlayer.dispose();
+                backgroundMusicPlayer = null;
+            }
+        });
+
+        fadeTimeline.play();
+    }
+
     // --- Управління музикою (Music) ---
 
     public boolean toggleMusic() {
