@@ -206,20 +206,28 @@ public class Lake extends Place {
             javafx.scene.media.MediaView mediaView = new javafx.scene.media.MediaView(mediaPlayer);
 
             StackPane rootPane = (StackPane) this.getRoot();
+
+            Rectangle videoBackground = new Rectangle();
+            videoBackground.widthProperty().bind(rootPane.widthProperty());
+            videoBackground.heightProperty().bind(rootPane.heightProperty());
+            videoBackground.setFill(Color.BLACK);
+            videoBackground.setOpacity(1.0);
+
             mediaView.fitWidthProperty().bind(rootPane.widthProperty());
             mediaView.fitHeightProperty().bind(rootPane.heightProperty());
             mediaView.setPreserveRatio(true);
 
             ukma.fourgirls.core.AudioManager.getInstance().fadeOutBackgroundMusic(1.0);
 
-            rootPane.getChildren().add(mediaView);
+            rootPane.getChildren().addAll(videoBackground, mediaView);
+            videoBackground.toFront();
             mediaView.toFront();
 
             mediaPlayer.play();
 
             mediaPlayer.setOnEndOfMedia(() -> {
                 mediaPlayer.stop();
-                rootPane.getChildren().remove(mediaView);
+                rootPane.getChildren().removeAll(videoBackground, mediaView);
 
                 System.out.println("Відео завершилось. Повертаємо гравця в меню.");
                 ukma.fourgirls.core.SceneManager.getInstance().resetSession();
