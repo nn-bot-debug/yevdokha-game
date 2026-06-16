@@ -130,7 +130,7 @@ public class Kitchen extends Place {
 
         actions.put("triggerScreamerSequence", () -> {
             this.setBackground("/images/canvas/rain_in_kitchen.png");
-            AudioManager.getInstance().buttonSound("/music/window.wav");
+            AudioManager.getInstance().buttonSound("/music/skrimer-feik.mp3");
             FadeTransition fade = new FadeTransition(Duration.millis(60), flashOverlay);
             fade.setFromValue(1.0);
             fade.setToValue(0.0);

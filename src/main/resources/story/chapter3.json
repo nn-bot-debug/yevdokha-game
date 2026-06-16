@@ -259,6 +259,10 @@
       },
       {
         "type": "action",
+        "actionId": "play_laugh"
+      },
+      {
+        "type": "action",
         "actionId": "showScaredYevdokha"
       },
       {

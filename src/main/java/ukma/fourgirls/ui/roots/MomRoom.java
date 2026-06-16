@@ -7,6 +7,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
+import ukma.fourgirls.core.AudioManager;
 import ukma.fourgirls.core.InventoryManager;
 import ukma.fourgirls.core.NotificationManager;
 import ukma.fourgirls.core.StatNotification;
@@ -244,6 +245,7 @@ public class MomRoom extends Place {
             this.root.getChildren().add(scaryMomView);
         }
         scaryMomView.toFront();
+        AudioManager.getInstance().buttonSound("/music/mama_skrimer.mp3");
     }
 
     public void hideScaryMom() {

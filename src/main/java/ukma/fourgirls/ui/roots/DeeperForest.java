@@ -56,7 +56,7 @@ public class DeeperForest extends Place {
         this.setBackground(DEEPER_FOREST);
 
         actions.clear();
-
+        ukma.fourgirls.core.AudioManager.getInstance().playBackgroundMusic("/music/Beneath_the_Ancient_Boughs.mp3");
         actions.put("hideActor", () -> {
             if (actorView != null) actorView.hide();
             if (bludView != null) bludView.hide();
