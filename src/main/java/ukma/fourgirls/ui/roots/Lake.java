@@ -142,7 +142,9 @@ public class Lake extends Place {
                 StackPane.setAlignment(scalePuzzle, Pos.CENTER);
                 scalePuzzle.toFront();
             });
-
+            actions.put("play_laugh", () -> {
+                ukma.fourgirls.core.AudioManager.getInstance().buttonSound("/music/mavka_smih.mp3");
+            });
             StoryRunner.playScene(session, "/story/chapter3.json", "lake-meeting-scene", (StackPane) this.getRoot(), actions, null);
             playFadeIn();
         }
