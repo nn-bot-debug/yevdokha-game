@@ -128,6 +128,26 @@ public class Lake extends Place {
                 puzzle.toFront();
             });
 
+            actions.put("trigger_bad_end_part2", () -> {
+                StoryRunner.playScene(session, "/story/theend.json", "bad-end-part2-water", (StackPane) this.getRoot(), actions, null);
+            });
+
+            actions.put("showFather", () -> {
+                if (mavkaView != null) mavkaView.hide();
+                if (actorView != null) {
+                    actorView.setPositionSide(false);
+                    actorView.setCharacterSprite("/images/characters/lukyan.png");
+                }
+            });
+
+            actions.put("play_video_ending_1", () -> {
+                playEndingVideo("/video/end_1.mp4");
+            });
+
+            actions.put("play_video_ending_2", () -> {
+                playEndingVideo("/video/end_2.mp4");
+            });
+
             actions.put("start_scale_puzzle", () -> {
                 ((StackPane) this.getRoot()).getChildren().removeIf(node -> node instanceof ukma.fourgirls.ui.puzzles.ScalePuzzle);
 
@@ -135,7 +155,21 @@ public class Lake extends Place {
                     ((StackPane) this.getRoot()).getChildren().removeIf(node -> node instanceof ukma.fourgirls.ui.puzzles.ScalePuzzle);
                     System.out.println("Головоломку ваг завершено! Отримано карми: " + karmaReward);
 
-                    //StoryRunner.playScene(session, "/story/chapter3.json", "mavka-farewell-scene", (StackPane) this.getRoot(), actions, null);
+                    int finalKarma = session.getKarmaBalance();
+                    System.out.println("Фінальна кількість подихів лісу: " + finalKarma);
+
+                    if (finalKarma < 7) {
+                        boolean putDrawingOnScale = session.getInventoryItems().stream()
+                                .noneMatch(item -> item.getName().equals("Малюнок"));
+
+                        if (putDrawingOnScale) {
+                            StoryRunner.playScene(session, "/story/theend.json", "bad-end-part1-with-drawing", (StackPane) this.getRoot(), actions, null);
+                        } else {
+                            StoryRunner.playScene(session, "/story/theend.json", "bad-end-part2-water", (StackPane) this.getRoot(), actions, null);
+                        }
+                    } else {
+                        StoryRunner.playScene(session, "/story/theend.json", "good-ending", (StackPane) this.getRoot(), actions, null);
+                    }
                 });
 
                 ((StackPane) this.getRoot()).getChildren().add(scalePuzzle);
@@ -157,4 +191,44 @@ public class Lake extends Place {
             fadeIn.setOnFinished(e -> blackOverlay.setMouseTransparent(true));
             fadeIn.play();
         }
+
+    private void playEndingVideo(String videoPath) {
+        try {
+            var resource = getClass().getResource(videoPath);
+            if (resource == null) {
+                System.err.println("Помилка: Файл відео не знайдено за шляхом " + videoPath);
+                return;
+            }
+            String source = resource.toExternalForm();
+
+            javafx.scene.media.Media media = new javafx.scene.media.Media(source);
+            javafx.scene.media.MediaPlayer mediaPlayer = new javafx.scene.media.MediaPlayer(media);
+            javafx.scene.media.MediaView mediaView = new javafx.scene.media.MediaView(mediaPlayer);
+
+            StackPane rootPane = (StackPane) this.getRoot();
+            mediaView.fitWidthProperty().bind(rootPane.widthProperty());
+            mediaView.fitHeightProperty().bind(rootPane.heightProperty());
+            mediaView.setPreserveRatio(true);
+
+            ukma.fourgirls.core.AudioManager.getInstance().fadeOutBackgroundMusic(1.0);
+
+            rootPane.getChildren().add(mediaView);
+            mediaView.toFront();
+
+            mediaPlayer.play();
+
+            mediaPlayer.setOnEndOfMedia(() -> {
+                mediaPlayer.stop();
+                rootPane.getChildren().remove(mediaView);
+
+                System.out.println("Відео завершилось. Повертаємо гравця в меню.");
+                ukma.fourgirls.core.SceneManager.getInstance().resetSession();
+                ukma.fourgirls.core.SceneManager.getInstance().switchToMainMenu();
+            });
+
+        } catch (Exception e) {
+            System.err.println("Критична помилка ініціалізації відеоплеєра JavaFX:");
+            e.printStackTrace();
+        }
+    }
 }
