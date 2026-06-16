@@ -36,6 +36,7 @@ public class Yard extends Place {
     public void onEnter() {
         CameraController.setPanningEnabled(false);
         this.startYardRavenCutscene();
+        ukma.fourgirls.core.AudioManager.getInstance().playBackgroundMusic("/music/Beneath_the_Ancient_Boughs.mp3");
     }
 
     private void startYardRavenCutscene() {
