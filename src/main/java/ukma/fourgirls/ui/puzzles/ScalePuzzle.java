@@ -344,15 +344,29 @@ public class ScalePuzzle extends StackPane {
 
     private void handleWin() {
         isGameActive = false;
+        if (session != null) {
+            session.setKarmaListener((currentKarma, addedPoints) -> {
+                ukma.fourgirls.core.StatNotification.show(this, currentKarma, addedPoints);
+
+                if (!this.getChildren().isEmpty()) {
+                    var notification = this.getChildren().get(this.getChildren().size() - 1);
+                    StackPane.setAlignment(notification, Pos.TOP_CENTER);
+                    StackPane.setMargin(notification, new Insets(80, 0, 0, 0));
+                    notification.toFront();
+                }
+            });
+        }
+
         int karmaReward = hasDrawing ? 2 : 1;
-        if(session != null) {
+        if (session != null) {
             session.changeKarma(karmaReward);
         }
 
         resultTitle.setText("Ідеальний баланс! Отримано карми: +" + karmaReward);
         resultTitle.getStyleClass().add("puzzle-text-win");
+        resultTitle.setFill(Color.web("#34d399"));
         resultButton.setText("Йти далі");
-        resultButton.setOnAction(e -> { if (onFinishCallback != null) onFinishCallback.accept(1); });
+        resultButton.setOnAction(e -> { if (onFinishCallback != null) onFinishCallback.accept(karmaReward); });
 
         resultBox.setVisible(true);
         resultBox.toFront();
@@ -412,18 +426,30 @@ public class ScalePuzzle extends StackPane {
                     rightPanItems.add(this);
                     placed = true;
                 } else {
-                    for (ImageView tray : trays) {
-                        if (this.getBoundsInParent().intersects(tray.getBoundsInParent())) {
-                            double snapX = AnchorPane.getLeftAnchor(tray) + (tray.getFitWidth() - this.getBoundsInParent().getWidth()) / 2;
-                            double snapY = AnchorPane.getTopAnchor(tray) - this.getBoundsInParent().getHeight() + 40;
+                    ImageView closestTray = null;
+                    double minDistance = Double.MAX_VALUE;
 
-                            AnchorPane.setLeftAnchor(this, snapX);
-                            AnchorPane.setTopAnchor(this, snapY);
-                            placed = true;
-                            break;
+                    for (ImageView tray : trays) {
+                        double trayCenterX = AnchorPane.getLeftAnchor(tray) + (tray.getFitWidth() / 2);
+                        double distance = Math.abs(this.getCenterX() - trayCenterX);
+
+                        // Якщо предмет перебуває в межах зони підноса по горизонталі
+                        if (distance < 100.0 && distance < minDistance) {
+                            minDistance = distance;
+                            closestTray = tray;
                         }
                     }
+
+                    if (closestTray != null) {
+                        double snapX = AnchorPane.getLeftAnchor(closestTray) + (closestTray.getFitWidth() - this.getBoundsInParent().getWidth()) / 2;
+                        double snapY = AnchorPane.getTopAnchor(closestTray) - this.getBoundsInParent().getHeight() + 40;
+
+                        AnchorPane.setLeftAnchor(this, snapX);
+                        AnchorPane.setTopAnchor(this, snapY);
+                        placed = true;
+                    }
                 }
+
                 if (!placed) {
                     AnchorPane.setLeftAnchor(this, originalX);
                     AnchorPane.setTopAnchor(this, originalY);

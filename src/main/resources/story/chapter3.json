@@ -303,6 +303,10 @@
       {
         "type": "action",
         "actionId": "hideActor"
+      },
+      {
+        "type": "action",
+        "actionId": "start_scale_puzzle"
       }
     ]
   }

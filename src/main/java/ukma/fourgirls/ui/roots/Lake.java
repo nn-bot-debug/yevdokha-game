@@ -128,6 +128,21 @@ public class Lake extends Place {
                 puzzle.toFront();
             });
 
+            actions.put("start_scale_puzzle", () -> {
+                ((StackPane) this.getRoot()).getChildren().removeIf(node -> node instanceof ukma.fourgirls.ui.puzzles.ScalePuzzle);
+
+                ukma.fourgirls.ui.puzzles.ScalePuzzle scalePuzzle = new ukma.fourgirls.ui.puzzles.ScalePuzzle(session, (karmaReward) -> {
+                    ((StackPane) this.getRoot()).getChildren().removeIf(node -> node instanceof ukma.fourgirls.ui.puzzles.ScalePuzzle);
+                    System.out.println("Головоломку ваг завершено! Отримано карми: " + karmaReward);
+
+                    //StoryRunner.playScene(session, "/story/chapter3.json", "mavka-farewell-scene", (StackPane) this.getRoot(), actions, null);
+                });
+
+                ((StackPane) this.getRoot()).getChildren().add(scalePuzzle);
+                StackPane.setAlignment(scalePuzzle, Pos.CENTER);
+                scalePuzzle.toFront();
+            });
+
             StoryRunner.playScene(session, "/story/chapter3.json", "lake-meeting-scene", (StackPane) this.getRoot(), actions, null);
             playFadeIn();
         }
