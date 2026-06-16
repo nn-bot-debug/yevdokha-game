@@ -47,7 +47,6 @@ public class Forest extends Place{
     @Override
     public void onEnter() {
         CameraController.setPanningEnabled(true);
-        ukma.fourgirls.core.AudioManager.getInstance().playBackgroundMusic("/music/Beneath_the_Ancient_Boughs.mp3");
         if (session.hasItem("Горщик зі смолою")) {
             this.executeHealingPhase();
         } else {
