@@ -23,6 +23,7 @@ public class Lake extends Place {
         private static final String LAKE = "/images/canvas/Lake.png";
         private static final String LAKE_MAVKY = "/images/canvas/Lake-Mavky.png";
         private static final String LAKE_DINNER = "/images/canvas/mavky-dinner-scene.png";
+    private static final String LAKE_LUKYAN = "/images/canvas/with_lukyan.png";
 
         private final Rectangle blackOverlay;
         private CharacterView actorView;
@@ -138,6 +139,18 @@ public class Lake extends Place {
                     actorView.setPositionSide(false);
                     actorView.setCharacterSprite("/images/characters/lukyan.png");
                 }
+            });
+
+            actions.put("set_bg_lake_clean", () -> {
+                this.setBackground(LAKE);
+            });
+
+            actions.put("set_bg_with_lukyan", () -> {
+                this.setBackground(LAKE_LUKYAN);
+            });
+
+            actions.put("set_bg_mavka_dinner", () -> {
+                this.setBackground(LAKE_DINNER);
             });
 
             actions.put("play_video_ending_1", () -> {
