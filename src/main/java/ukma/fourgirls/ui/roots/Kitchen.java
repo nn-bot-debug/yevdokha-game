@@ -11,7 +11,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
-import ukma.fourgirls.core.AudioManager;
+import ukma.fourgirls.core.GameContext;
 import ukma.fourgirls.core.InventoryManager;
 import ukma.fourgirls.core.NotificationManager;
 import ukma.fourgirls.domain.Item;
@@ -32,8 +32,8 @@ public class Kitchen extends Place {
     private CharacterView actorView;
     private CharacterView ratView;
 
-    public Kitchen() {
-        super(IMAGE_PATH);
+    public Kitchen(GameContext context) {
+        super(IMAGE_PATH, context);
 
         this.animationCanvas = new AnimationCanvas();
         this.roomContentLayer.getChildren().add(animationCanvas);
@@ -91,7 +91,7 @@ public class Kitchen extends Place {
 
         actions.put("startStorm", () -> {
             actorView.hide();
-            AudioManager.getInstance().playBackgroundMusic("/music/Злива.mp3");
+            context.getAudio().playBackgroundMusic("/music/Злива.mp3");
             this.startStormEffects();
         });
 
@@ -113,7 +113,7 @@ public class Kitchen extends Place {
         });
 
         actions.put("play-scary-laugh", () -> {
-            AudioManager.getInstance().buttonSound("/music/scary-laugh.mp3");
+            context.getAudio().buttonSound("/music/scary-laugh.mp3");
         });
 
         actions.put("triggerLightning", () ->
@@ -130,7 +130,7 @@ public class Kitchen extends Place {
 
         actions.put("triggerScreamerSequence", () -> {
             this.setBackground("/images/canvas/rain_in_kitchen.png");
-            AudioManager.getInstance().buttonSound("/music/skrimer-feik.mp3");
+            context.getAudio().buttonSound("/music/skrimer-feik.mp3");
             FadeTransition fade = new FadeTransition(Duration.millis(60), flashOverlay);
             fade.setFromValue(1.0);
             fade.setToValue(0.0);
@@ -155,7 +155,7 @@ public class Kitchen extends Place {
                     }
                 }
             }
-            ukma.fourgirls.ui.CameraController.setPanningEnabled(false);
+            context.getCamera().setPanningEnabled(false);
         });
 
         actions.put("spawnRatNearBread", () ->
@@ -169,7 +169,7 @@ public class Kitchen extends Place {
         actions.put("playRatSqueak", () -> {
             if (actorView != null) actorView.hide();
             this.setBackground("/images/canvas/kitchen_floor.png");
-            AudioManager.getInstance().buttonSound("/music/mouse_pisk.wav");
+            context.getAudio().buttonSound("/music/mouse_pisk.wav");
             ratView.setPositionSide(false);
             ratView.setCharacterSprite("/images/characters/scary_rat.png");
         });
@@ -181,13 +181,13 @@ public class Kitchen extends Place {
                 if (topNode instanceof javafx.scene.control.ScrollPane sp) {
                     sp.setFitToWidth(false);
                     sp.setFitToHeight(false);
-                    ukma.fourgirls.ui.CameraController.setPanningEnabled(true);
+                    context.getCamera().setPanningEnabled(true);
                 }
             }
 
             if (actorView != null) actorView.hide();
             if (ratView != null) ratView.hide();
-            StoryRunner.playScene(session, "/story/chapter1.json", "kitchen_leave_hint",
+            StoryRunner.playScene(context, "/story/chapter1.json", "kitchen_leave_hint",
                     (StackPane) this.getRoot(), actions, null);
         });
 
@@ -206,7 +206,7 @@ public class Kitchen extends Place {
             System.out.println("Євдоха біжить за щуром на наступну локацію.");
         });
 
-        StoryRunner.playScene(session, "/story/chapter1.json", "kitchen_storm_sequence",
+        StoryRunner.playScene(context, "/story/chapter1.json", "kitchen_storm_sequence",
                 (StackPane) this.getRoot(), actions, null);
     }
 

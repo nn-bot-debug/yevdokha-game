@@ -7,11 +7,9 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
-import ukma.fourgirls.core.AudioManager;
-import ukma.fourgirls.core.SceneManager;
+import ukma.fourgirls.core.GameContext;
 import ukma.fourgirls.logic.StoryRunner;
 import ukma.fourgirls.state.GameSession;
-import ukma.fourgirls.ui.CameraController;
 import ukma.fourgirls.ui.CharacterView;
 import ukma.fourgirls.ui.puzzles.PendantPuzzle;
 
@@ -31,9 +29,9 @@ public class Lake extends Place {
         private final Map<String, Runnable> actions;
         private final GameSession session;
 
-        public Lake() {
-            super(LAKE);
-            this.session = SceneManager.getInstance().getSession();
+        public Lake(GameContext context) {
+            super(LAKE, context);
+            this.session = context.getSession();
             if (getClass().getResource("/css/settings.css") != null) {
                 this.getRoot().getStylesheets().add(getClass().getResource("/css/settings.css").toExternalForm());
             }
@@ -53,7 +51,7 @@ public class Lake extends Place {
 
         @Override
         public void onEnter() {
-            CameraController.setPanningEnabled(true);
+            context.getCamera().setPanningEnabled(true);
             this.setBackground(LAKE);
 
             actions.clear();
@@ -89,11 +87,11 @@ public class Lake extends Place {
 
             actions.put("dinner-scene", () ->{
                 this.setBackground(LAKE_DINNER);
-                StoryRunner.playScene(session, "/story/chapter3.json", "mavka-dinner-scene", (StackPane) this.getRoot(), actions, null);
+                StoryRunner.playScene(context, "/story/chapter3.json", "mavka-dinner-scene", (StackPane) this.getRoot(), actions, null);
             });
 
             actions.put("play-melodia-sound", () -> {
-                ukma.fourgirls.core.AudioManager.getInstance().playBackgroundMusic("/music/Lake-scene-melody.mp3");
+                context.getAudio().playBackgroundMusic("/music/Lake-scene-melody.mp3");
             });
 
             actions.put("start", () ->{
@@ -107,7 +105,7 @@ public class Lake extends Place {
 
                 eyeButton.setOnAction(event -> {
                     ((StackPane) this.getRoot()).getChildren().remove(eyeButton);
-                    StoryRunner.playScene(session, "/story/chapter3.json", "mavky-meeting-scene", (StackPane) this.getRoot(), actions, null);
+                    StoryRunner.playScene(context, "/story/chapter3.json", "mavky-meeting-scene", (StackPane) this.getRoot(), actions, null);
                 });
                 ((StackPane) this.getRoot()).getChildren().add(eyeButton);
                 eyeButton.toFront();
@@ -116,12 +114,12 @@ public class Lake extends Place {
             actions.put("start_pendant_puzzle", () -> {
                 ((StackPane) this.getRoot()).getChildren().removeIf(node -> node instanceof PendantPuzzle);
 
-                PendantPuzzle puzzle = new PendantPuzzle(session, (isWin) -> {
+                PendantPuzzle puzzle = new PendantPuzzle(context, (isWin) -> {
                     ((StackPane) this.getRoot()).getChildren().removeIf(node -> node instanceof PendantPuzzle);
 
                     System.out.println("Головоломку кулона завершено! Результат успіху: " + isWin);
 
-                    StoryRunner.playScene(session, "/story/chapter3.json", "mavka-dinner-scene", (StackPane) this.getRoot(), actions, null);
+                    StoryRunner.playScene(context, "/story/chapter3.json", "mavka-dinner-scene", (StackPane) this.getRoot(), actions, null);
                 });
 
                 ((StackPane) this.getRoot()).getChildren().add(puzzle);
@@ -130,7 +128,7 @@ public class Lake extends Place {
             });
 
             actions.put("trigger_bad_end_part2", () -> {
-                StoryRunner.playScene(session, "/story/theend.json", "bad-end-part2-water", (StackPane) this.getRoot(), actions, null);
+                StoryRunner.playScene(context, "/story/theend.json", "bad-end-part2-water", (StackPane) this.getRoot(), actions, null);
             });
 
             actions.put("showFather", () -> {
@@ -164,7 +162,7 @@ public class Lake extends Place {
             actions.put("start_scale_puzzle", () -> {
                 ((StackPane) this.getRoot()).getChildren().removeIf(node -> node instanceof ukma.fourgirls.ui.puzzles.ScalePuzzle);
 
-                ukma.fourgirls.ui.puzzles.ScalePuzzle scalePuzzle = new ukma.fourgirls.ui.puzzles.ScalePuzzle(session, (karmaReward) -> {
+                ukma.fourgirls.ui.puzzles.ScalePuzzle scalePuzzle = new ukma.fourgirls.ui.puzzles.ScalePuzzle(context, (karmaReward) -> {
                     ((StackPane) this.getRoot()).getChildren().removeIf(node -> node instanceof ukma.fourgirls.ui.puzzles.ScalePuzzle);
                     System.out.println("Головоломку ваг завершено! Отримано карми: " + karmaReward);
 
@@ -176,12 +174,12 @@ public class Lake extends Place {
                                 .noneMatch(item -> item.getName().equals("Малюнок"));
 
                         if (putDrawingOnScale) {
-                            StoryRunner.playScene(session, "/story/theend.json", "bad-end-part1-with-drawing", (StackPane) this.getRoot(), actions, null);
+                            StoryRunner.playScene(context, "/story/theend.json", "bad-end-part1-with-drawing", (StackPane) this.getRoot(), actions, null);
                         } else {
-                            StoryRunner.playScene(session, "/story/theend.json", "bad-end-part2-water", (StackPane) this.getRoot(), actions, null);
+                            StoryRunner.playScene(context, "/story/theend.json", "bad-end-part2-water", (StackPane) this.getRoot(), actions, null);
                         }
                     } else {
-                        StoryRunner.playScene(session, "/story/theend.json", "good-ending", (StackPane) this.getRoot(), actions, null);
+                        StoryRunner.playScene(context, "/story/theend.json", "good-ending", (StackPane) this.getRoot(), actions, null);
                     }
                 });
 
@@ -190,9 +188,9 @@ public class Lake extends Place {
                 scalePuzzle.toFront();
             });
             actions.put("play_laugh", () -> {
-                ukma.fourgirls.core.AudioManager.getInstance().buttonSound("/music/mavka_smih.mp3");
+                context.getAudio().buttonSound("/music/mavka_smih.mp3");
             });
-            StoryRunner.playScene(session, "/story/chapter3.json", "lake-meeting-scene", (StackPane) this.getRoot(), actions, null);
+            StoryRunner.playScene(context, "/story/chapter3.json", "lake-meeting-scene", (StackPane) this.getRoot(), actions, null);
             playFadeIn();
         }
 
@@ -232,7 +230,7 @@ public class Lake extends Place {
             mediaView.fitHeightProperty().bind(rootPane.heightProperty());
             mediaView.setPreserveRatio(true);
 
-            ukma.fourgirls.core.AudioManager.getInstance().fadeOutBackgroundMusic(1.0);
+            context.getAudio().fadeOutBackgroundMusic(1.0);
 
             rootPane.getChildren().addAll(videoBackground, mediaView);
             videoBackground.toFront();
@@ -245,8 +243,8 @@ public class Lake extends Place {
                 rootPane.getChildren().removeAll(videoBackground, mediaView);
 
                 System.out.println("Відео завершилось. Повертаємо гравця в меню.");
-                ukma.fourgirls.core.SceneManager.getInstance().resetSession();
-                ukma.fourgirls.core.SceneManager.getInstance().switchToMainMenu();
+                context.getScene().resetSession();
+                context.getScene().switchToMainMenu();
             });
 
         } catch (Exception e) {

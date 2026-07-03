@@ -12,27 +12,20 @@ import java.util.function.Supplier;
 
 public class SceneManager {
 
-    private Stage primaryStage;
+    private final Stage primaryStage;
+    private final GameContext context;
     private Parent mainMenuRoot;
-    private final GameSession session = new GameSession();
+    private final GameSession session;
 
     private final Map<String, Place> cachedRooms = new HashMap<>();
 
-    private SceneManager() {}
-
-    public static SceneManager getInstance() {
-        return InstanceHolder.INSTANCE;
-    }
-
-    private static class InstanceHolder {
-        private static final SceneManager INSTANCE = new SceneManager();
-    }
-
-    public void init(Stage stage) {
-        if (stage == null) {
+    public SceneManager(Stage primaryStage, GameContext context) {
+        if (primaryStage == null) {
             System.err.println("Error: Stage cannot be null during SceneManager initialization!");
         }
-        this.primaryStage = stage;
+        this.primaryStage = primaryStage;
+        this.context = context;
+        this.session = context.getSession();
     }
 
     public void setMainMenuRoot(Parent root) {

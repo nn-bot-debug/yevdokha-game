@@ -9,14 +9,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
-import ukma.fourgirls.core.AudioManager;
-import ukma.fourgirls.core.LanguageManager;
-import ukma.fourgirls.core.LocationRegistry;
-import ukma.fourgirls.core.NotificationManager;
-import ukma.fourgirls.core.SaveManager;
-import ukma.fourgirls.core.SceneManager;
+import ukma.fourgirls.core.*;
 import ukma.fourgirls.state.GameSession;
-import ukma.fourgirls.ui.CameraController;
 import ukma.fourgirls.ui.NavigationPanel;
 
 import java.util.Objects;
@@ -26,13 +20,15 @@ public abstract class Place {
     protected final StackPane roomContentLayer;
     protected final ImageView roomView;
     protected final GameSession session;
+    protected final GameContext context;
     private Font enFont;
     private Font ukFont;
     protected final Inventory inventory;
     private NavigationPanel currentNavPanel;
 
-    public Place(String imagePath) {
-        this.session = SceneManager.getInstance().getSession();
+    public Place(String imagePath, GameContext context) {
+        this.context = context;
+        this.session = context.getSession();
         StackPane rootPane = new StackPane();
         rootPane.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/buttons.css")).toExternalForm());
 
@@ -71,7 +67,7 @@ public abstract class Place {
         this.inventory.attachTo(rootPane);
         this.inventory.setVisible(session.isInventoryUnlocked());
 
-        CameraController.enableMousePanning(rootPane, scrollPane);
+        context.getCamera().enableMousePanning(rootPane, scrollPane);
         javafx.application.Platform.runLater(() -> scrollPane.setHvalue(0.5));
 
         this.root = rootPane;
@@ -105,7 +101,7 @@ public abstract class Place {
 
         backButton.setOnAction(e -> {
             if (session.isCutsceneActive()) {
-                AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
+                context.getAudio().buttonSound("/music/button-click-sound.wav");
                 NotificationManager.showNotification(
                         this.root,
                         "Ви не можете вийти в меню під час розмови чи важливої події!"
@@ -113,9 +109,9 @@ public abstract class Place {
                 return;
             }
 
-            AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
+            context.getAudio().buttonSound("/music/button-click-sound.wav");
             SaveManager.saveGame(session, this.getClass().getSimpleName(), "");
-            SceneManager.getInstance().switchToMainMenu();
+            context.getScene().switchToMainMenu();
         });
         return backButton;
     }
@@ -145,11 +141,11 @@ public abstract class Place {
 
         NavigationPanel navPanel = new NavigationPanel();
 
-        for (LocationRegistry.Location location : LocationRegistry.navigationLocations()) {
+        for (LocationRegistry.Location location : context.getLocations().navigationLocations()) {
             if (!location.getId().equals(currentRoomName) && session.isUnlocked(location.getId())) {
                 navPanel.addNavigationTarget(location.getDisplayName(), () -> {
-                    AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
-                    LocationRegistry.switchTo(location.getId());
+                    context.getAudio().buttonSound("/music/button-click-sound.wav");
+                    context.getLocations().switchTo(location.getId());
                 });
             }
         }

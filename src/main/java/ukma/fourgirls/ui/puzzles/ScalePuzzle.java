@@ -16,6 +16,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
+import ukma.fourgirls.core.GameContext;
 import ukma.fourgirls.state.GameSession;
 import ukma.fourgirls.ui.roots.Inventory;
 
@@ -26,6 +27,7 @@ import java.util.Objects;
 
 public class ScalePuzzle extends StackPane {
 
+    private final GameContext context;
     private final GameSession session;
     private final java.util.function.Consumer<Integer> onFinishCallback;
 
@@ -57,8 +59,9 @@ public class ScalePuzzle extends StackPane {
     private final List<ImageView> trays = new ArrayList<>();
     private final List<DraggableItem> allItems = new ArrayList<>();
 
-    public ScalePuzzle(GameSession session, java.util.function.Consumer<Integer> onFinishCallback) {
-        this.session = session;
+    public ScalePuzzle(GameContext context, java.util.function.Consumer<Integer> onFinishCallback) {
+        this.context = context;
+        this.session = context.getSession();
         this.onFinishCallback = onFinishCallback;
 
         this.getStylesheets().addAll(
@@ -268,7 +271,7 @@ public class ScalePuzzle extends StackPane {
             return;
         }
 
-        ukma.fourgirls.core.AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
+        context.getAudio().buttonSound("/music/button-click-sound.wav");
 
         weighingsLeft--;
         counterText.setText(String.valueOf(weighingsLeft));

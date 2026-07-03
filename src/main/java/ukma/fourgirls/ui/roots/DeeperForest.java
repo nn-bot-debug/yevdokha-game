@@ -7,13 +7,9 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
-import ukma.fourgirls.core.AudioManager;
-import ukma.fourgirls.core.LocationRegistry;
-import ukma.fourgirls.core.SceneManager;
-import ukma.fourgirls.core.StatNotification;
+import ukma.fourgirls.core.*;
 import ukma.fourgirls.logic.StoryRunner;
 import ukma.fourgirls.state.GameSession;
-import ukma.fourgirls.ui.CameraController;
 import ukma.fourgirls.ui.CharacterView;
 
 import java.util.HashMap;
@@ -30,9 +26,9 @@ public class DeeperForest extends Place {
     private final Map<String, Runnable> actions;
     private final GameSession session;
 
-    public DeeperForest() {
-        super(DEEPER_FOREST);
-        this.session = SceneManager.getInstance().getSession();
+    public DeeperForest(GameContext context) {
+        super(DEEPER_FOREST, context);
+        this.session = context.getSession();
         if (getClass().getResource("/css/settings.css") != null) {
             this.getRoot().getStylesheets().add(getClass().getResource("/css/settings.css").toExternalForm());
         }
@@ -52,7 +48,7 @@ public class DeeperForest extends Place {
 
     @Override
     public void onEnter() {
-        CameraController.setPanningEnabled(true);
+        context.getCamera().setPanningEnabled(true);
         this.setBackground(DEEPER_FOREST);
 
         actions.clear();
@@ -78,7 +74,7 @@ public class DeeperForest extends Place {
         });
 
         actions.put("play-sound-scary-laugh", () -> {
-            AudioManager.getInstance().buttonSound("/music/scary-laugh.mp3");
+            context.getAudio().buttonSound("/music/scary-laugh.mp3");
         });
 
         actions.put("enable-blud-eye-button", () -> {
@@ -90,7 +86,7 @@ public class DeeperForest extends Place {
             eyeButton.setOnAction(event -> {
                 ((StackPane) this.getRoot()).getChildren().remove(eyeButton);
                 this.setBackground(IMAGE_DEEPER_FOREST);
-                StoryRunner.playScene(session, "/story/chapter3.json", "blud-intro-scene", (StackPane) this.getRoot(), actions, null);
+                StoryRunner.playScene(context, "/story/chapter3.json", "blud-intro-scene", (StackPane) this.getRoot(), actions, null);
             });
             ((StackPane) this.getRoot()).getChildren().add(eyeButton);
             eyeButton.toFront();
@@ -103,12 +99,12 @@ public class DeeperForest extends Place {
 
         actions.put("choice_refuse_game", () -> {
             session.changeKarma(-1);
-            StoryRunner.playScene(session, "/story/chapter3.json", "blud-rejection-scene", (StackPane) this.getRoot(), actions, null);
+            StoryRunner.playScene(context, "/story/chapter3.json", "blud-rejection-scene", (StackPane) this.getRoot(), actions, null);
         });
 
         actions.put("choice_accept_game", () -> {
             session.changeKarma(1);
-            StoryRunner.playScene(session, "/story/chapter3.json", "blud-agreement-scene", (StackPane) this.getRoot(), actions, null);
+            StoryRunner.playScene(context, "/story/chapter3.json", "blud-agreement-scene", (StackPane) this.getRoot(), actions, null);
         });
 
         actions.put("lake-scene", this::playFadeOutToLake);
@@ -120,7 +116,7 @@ public class DeeperForest extends Place {
         actions.put("start_maze_with_timer", () -> {
             ((StackPane) this.getRoot()).getChildren().removeIf(node -> node instanceof ukma.fourgirls.ui.puzzles.MazePuzzle);
 
-            ukma.fourgirls.ui.puzzles.MazePuzzle puzzle = new ukma.fourgirls.ui.puzzles.MazePuzzle(session, true, (result) -> {
+            ukma.fourgirls.ui.puzzles.MazePuzzle puzzle = new ukma.fourgirls.ui.puzzles.MazePuzzle(context, true, (result) -> {
                 ((StackPane) this.getRoot()).getChildren().removeIf(node -> node instanceof ukma.fourgirls.ui.puzzles.MazePuzzle);
                 this.playFadeOutToLake();
             });
@@ -131,7 +127,7 @@ public class DeeperForest extends Place {
         actions.put("start_maze_no_timer", () -> {
             ((StackPane) this.getRoot()).getChildren().removeIf(node -> node instanceof ukma.fourgirls.ui.puzzles.MazePuzzle);
 
-            ukma.fourgirls.ui.puzzles.MazePuzzle puzzle = new ukma.fourgirls.ui.puzzles.MazePuzzle(session, false, (result) -> {
+            ukma.fourgirls.ui.puzzles.MazePuzzle puzzle = new ukma.fourgirls.ui.puzzles.MazePuzzle(context, false, (result) -> {
                 ((StackPane) this.getRoot()).getChildren().removeIf(node -> node instanceof ukma.fourgirls.ui.puzzles.MazePuzzle);
                 this.playFadeOutToLake();
             });
@@ -139,20 +135,20 @@ public class DeeperForest extends Place {
             puzzle.toFront();
         });
 
-        StoryRunner.playScene(session, "/story/chapter3.json", "blud-meeting-scene", (StackPane) this.getRoot(), actions, null);
+        StoryRunner.playScene(context, "/story/chapter3.json", "blud-meeting-scene", (StackPane) this.getRoot(), actions, null);
         playFadeIn();
     }
 
     private void playFadeOutToLake(){
         blackOverlay.toFront();
-        ukma.fourgirls.core.AudioManager.getInstance().fadeOutBackgroundMusic(1.5);
+        context.getAudio().fadeOutBackgroundMusic(1.5);
         FadeTransition fadeOut = new FadeTransition(Duration.seconds(1.5), blackOverlay);
         fadeOut.setFromValue(0.0);
         fadeOut.setToValue(1.0);
 
         fadeOut.setOnFinished(e -> {
             actions.clear();
-            LocationRegistry.switchTo("Lake");
+            context.getLocations().switchTo("Lake");
         });
         fadeOut.play();
     }

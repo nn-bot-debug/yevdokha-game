@@ -7,12 +7,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
-import ukma.fourgirls.core.AudioManager;
-import ukma.fourgirls.core.InventoryManager;
-import ukma.fourgirls.core.NotificationManager;
-import ukma.fourgirls.core.StatNotification;
+import ukma.fourgirls.core.*;
 import ukma.fourgirls.logic.StoryRunner;
-import ukma.fourgirls.ui.CameraController;
 import ukma.fourgirls.ui.CharacterView;
 
 import java.util.HashMap;
@@ -38,8 +34,8 @@ public class MomRoom extends Place {
     private CharacterView actorView;
     private CharacterView ratView;
 
-    public MomRoom() {
-        super(IMAGE_PATH);
+    public MomRoom(GameContext context) {
+        super(IMAGE_PATH, context);
 
         blackOverlay = new Rectangle();
         blackOverlay.widthProperty().bind(this.root.widthProperty());
@@ -48,7 +44,7 @@ public class MomRoom extends Place {
         blackOverlay.setMouseTransparent(true);
 
         this.root.getChildren().add(blackOverlay);
-        CameraController.setPanningEnabled(false);
+        context.getCamera().setPanningEnabled(false);
 
         momView = createCinematicView(IMAGE_PATH, 1.5);
         drawingView = createCinematicView(SECOND_IMAGE_PATH, 0.7);
@@ -80,7 +76,7 @@ public class MomRoom extends Place {
 
     public void startRatKeyCutscene() {
         session.setMomRoomRatScenePlayed(true);
-        CameraController.setPanningEnabled(true);
+        context.getCamera().setPanningEnabled(true);
         this.removeBlackOverlay();
         this.root.getChildren().removeAll(momView, drawingView, scaryMomView);
 
@@ -121,12 +117,12 @@ public class MomRoom extends Place {
 
         actions.put("choice_ask_for_key", () -> {
             session.changeKarma(1);
-            StoryRunner.playScene(session, "/story/chapter1.json", "ask_for_a_key", (StackPane) this.getRoot(), actions, animations);
+            StoryRunner.playScene(context, "/story/chapter1.json", "ask_for_a_key", (StackPane) this.getRoot(), actions, animations);
         });
 
         actions.put("choice_take_by_force", () -> {
             session.changeKarma(-1);
-            StoryRunner.playScene(session, "/story/chapter1.json", "take_key_from_rat", (StackPane) this.getRoot(), actions, animations);
+            StoryRunner.playScene(context, "/story/chapter1.json", "take_key_from_rat", (StackPane) this.getRoot(), actions, animations);
         });
 
         actions.put("show_corner_flash", () -> {
@@ -182,7 +178,7 @@ public class MomRoom extends Place {
 
         animations.put("lightning_pause", getLightningAnimation());
 
-        StoryRunner.playScene(session, "/story/chapter1.json", "mom_room_rat_key", (StackPane) this.getRoot(), actions, animations);
+        StoryRunner.playScene(context, "/story/chapter1.json", "mom_room_rat_key", (StackPane) this.getRoot(), actions, animations);
     }
 
     public void startCutscene() {
@@ -209,13 +205,13 @@ public class MomRoom extends Place {
             session.removeItem("Малюнок");
             session.changeKarma(-1);
             this.hideDrawingView();
-            StoryRunner.playScene(session, "/story/chapter1.json", "mom_room_scary_sequence", (StackPane) this.getRoot(), actions, animations);
+            StoryRunner.playScene(context, "/story/chapter1.json", "mom_room_scary_sequence", (StackPane) this.getRoot(), actions, animations);
         });
 
         actions.put("choice_hide_in_pocket", () -> {
             session.changeKarma(1);
             this.hideDrawingView();
-            StoryRunner.playScene(session, "/story/chapter1.json", "mom_room_hide_sequence", (StackPane) this.getRoot(), actions, animations);
+            StoryRunner.playScene(context, "/story/chapter1.json", "mom_room_hide_sequence", (StackPane) this.getRoot(), actions, animations);
         });
 
         actions.put("goToKitchenHint", () -> {
@@ -224,7 +220,7 @@ public class MomRoom extends Place {
             NotificationManager.showNotification(this.root, "Нове завдання: Знайдіть їжу на кухні");
         });
 
-        StoryRunner.playScene(session, "/story/chapter1.json", "mom_room_first_visit", (StackPane) this.getRoot(), actions, animations);
+        StoryRunner.playScene(context, "/story/chapter1.json", "mom_room_first_visit", (StackPane) this.getRoot(), actions, animations);
     }
 
     // --- МЕТОДИ ДЛЯ КЕРУВАННЯ СЦЕНОЮ З КОНТРОЛЕРА ---
@@ -245,7 +241,7 @@ public class MomRoom extends Place {
             this.root.getChildren().add(scaryMomView);
         }
         scaryMomView.toFront();
-        AudioManager.getInstance().buttonSound("/music/mama_skrimer.mp3");
+        context.getAudio().buttonSound("/music/mama_skrimer.mp3");
     }
 
     public void hideScaryMom() {
@@ -257,7 +253,7 @@ public class MomRoom extends Place {
     }
 
     public void finalizeCutscene() {
-        CameraController.setPanningEnabled(true);
+        context.getCamera().setPanningEnabled(true);
         setupNavigation("MomRoom");
     }
 

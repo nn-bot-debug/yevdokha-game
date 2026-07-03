@@ -15,8 +15,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+import ukma.fourgirls.core.GameContext;
 import ukma.fourgirls.state.GameSession;
-import ukma.fourgirls.core.AudioManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,6 +38,7 @@ public class FirstPuzzle extends StackPane {
     private final List<Rectangle> rectangles = new ArrayList<>();
     private Rectangle firstSelectedRectangle = null;
 
+    private final GameContext context;
     private final GameSession session;
     private final Runnable onWinCallback;
 
@@ -55,8 +56,9 @@ public class FirstPuzzle extends StackPane {
 
     private final VBox mainLayout;
 
-    public  FirstPuzzle(GameSession session, Runnable onWinCallback) {
-        this.session = session;
+    public FirstPuzzle(GameContext context, Runnable onWinCallback) {
+        this.context = context;
+        this.session = context.getSession();
         this.onWinCallback = onWinCallback;
 
         this.getStylesheets().addAll(
@@ -200,7 +202,7 @@ public class FirstPuzzle extends StackPane {
         acceptButton.setStyle("-fx-cursor: hand;");
 
         acceptButton.setOnAction(e -> {
-            AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
+            context.getAudio().buttonSound("/music/button-click-sound.wav");
             this.getChildren().remove(tutorialBox);
             mainLayout.setVisible(true);
             session.setKarmaListener((currentKarma, addedPoints) -> {

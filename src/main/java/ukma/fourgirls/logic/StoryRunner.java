@@ -4,10 +4,10 @@ import com.google.gson.Gson;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import ukma.fourgirls.core.ChoiceManager;
+import ukma.fourgirls.core.GameContext;
 import ukma.fourgirls.domain.story.ChoiceOption;
 import ukma.fourgirls.domain.story.StoryData;
 import ukma.fourgirls.domain.story.StoryEvent;
-import ukma.fourgirls.state.GameSession;
 
 import javafx.animation.Animation;
 import java.io.InputStream;
@@ -19,10 +19,10 @@ import java.util.Objects;
 
 public class StoryRunner {
 
-    public static void playScene(GameSession session, String jsonFilePath, String sceneId, StackPane roomRoot, Map<String, Runnable> actions, Map<String, Animation> animations) {
+    public static void playScene(GameContext context, String jsonFilePath, String sceneId, StackPane roomRoot, Map<String, Runnable> actions, Map<String, Animation> animations) {
 
-        session.setActiveSceneId(sceneId);
-        session.setCutsceneActive(true);
+        context.getSession().setActiveSceneId(sceneId);
+        context.getSession().setCutsceneActive(true);
 
         InputStream inputStream = StoryRunner.class.getResourceAsStream(jsonFilePath);
         if (inputStream == null) {
@@ -41,7 +41,7 @@ public class StoryRunner {
             return;
         }
 
-        StorySequence sequence = StorySequence.create(roomRoot);
+        StorySequence sequence = StorySequence.create(roomRoot, context);
 
         for (StoryEvent event : events) {
             switch (event.type) {
@@ -88,8 +88,8 @@ public class StoryRunner {
         }
 
         sequence.execute(() -> {
-            session.setActiveSceneId("");
-            session.setCutsceneActive(false);
+            context.getSession().setActiveSceneId("");
+            context.getSession().setCutsceneActive(false);
         });
 
         sequence.play();

@@ -18,14 +18,15 @@ import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+import ukma.fourgirls.core.GameContext;
 import ukma.fourgirls.state.GameSession;
-import ukma.fourgirls.core.AudioManager;
 
 import java.util.Objects;
 
 public class VentiliPuzzle extends StackPane {
 
     private final GameSession session;
+    private final GameContext context;
     private final java.util.function.Consumer<Integer> onFinishCallback;
 
     // Стан чотирьох вентилів
@@ -58,8 +59,9 @@ public class VentiliPuzzle extends StackPane {
     private static final Color RESIN_FLOW = Color.rgb(245, 158, 11);
     private static final Color RESIN_GLOW = Color.rgb(251, 191, 36);
 
-    public VentiliPuzzle(GameSession session, java.util.function.Consumer<Integer> onFinishCallback) {
-        this.session = session;
+    public VentiliPuzzle(GameContext context, java.util.function.Consumer<Integer> onFinishCallback) {
+        this.context = context;
+        this.session = context.getSession();
         this.onFinishCallback = onFinishCallback;
 
         this.getStylesheets().addAll(
@@ -285,7 +287,7 @@ public class VentiliPuzzle extends StackPane {
         acceptButton.setStyle("-fx-cursor: hand;");
 
         acceptButton.setOnAction(e -> {
-            AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
+            context.getAudio().buttonSound("/music/button-click-sound.wav");
             this.getChildren().remove(tutorialBox);
             mainLayout.setVisible(true);
 

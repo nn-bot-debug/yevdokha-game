@@ -6,12 +6,10 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import ukma.fourgirls.core.AudioManager;
-import ukma.fourgirls.core.LocationRegistry;
+import ukma.fourgirls.core.GameContext;
 import ukma.fourgirls.core.StatNotification;
 import javafx.util.Duration;
 import ukma.fourgirls.logic.StoryRunner;
-import ukma.fourgirls.ui.CameraController;
 import ukma.fourgirls.ui.CharacterView;
 
 import java.util.HashMap;
@@ -25,8 +23,8 @@ public class Forest extends Place{
     private CharacterView lisovukView;
     private final Map<String, Runnable> actions;
 
-    public Forest() {
-        super(NORMAL_FOREST);
+    public Forest(GameContext context) {
+        super(NORMAL_FOREST, context);
         this.getRoot().getStylesheets().add(getClass().getResource("/css/settings.css").toExternalForm());
 
         blackOverlay = new Rectangle();
@@ -46,7 +44,7 @@ public class Forest extends Place{
 
     @Override
     public void onEnter() {
-        CameraController.setPanningEnabled(true);
+        context.getCamera().setPanningEnabled(true);
         if (session.hasItem("Горщик зі смолою")) {
             this.executeHealingPhase();
         } else {
@@ -62,7 +60,7 @@ public class Forest extends Place{
         this.playFadeIn();
 
         actions.put("show_feature_tutorial", () -> {
-            ukma.fourgirls.ui.views.TutorialOverlay tutorial = new ukma.fourgirls.ui.views.TutorialOverlay((StackPane) this.getRoot());
+            ukma.fourgirls.ui.views.TutorialOverlay tutorial = new ukma.fourgirls.ui.views.TutorialOverlay(context, (StackPane) this.getRoot());
             ((StackPane) this.getRoot()).getChildren().add(tutorial.getRoot());
         });
 
@@ -72,15 +70,15 @@ public class Forest extends Place{
             StackPane.setAlignment(eyeButton, Pos.TOP_RIGHT);
             StackPane.setMargin(eyeButton, new javafx.geometry.Insets(20, 20, 0, 0));
 
-            var eyeTrack = AudioManager.getInstance().playEyeLoopSound("/music/eye-button.wav");
+            var eyeTrack = context.getAudio().playEyeLoopSound("/music/eye-button.wav");
 
             eyeButton.setOnAction(e -> {
                 if (eyeTrack != null)
-                    AudioManager.getInstance().fadeOutAndStop(eyeTrack, 1.5);
+                    context.getAudio().fadeOutAndStop(eyeTrack, 1.5);
 
                 ((StackPane) this.getRoot()).getChildren().remove(eyeButton);
                 this.setBackground(MAGIC_FOREST);
-                StoryRunner.playScene(session, "/story/chapter2.json", "forest_meeting", (StackPane) this.getRoot(), actions, null);
+                StoryRunner.playScene(context, "/story/chapter2.json", "forest_meeting", (StackPane) this.getRoot(), actions, null);
             });
             ((StackPane) this.getRoot()).getChildren().add(eyeButton);
             eyeButton.toFront();
@@ -94,12 +92,12 @@ public class Forest extends Place{
 
         actions.put("choice_say_name", () -> {
             session.changeKarma(1);
-            StoryRunner.playScene(session, "/story/chapter2.json", "lisovuk_quest_start", (StackPane) this.getRoot(), actions, null);
+            StoryRunner.playScene(context, "/story/chapter2.json", "lisovuk_quest_start", (StackPane) this.getRoot(), actions, null);
         });
 
         actions.put("choice_stay_silent", () -> {
             session.changeKarma(-1);
-            StoryRunner.playScene(session, "/story/chapter2.json", "lisovuk_quest_start", (StackPane) this.getRoot(), actions, null);
+            StoryRunner.playScene(context, "/story/chapter2.json", "lisovuk_quest_start", (StackPane) this.getRoot(), actions, null);
         });
 
         actions.put("give_empty_pot", () -> {
@@ -111,11 +109,11 @@ public class Forest extends Place{
             FadeTransition fadeOut = new FadeTransition(Duration.seconds(1.2), blackOverlay);
             fadeOut.setFromValue(0.0);
             fadeOut.setToValue(1.0);
-            fadeOut.setOnFinished(e -> LocationRegistry.switchTo("Tree"));
+            fadeOut.setOnFinished(e -> context.getLocations().switchTo("Tree"));
             fadeOut.play();
         });
 
-        StoryRunner.playScene(session, "/story/chapter2.json", "forest_intro_scene", (StackPane) this.getRoot(), actions, null);
+        StoryRunner.playScene(context, "/story/chapter2.json", "forest_intro_scene", (StackPane) this.getRoot(), actions, null);
     }
 
     /**
@@ -136,12 +134,12 @@ public class Forest extends Place{
             fadeOut.setToValue(1.0);
 
             fadeOut.setOnFinished(e -> {
-                LocationRegistry.switchTo("DeeperForest");
+                context.getLocations().switchTo("DeeperForest");
             });
             fadeOut.play();
         });
 
-        StoryRunner.playScene(session, "/story/chapter2.json", "lisovuk_healing_and_prophecy", (StackPane) this.getRoot(), actions, null);
+        StoryRunner.playScene(context, "/story/chapter2.json", "lisovuk_healing_and_prophecy", (StackPane) this.getRoot(), actions, null);
     }
 
     private void initBaseActions() {
@@ -177,7 +175,7 @@ public class Forest extends Place{
     }
 
     public void enableNavigation() {
-        CameraController.setPanningEnabled(true);
+        context.getCamera().setPanningEnabled(true);
         this.setupNavigation("Forest");
     }
 }

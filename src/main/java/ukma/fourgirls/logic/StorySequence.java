@@ -5,31 +5,33 @@ import javafx.animation.PauseTransition;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
-import ukma.fourgirls.core.DialogueManager;
+import ukma.fourgirls.core.GameContext;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class StorySequence {
     private final StackPane root;
+    private final GameContext context;
     private final List<Runnable> actions = new ArrayList<>();
     private int currentIndex = 0;
 
-    private StorySequence(StackPane root) {
+    private StorySequence(StackPane root,  GameContext context) {
         this.root = root;
+        this.context = context;
     }
 
-    public static StorySequence create(StackPane root) {
-        return new StorySequence(root);
+    public static StorySequence create(StackPane root, GameContext context) {
+        return new StorySequence(root, context);
     }
 
     public StorySequence addDialogue(String... lines) {
-        actions.add(() -> DialogueManager.getInstance().play(root, lines, this::next));
+        actions.add(() -> context.getDialogue().play(root, lines, this::next));
         return this;
     }
 
     public StorySequence addDialogue(String characterName, Image portrait, String... lines) {
-        actions.add(() -> DialogueManager.getInstance().play(root, characterName, portrait, lines, this::next));
+        actions.add(() -> context.getDialogue().play(root, characterName, portrait, lines, this::next));
         return this;
     }
 

@@ -6,15 +6,17 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import ukma.fourgirls.core.AudioManager;
+import ukma.fourgirls.core.GameContext;
 
 import java.util.Objects;
 
 public class TutorialOverlay {
     private final StackPane overlayRoot;
     private final StackPane parentContainer;
+    private final GameContext context;
 
-    public TutorialOverlay(StackPane parentContainer) {
+    public TutorialOverlay(GameContext context, StackPane parentContainer) {
+        this.context = context;
         this.parentContainer = parentContainer;
         this.overlayRoot = new StackPane();
         this.overlayRoot.getStyleClass().add("settings-overlay");
@@ -47,7 +49,7 @@ public class TutorialOverlay {
         acceptButton.setPrefWidth(140);
 
         acceptButton.setOnAction(e -> {
-            AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
+            context.getAudio().buttonSound("/music/button-click-sound.wav");
             parentContainer.getChildren().remove(overlayRoot);
         });
 

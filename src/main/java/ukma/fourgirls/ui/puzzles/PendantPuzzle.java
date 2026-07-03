@@ -12,8 +12,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.util.Duration;
+import ukma.fourgirls.core.GameContext;
 import ukma.fourgirls.state.GameSession;
-import ukma.fourgirls.core.AudioManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +22,7 @@ import java.util.function.Consumer;
 
 public class PendantPuzzle extends StackPane {
 
+    private final GameContext context;
     private final GameSession session;
     private final Consumer<Boolean> onPositionFinished;
 
@@ -60,8 +61,9 @@ public class PendantPuzzle extends StackPane {
     private int timeLeftSeconds = 120;
     private final List<Button> actionButtons = new ArrayList<>();
 
-    public PendantPuzzle(GameSession session, Consumer<Boolean> onPositionFinished) {
-        this.session = session;
+    public PendantPuzzle(GameContext context, Consumer<Boolean> onPositionFinished) {
+        this.context = context;
+        this.session = context.getSession();
         this.onPositionFinished = onPositionFinished;
 
         if (getClass().getResource("/css/puzzle.css") != null) {
@@ -223,7 +225,7 @@ public class PendantPuzzle extends StackPane {
         acceptButton.setStyle("-fx-cursor: hand;");
 
         acceptButton.setOnAction(e -> {
-            AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
+            context.getAudio().buttonSound("/music/button-click-sound.wav");
             this.getChildren().remove(tutorialBox);
 
             this.setMaxSize(850, 580);
@@ -285,7 +287,7 @@ public class PendantPuzzle extends StackPane {
 
     private void clickLeftRing() {
         if (!isGameActive) return;
-        AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
+        context.getAudio().buttonSound("/music/button-click-sound.wav");
 
         leftIdx = (leftIdx + 1) % TOTAL_STEPS;
 
@@ -298,7 +300,7 @@ public class PendantPuzzle extends StackPane {
 
     private void clickCenterRing() {
         if (!isGameActive) return;
-        AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
+        context.getAudio().buttonSound("/music/button-click-sound.wav");
 
         centerIdx = (centerIdx + 1) % TOTAL_STEPS;
         rightIdx = (rightIdx + 1) % TOTAL_STEPS;
@@ -309,7 +311,7 @@ public class PendantPuzzle extends StackPane {
 
     private void clickRightRing() {
         if (!isGameActive) return;
-        AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
+        context.getAudio().buttonSound("/music/button-click-sound.wav");
 
         rightIdx = (rightIdx + 1) % TOTAL_STEPS;
         centerDirectionMultiplier *= -1;

@@ -2,11 +2,16 @@ package ukma.fourgirls.ui;
 
 import javafx.scene.Parent;
 import javafx.scene.control.ScrollPane;
-import ukma.fourgirls.core.SceneManager;
+import ukma.fourgirls.core.GameContext;
 
 public class CameraController {
 
-    private static boolean isPanningEnabled = true;
+    private boolean isPanningEnabled = true;
+    private final GameContext context;
+
+    public CameraController(GameContext context) {
+        this.context = context;
+    }
 
     /**
      * Додає ефект повороту голови (панорами) за курсором миші.
@@ -14,14 +19,14 @@ public class CameraController {
      * @param interactiveNode Контейнер, який відловлює рух миші (наприклад, VBox кімнати)
      * @param scrollPane      Скрол-панель із зображенням, яку потрібно рухати
      */
-    public static void enableMousePanning(Parent interactiveNode, ScrollPane scrollPane) {
+    public void enableMousePanning(Parent interactiveNode, ScrollPane scrollPane) {
         interactiveNode.setOnMouseMoved(event -> {
             if (!isPanningEnabled) {
                 return;
             }
 
             double mouseX = event.getSceneX();
-            double sceneWidth = SceneManager.getInstance().getWidth();
+            double sceneWidth = context.getScene().getWidth();
 
             if (sceneWidth > 0) {
                 double scrollValue = mouseX / sceneWidth;
@@ -29,7 +34,7 @@ public class CameraController {
             }
         });
     }
-    public static void setPanningEnabled(boolean enabled) {
+    public void setPanningEnabled(boolean enabled) {
         isPanningEnabled = enabled;
     }
 }

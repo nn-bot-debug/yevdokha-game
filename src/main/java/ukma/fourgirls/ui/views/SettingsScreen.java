@@ -9,6 +9,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.*;
 import ukma.fourgirls.core.AudioManager;
+import ukma.fourgirls.core.GameContext;
 import ukma.fourgirls.core.LanguageManager;
 
 import java.util.Objects;
@@ -16,8 +17,10 @@ import java.util.Objects;
 public class SettingsScreen {
     private final StackPane overlayRoot;
     private final StackPane parentContainer;
+    private final GameContext context;
 
-    public SettingsScreen(StackPane parentContainer) {
+    public SettingsScreen(GameContext context, StackPane parentContainer) {
+        this.context = context;
         this.parentContainer = parentContainer;
 
         this.overlayRoot = new StackPane();
@@ -44,7 +47,7 @@ public class SettingsScreen {
         Label musicLabel = new Label(LanguageManager.getString("settings.music"));
         musicLabel.getStyleClass().add("settings-label");
 
-        boolean musicMuted = AudioManager.getInstance().isMusicMuted();
+        boolean musicMuted = context.getAudio().isMusicMuted();
         ToggleButton musicToggle = new ToggleButton(LanguageManager.getString(musicMuted ? "settings.off" : "settings.on"));
         musicToggle.getStyleClass().add("settings-toggle");
         musicToggle.setSelected(musicMuted);
@@ -52,20 +55,20 @@ public class SettingsScreen {
         settingsGrid.add(musicLabel, 0, 0);
         settingsGrid.add(musicToggle, 1, 0);
 
-        double currentMusicVolume = AudioManager.getInstance().getVolume();
+        double currentMusicVolume = context.getAudio().getVolume();
         Slider musicSlider = new Slider(0.0, 1.0, currentMusicVolume);
         musicSlider.getStyleClass().add("settings-slider");
         musicSlider.setDisable(musicMuted);
 
         musicSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-            AudioManager.getInstance().setVolume(newValue.doubleValue());
+            context.getAudio().setVolume(newValue.doubleValue());
         });
 
         musicToggle.setOnAction(e -> {
-            boolean isMuted = AudioManager.getInstance().toggleMusic();
+            boolean isMuted = context.getAudio().toggleMusic();
             musicToggle.setText(LanguageManager.getString(isMuted ? "settings.off" : "settings.on"));
             musicSlider.setDisable(isMuted);
-            AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
+            context.getAudio().buttonSound("/music/button-click-sound.wav");
         });
 
         settingsGrid.add(musicSlider, 0, 1, 2, 1);
@@ -74,7 +77,7 @@ public class SettingsScreen {
         Label soundLabel = new Label(LanguageManager.getString("settings.sounds"));
         soundLabel.getStyleClass().add("settings-label");
 
-        boolean sfxMuted = AudioManager.getInstance().isSFXMuted();
+        boolean sfxMuted = context.getAudio().isSFXMuted();
         ToggleButton soundToggle = new ToggleButton(LanguageManager.getString(sfxMuted ? "settings.off" : "settings.on"));
         soundToggle.getStyleClass().add("settings-toggle");
         soundToggle.setSelected(sfxMuted);
@@ -82,20 +85,20 @@ public class SettingsScreen {
         settingsGrid.add(soundLabel, 0, 2);
         settingsGrid.add(soundToggle, 1, 2);
 
-        double currentSfxVolume = AudioManager.getInstance().getSFXVolume();
+        double currentSfxVolume = context.getAudio().getSFXVolume();
         Slider soundSlider = new Slider(0.0, 1.0, currentSfxVolume);
         soundSlider.getStyleClass().add("settings-slider");
         soundSlider.setDisable(sfxMuted);
 
         soundSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-            AudioManager.getInstance().setSFXVolume(newValue.doubleValue());
+            context.getAudio().setSFXVolume(newValue.doubleValue());
         });
 
         soundToggle.setOnAction(e -> {
-            boolean isMuted = AudioManager.getInstance().toggleSFX();
+            boolean isMuted = context.getAudio().toggleSFX();
             soundToggle.setText(LanguageManager.getString(isMuted ? "settings.off" : "settings.on"));
             soundSlider.setDisable(isMuted);
-            AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
+            context.getAudio().buttonSound("/music/button-click-sound.wav");
         });
 
         settingsGrid.add(soundSlider, 0, 3, 2, 1);
@@ -105,7 +108,7 @@ public class SettingsScreen {
         Label vfxLabel = new Label(LanguageManager.getString("settings.vfx"));
         vfxLabel.getStyleClass().add("settings-label");
 
-        boolean vfxMuted = AudioManager.getInstance().isVFXMuted();
+        boolean vfxMuted = context.getAudio().isVFXMuted();
         ToggleButton vfxToggle = new ToggleButton(LanguageManager.getString(vfxMuted ? "settings.off" : "settings.on"));
         vfxToggle.getStyleClass().add("settings-toggle");
         vfxToggle.setSelected(vfxMuted);
@@ -113,21 +116,21 @@ public class SettingsScreen {
         settingsGrid.add(vfxLabel, 0, 4);
         settingsGrid.add(vfxToggle, 1, 4);
 
-        double currentVfxVolume = AudioManager.getInstance().getVFXVolume();
+        double currentVfxVolume = context.getAudio().getVFXVolume();
         Slider vfxSlider = new Slider(0.0, 1.0, currentVfxVolume);
         vfxSlider.getStyleClass().add("settings-slider");
         vfxSlider.setDisable(vfxMuted);
 
         vfxSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-            AudioManager.getInstance().setVFXVolume(newValue.doubleValue());
+            context.getAudio().setVFXVolume(newValue.doubleValue());
         });
 
         vfxToggle.setOnAction(e -> {
-            boolean isMuted = AudioManager.getInstance().toggleVFX();
+            boolean isMuted = context.getAudio().toggleVFX();
             vfxToggle.setText(LanguageManager.getString(isMuted ? "settings.off" : "settings.on"));
             vfxSlider.setDisable(isMuted);
             // Програємо тестовий звук VFX (наприклад, якийсь спалах чи іскру), якщо увімкнули назад
-            AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
+            context.getAudio().buttonSound("/music/button-click-sound.wav");
         });
 
         settingsGrid.add(vfxSlider, 0, 5, 2, 1);
@@ -149,7 +152,7 @@ public class SettingsScreen {
                 langButton.setText("UA");
                 LanguageManager.setLanguage(java.util.Locale.of("uk"));
             }
-            AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
+            context.getAudio().buttonSound("/music/button-click-sound.wav");
         });
         settingsGrid.add(langLabel, 0, 6);
         settingsGrid.add(langButton, 1, 6);
@@ -160,7 +163,7 @@ public class SettingsScreen {
         Button closeButton = new Button(LanguageManager.getString("settings.close"));
         closeButton.getStyleClass().add("settings-button");
         closeButton.setOnAction(e -> {
-            AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
+            context.getAudio().buttonSound("/music/button-click-sound.wav");
             parentContainer.getChildren().remove(overlayRoot);
         });
 

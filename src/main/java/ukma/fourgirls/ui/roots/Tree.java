@@ -5,11 +5,9 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import ukma.fourgirls.core.AudioManager;
-import ukma.fourgirls.core.LocationRegistry;
+import ukma.fourgirls.core.GameContext;
 import ukma.fourgirls.core.StatNotification;
 import ukma.fourgirls.logic.StoryRunner;
-import ukma.fourgirls.ui.CameraController;
 import ukma.fourgirls.ui.CharacterView;
 import ukma.fourgirls.ui.puzzles.FourthPuzzle;
 
@@ -25,8 +23,8 @@ public class Tree extends Place{
     private CharacterView antView;
     Map<String, Runnable> actions = new HashMap<>();
 
-    public Tree() {
-        super(NORMAL_TREE);
+    public Tree(GameContext context) {
+        super(NORMAL_TREE, context);
         this.getRoot().getStylesheets().add(getClass().getResource("/css/settings.css").toExternalForm());
 
         blackOverlay = new Rectangle();
@@ -41,7 +39,7 @@ public class Tree extends Place{
 
     @Override
     public void onEnter() {
-        CameraController.setPanningEnabled(true);
+        context.getCamera().setPanningEnabled(true);
         this.setBackground(NORMAL_TREE);
         this.startTreeCutscene();
     }
@@ -101,21 +99,21 @@ public class Tree extends Place{
             StackPane.setAlignment(eyeButton, Pos.TOP_RIGHT);
             StackPane.setMargin(eyeButton, new javafx.geometry.Insets(20, 20, 0, 0));
 
-            var eyeTrack = AudioManager.getInstance().playEyeLoopSound("/music/eye-button.wav");
+            var eyeTrack = context.getAudio().playEyeLoopSound("/music/eye-button.wav");
 
             eyeButton.setOnAction(e -> {
                 if (eyeTrack != null)
-                    AudioManager.getInstance().fadeOutAndStop(eyeTrack, 1.5);
+                    context.getAudio().fadeOutAndStop(eyeTrack, 1.5);
                 ((StackPane) this.getRoot()).getChildren().remove(eyeButton);
                 this.setBackground(MAGIC_TREE);
-                StoryRunner.playScene(session, "/story/chapter2.json", "ant_colony_dialogue", (StackPane) this.getRoot(), actions, null);
+                StoryRunner.playScene(context, "/story/chapter2.json", "ant_colony_dialogue", (StackPane) this.getRoot(), actions, null);
             });
             ((StackPane) this.getRoot()).getChildren().add(eyeButton);
             eyeButton.toFront();
         });
 
         actions.put("trigger_root_vision", () -> {
-            StoryRunner.playScene(session, "/story/chapter2.json", "ant_rescue_start", (StackPane) this.getRoot(), actions, null);
+            StoryRunner.playScene(context, "/story/chapter2.json", "ant_rescue_start", (StackPane) this.getRoot(), actions, null);
         });
 
         actions.put("start_ant_rescue_puzzle", () -> {
@@ -131,10 +129,10 @@ public class Tree extends Place{
         });
 
         actions.put("enable_resin_planning", () -> {
-            ukma.fourgirls.ui.puzzles.VentiliPuzzle logicPuzzle = new ukma.fourgirls.ui.puzzles.VentiliPuzzle(session, (puzzleResult) -> {
+            ukma.fourgirls.ui.puzzles.VentiliPuzzle logicPuzzle = new ukma.fourgirls.ui.puzzles.VentiliPuzzle(context, (puzzleResult) -> {
 
                 this.root.getChildren().removeIf(node -> node instanceof ukma.fourgirls.ui.puzzles.VentiliPuzzle);
-                StoryRunner.playScene(session, "/story/chapter2.json", "resin_collection_success", (StackPane) this.getRoot(), actions, null);
+                StoryRunner.playScene(context, "/story/chapter2.json", "resin_collection_success", (StackPane) this.getRoot(), actions, null);
             });
             this.root.getChildren().add(logicPuzzle);
             logicPuzzle.toFront();
@@ -149,12 +147,12 @@ public class Tree extends Place{
                 session.removeItem("Порожній горщик");
                 session.addItem(new ukma.fourgirls.domain.Item("Горщик зі смолою", "/images/objects/full_pot.png"));
 
-                LocationRegistry.switchTo("Forest");
+                context.getLocations().switchTo("Forest");
             });
             fadeOut.play();
         });
 
-        StoryRunner.playScene(session, "/story/chapter2.json", "resin_tree_intro", (StackPane) this.getRoot(), actions, null);
+        StoryRunner.playScene(context, "/story/chapter2.json", "resin_tree_intro", (StackPane) this.getRoot(), actions, null);
     }
 
 
@@ -178,6 +176,6 @@ public class Tree extends Place{
             session.changeKarma(karmaChange);
         }
 
-        StoryRunner.playScene(session, "/story/chapter2.json", "ant_rescue_success", (StackPane) this.getRoot(), actions, null);
+        StoryRunner.playScene(context, "/story/chapter2.json", "ant_rescue_success", (StackPane) this.getRoot(), actions, null);
     }
 }

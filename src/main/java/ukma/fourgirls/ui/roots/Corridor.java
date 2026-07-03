@@ -5,10 +5,9 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
-import ukma.fourgirls.core.LocationRegistry;
+import ukma.fourgirls.core.GameContext;
 import ukma.fourgirls.core.NotificationManager;
 import ukma.fourgirls.logic.StoryRunner;
-import ukma.fourgirls.ui.CameraController;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,8 +16,8 @@ public class Corridor extends Place {
     private static final String IMAGE_PATH = "/images/canvas/corridor.png";
     private final Rectangle blackOverlay;
 
-    public Corridor() {
-        super(IMAGE_PATH);
+    public Corridor(GameContext context) {
+        super(IMAGE_PATH, context);
 
         blackOverlay = new Rectangle();
         blackOverlay.widthProperty().bind(this.root.widthProperty());
@@ -33,7 +32,7 @@ public class Corridor extends Place {
     @Override
     public void onEnter() {
         if (!session.isUnlocked("Yard") && !session.isUnlocked("ChildRoom")) {
-            LocationRegistry.switchTo("Forest");
+            context.getLocations().switchTo("Forest");
             return;
         }
         this.enableNavigation();
@@ -44,7 +43,7 @@ public class Corridor extends Place {
     }
 
     public void playApproachAnimation() {
-        CameraController.setPanningEnabled(false);
+        context.getCamera().setPanningEnabled(false);
 
         double animationDuration = 3.5;
 
@@ -78,7 +77,7 @@ public class Corridor extends Place {
 
         NotificationManager.showNotification(this.root, "Головоломка розпочалася!");
 
-        ukma.fourgirls.ui.puzzles.FirstPuzzle gradientPuzzle = new ukma.fourgirls.ui.puzzles.FirstPuzzle(session, () -> {
+        ukma.fourgirls.ui.puzzles.FirstPuzzle gradientPuzzle = new ukma.fourgirls.ui.puzzles.FirstPuzzle(context, () -> {
             this.root.getChildren().removeIf(node -> node instanceof ukma.fourgirls.ui.puzzles.FirstPuzzle);
             wentOut();
         });
@@ -88,19 +87,19 @@ public class Corridor extends Place {
     }
 
     private void startIntroCutscene() {
-        CameraController.setPanningEnabled(false);
+        context.getCamera().setPanningEnabled(false);
         Map<String, Runnable> actions = new HashMap<>();
         actions.put("endCutscene", this::enableNavigation);
 
-        StoryRunner.playScene(session, "/story/chapter1.json", "corridor_intro", (StackPane) this.getRoot(), actions, null);
+        StoryRunner.playScene(context, "/story/chapter1.json", "corridor_intro", (StackPane) this.getRoot(), actions, null);
     }
 
     public void enableNavigation() {
-        CameraController.setPanningEnabled(true);
+        context.getCamera().setPanningEnabled(true);
         this.setupNavigation("Corridor");
     }
 
     private void wentOut() {
-        LocationRegistry.switchTo("Yard");
+        context.getLocations().switchTo("Yard");
     }
 }

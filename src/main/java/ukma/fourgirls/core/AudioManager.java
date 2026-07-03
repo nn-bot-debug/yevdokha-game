@@ -23,15 +23,7 @@ public class AudioManager {
     private double sfxVolume = 0.7;
     private double vfxVolume = 0.4;
 
-    private AudioManager() {}
-
-    public static AudioManager getInstance() {
-        return InstanceHolder.INSTANCE;
-    }
-
-    private static class InstanceHolder {
-        private static final AudioManager INSTANCE = new AudioManager();
-    }
+    public AudioManager() {}
 
     /**
      * Запускає фонову музику по колу

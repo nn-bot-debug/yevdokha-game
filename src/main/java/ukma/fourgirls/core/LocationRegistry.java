@@ -9,40 +9,40 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 public final class LocationRegistry {
-    private static final Map<String, Location> LOCATIONS = new LinkedHashMap<>();
+    private final Map<String, Location> LOCATIONS = new LinkedHashMap<>();
+    private final GameContext context;
 
-    static {
-        register("MomRoom", "Кімната матері", MomRoom::new, true);
-        register("Kitchen", "Кухня", Kitchen::new, true);
-        register("ChildRoom", "Дитяча кімната", ChildRoom::new, true);
-        register("Corridor", "Коридор", Corridor::new, true);
-        register("Yard", "Подвір'я", Yard::new, true);
-        register("Forest", "Ліс", Forest::new, false);
-        register("Tree", "Дерево", Tree::new, false);
-        register("DeeperForest", "Глиб лісу", DeeperForest::new, false);
-        register("Lake", "Озеро з мавками", Lake::new, false);
+    public LocationRegistry(GameContext context) {
+        this.context = context;
+        register("MomRoom", "Кімната матері", () -> new MomRoom(context), true);
+        register("Kitchen", "Кухня", () -> new Kitchen(context), true);
+        register("ChildRoom", "Дитяча кімната", () -> new ChildRoom(context), true);
+        register("Corridor", "Коридор", () -> new Corridor(context), true);
+        register("Yard", "Подвір'я", () -> new Yard(context), true);
+        register("Forest", "Ліс", () -> new Forest(context), false);
+        register("Tree", "Дерево", () -> new Tree(context), false);
+        register("DeeperForest", "Глиб лісу", () -> new DeeperForest(context), false);
+        register("Lake", "Озеро з мавками", () -> new Lake(context), false);
     }
 
-    private LocationRegistry() {}
-
-    private static void register(String id, String displayName, Supplier<Place> roomCreator, boolean visibleInNavigation) {
+    private void register(String id, String displayName, Supplier<Place> roomCreator, boolean visibleInNavigation) {
         LOCATIONS.put(id, new Location(id, displayName, roomCreator, visibleInNavigation));
     }
 
-    public static Optional<Location> find(String id) {
+    public Optional<Location> find(String id) {
         return Optional.ofNullable(LOCATIONS.get(id));
     }
 
-    public static Collection<Location> navigationLocations() {
+    public Collection<Location> navigationLocations() {
         return LOCATIONS.values().stream()
                 .filter(Location::isVisibleInNavigation)
                 .toList();
     }
 
-    public static boolean switchTo(String id) {
+    public boolean switchTo(String id) {
         Optional<Location> location = find(id);
         location.ifPresent(value ->
-                SceneManager.getInstance().switchToCachedRoom(value.getId(), value.getRoomCreator())
+                context.getScene().switchToCachedRoom(value.getId(), value.getRoomCreator())
         );
         return location.isPresent();
     }

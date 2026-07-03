@@ -5,9 +5,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
-import ukma.fourgirls.core.LocationRegistry;
+import ukma.fourgirls.core.GameContext;
 import ukma.fourgirls.logic.StoryRunner;
-import ukma.fourgirls.ui.CameraController;
 import ukma.fourgirls.ui.CharacterView;
 import ukma.fourgirls.ui.puzzles.SecondPuzzle;
 
@@ -19,8 +18,8 @@ public class Yard extends Place {
     private final Rectangle blackOverlay;
     private CharacterView actorView;
 
-    public Yard() {
-        super(IMAGE_PATH);
+    public Yard(GameContext context) {
+        super(IMAGE_PATH, context);
 
         blackOverlay = new Rectangle();
         blackOverlay.widthProperty().bind(this.root.widthProperty());
@@ -34,9 +33,9 @@ public class Yard extends Place {
 
     @Override
     public void onEnter() {
-        CameraController.setPanningEnabled(false);
+        context.getCamera().setPanningEnabled(false);
         this.startYardRavenCutscene();
-        ukma.fourgirls.core.AudioManager.getInstance().playBackgroundMusic("/music/Beneath_the_Ancient_Boughs.mp3");
+        context.getAudio().playBackgroundMusic("/music/Beneath_the_Ancient_Boughs.mp3");
     }
 
     private void startYardRavenCutscene() {
@@ -72,7 +71,7 @@ public class Yard extends Place {
             var puzzleOverlay = new SecondPuzzle();
 
             puzzleOverlay.setOnPuzzleSolved(() -> {
-                StoryRunner.playScene(session, "/story/chapter2.json", "yard_raven_scene_part2", (StackPane) this.getRoot(), actions, null);
+                StoryRunner.playScene(context, "/story/chapter2.json", "yard_raven_scene_part2", (StackPane) this.getRoot(), actions, null);
             });
 
             StackPane rootPane = (StackPane) this.getRoot();
@@ -90,16 +89,16 @@ public class Yard extends Place {
             fadeToBlack.setFromValue(0.0);
             fadeToBlack.setToValue(1.0);
             fadeToBlack.setOnFinished(e ->
-                    LocationRegistry.switchTo("Forest")
+                    context.getLocations().switchTo("Forest")
             );
             fadeToBlack.play();
         });
 
-        StoryRunner.playScene(session, "/story/chapter2.json", "yard_raven_scene_part1", (StackPane) this.getRoot(), actions, null);
+        StoryRunner.playScene(context, "/story/chapter2.json", "yard_raven_scene_part1", (StackPane) this.getRoot(), actions, null);
     }
 
     public void enableNavigation() {
-        CameraController.setPanningEnabled(true);
+        context.getCamera().setPanningEnabled(true);
         this.setupNavigation("Yard");
     }
 }

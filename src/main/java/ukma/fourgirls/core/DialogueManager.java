@@ -38,15 +38,7 @@ public class DialogueManager {
     private VBox textContainer;
     private HBox contentBox;
 
-    private static class Holder {
-        private static final DialogueManager INSTANCE = new DialogueManager();
-    }
-
-    public static DialogueManager getInstance() {
-        return Holder.INSTANCE;
-    }
-
-    private DialogueManager() {
+    public DialogueManager() {
         initUI();
     }
 

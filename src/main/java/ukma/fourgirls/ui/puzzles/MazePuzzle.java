@@ -15,8 +15,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+import ukma.fourgirls.core.GameContext;
 import ukma.fourgirls.state.GameSession;
-import ukma.fourgirls.core.AudioManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,6 +25,7 @@ import java.util.Objects;
 
 public class MazePuzzle extends StackPane{
 
+    private final GameContext context;
     private final GameSession session;
     private final java.util.function.Consumer<Integer> onFinishCallback;
     private final boolean isTimed;
@@ -61,8 +62,9 @@ public class MazePuzzle extends StackPane{
         }
     }
 
-    public MazePuzzle(GameSession session, boolean isTimed, java.util.function.Consumer<Integer> onFinishCallback) {
-        this.session = session;
+    public MazePuzzle(GameContext context, boolean isTimed, java.util.function.Consumer<Integer> onFinishCallback) {
+        this.context = context;
+        this.session = context.getSession();
         this.onFinishCallback = onFinishCallback;
         this.isTimed = isTimed;
 
@@ -208,7 +210,7 @@ public class MazePuzzle extends StackPane{
         acceptButton.setStyle("-fx-cursor: hand;");
 
         acceptButton.setOnAction(e -> {
-            AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
+            context.getAudio().buttonSound("/music/button-click-sound.wav");
             this.getChildren().remove(tutorialBox);
             mainLayout.setVisible(true);
 
@@ -245,7 +247,7 @@ public class MazePuzzle extends StackPane{
         btn.setOnAction(e -> {
             if (!isGameActive) return;
 
-            AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
+            context.getAudio().buttonSound("/music/button-click-sound.wav");
             int oldNumber = currentNumber;
 
             this.getChildren().removeIf(node ->

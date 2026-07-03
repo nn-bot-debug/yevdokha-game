@@ -5,12 +5,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.transform.Rotate;
+import ukma.fourgirls.core.GameContext;
 import ukma.fourgirls.core.InventoryManager;
 import ukma.fourgirls.core.NotificationManager;
-import ukma.fourgirls.core.SceneManager;
 import ukma.fourgirls.domain.Item;
 import ukma.fourgirls.logic.StoryRunner;
-import ukma.fourgirls.ui.CameraController;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,17 +20,17 @@ public class ChildRoom extends Place {
     private static final String GAMEPLAY_IMAGE_PATH = "/images/canvas/Yevdokha_room.png";
     private ImageView interactiveDrawing;
 
-    public ChildRoom() {
-        super(SceneManager.getInstance().getSession().isChildRoomIntroPlayed() ? GAMEPLAY_IMAGE_PATH : INTRO_IMAGE_PATH);
+    public ChildRoom(GameContext context) {
+        super(context.getSession().isChildRoomIntroPlayed() ? GAMEPLAY_IMAGE_PATH : INTRO_IMAGE_PATH, context);
     }
 
     @Override
     public void onEnter() {
         if (!session.isChildRoomIntroPlayed()) {
-            CameraController.setPanningEnabled(false);
+            context.getCamera().setPanningEnabled(false);
             this.startIntroCutscene();
         } else {
-            CameraController.setPanningEnabled(true);
+            context.getCamera().setPanningEnabled(true);
 
             if (!session.isDrawingPickedUp()) {
                 if (interactiveDrawing == null) {
@@ -78,7 +77,7 @@ public class ChildRoom extends Place {
             );
         });
 
-        StoryRunner.playScene(session, "/story/chapter1.json", "child_room_intro", (StackPane) this.getRoot(), actions, null);
+        StoryRunner.playScene(context, "/story/chapter1.json", "child_room_intro", (StackPane) this.getRoot(), actions, null);
     }
 
     private void onDrawingPickedUp() {
@@ -98,12 +97,12 @@ public class ChildRoom extends Place {
             );
         });
 
-        StoryRunner.playScene(session, "/story/chapter1.json", "child_room_after_pickup", (StackPane) this.getRoot(), actions, null);
+        StoryRunner.playScene(context, "/story/chapter1.json", "child_room_after_pickup", (StackPane) this.getRoot(), actions, null);
     }
 
     public void activateGameplay() {
         this.setBackground(GAMEPLAY_IMAGE_PATH);
-        CameraController.setPanningEnabled(true);
+        context.getCamera().setPanningEnabled(true);
 
         this.interactiveDrawing = createInteractiveDrawing();
         this.roomContentLayer.getChildren().add(interactiveDrawing);

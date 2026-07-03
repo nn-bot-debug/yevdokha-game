@@ -1,17 +1,15 @@
 {
-  "karmaBalance": -1,
+  "karmaBalance": 0,
   "unlockedLocations": [
-    "ChildRoom",
-    "Kitchen",
-    "MomRoom"
+    "ChildRoom"
   ],
-  "inventoryUnlocked": true,
-  "momRoomVisited": true,
-  "kitchenStormFinished": true,
+  "inventoryUnlocked": false,
+  "momRoomVisited": false,
+  "kitchenStormFinished": false,
   "childRoomIntroPlayed": true,
-  "drawingPickedUp": true,
+  "drawingPickedUp": false,
   "inventoryItemNames": [],
   "momRoomRatScenePlayed": false,
-  "currentRoomId": "Kitchen",
+  "currentRoomId": "ChildRoom",
   "currentDialogNodeId": ""
 }

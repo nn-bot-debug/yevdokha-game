@@ -8,20 +8,21 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
-import ukma.fourgirls.core.AudioManager;
+import ukma.fourgirls.core.GameContext;
 import ukma.fourgirls.core.LanguageManager;
-import ukma.fourgirls.core.SceneManager;
 import ukma.fourgirls.ui.animation.AnimationCanvas;
 
 import java.util.Objects;
 
 public class InstructionsScreen {
 
+    private final GameContext context;
     private final StackPane root;
     private Font btnFont;
     private Font textFont;
 
-    public InstructionsScreen() {
+    public InstructionsScreen(GameContext context) {
+        this.context = context;
         this.root = new StackPane();
 
         this.root.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/buttons.css")).toExternalForm());
@@ -121,8 +122,8 @@ public class InstructionsScreen {
         Button backButton = new Button();
         backButton.getStyleClass().add("back-button");
         backButton.setOnAction(e -> {
-            AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
-            SceneManager.getInstance().switchToMainMenu();
+            context.getAudio().buttonSound("/music/button-click-sound.wav");
+            context.getScene().switchToMainMenu();
         });
 
         LanguageManager.addLanguageChangeListener(()->{

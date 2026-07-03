@@ -17,11 +17,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import ukma.fourgirls.core.AudioManager;
-import ukma.fourgirls.core.LanguageManager;
-import ukma.fourgirls.core.LocationRegistry;
+import ukma.fourgirls.core.*;
 import ukma.fourgirls.ui.animation.MenuAnimationCanvas;
-import ukma.fourgirls.core.SceneManager;
 
 
 import java.util.LinkedHashMap;
@@ -32,11 +29,11 @@ public class MainMenuWindow extends Application {
 
     private Font uaFont;
     private Font enFont;
+    private GameContext context;
 
     @Override
     public void start(Stage primaryStage){
-        SceneManager.getInstance().init(primaryStage);
-
+        context = new GameContext(primaryStage);
         primaryStage.setTitle("YEVDOKHA-GAME");
         primaryStage.setFullScreen(true);
         //primaryStage.setResizable(false);
@@ -119,17 +116,17 @@ public class MainMenuWindow extends Application {
 
         mainScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/buttons.css")).toExternalForm());
 
-        SceneManager.getInstance().setMainMenuRoot(root);
+        context.getScene().setMainMenuRoot(root);
 
         Map<String, Runnable> buttonActions = new LinkedHashMap<>();
         buttonActions.put("menu.new", () -> {
-            SceneManager.getInstance().resetSession();
-            LocationRegistry.switchTo("ChildRoom");
+            context.getScene().resetSession();
+            context.getLocations().switchTo("ChildRoom");
         });
         buttonActions.put("menu.continue", this::continueGame);
-        buttonActions.put("menu.instruction", () -> SceneManager.getInstance().switchToRoot(new InstructionsScreen().getRoot()));
+        buttonActions.put("menu.instruction", () -> context.getScene().switchToRoot(new InstructionsScreen(context).getRoot()));
         buttonActions.put("menu.settings", () -> {
-            SettingsScreen settings = new SettingsScreen(root);
+            SettingsScreen settings = new SettingsScreen(context, root);
             root.getChildren().add(settings.getRoot());
         });
         buttonActions.put("menu.quit", Platform::exit);
@@ -142,7 +139,7 @@ public class MainMenuWindow extends Application {
             buttonN.setFont(isCurrentLanguageEnglish() ? enFont : uaFont);
             buttonN.getStyleClass().add("main-menu-button");
             buttonN.setOnAction(e -> {
-                AudioManager.getInstance().buttonSound("/music/button-click-sound.wav");
+                context.getAudio().buttonSound("/music/button-click-sound.wav");
                 entry.getValue().run();
             });
 
@@ -176,7 +173,7 @@ public class MainMenuWindow extends Application {
 
         primaryStage.setScene(mainScene);
 
-        AudioManager.getInstance().playBackgroundMusic("/music/background.mp3");
+        context.getAudio().playBackgroundMusic("/music/background.mp3");
 
         primaryStage.show();
     }
@@ -199,11 +196,11 @@ public class MainMenuWindow extends Application {
             return;
         }
 
-        SceneManager.getInstance().loadSession(data);
+        context.getScene().loadSession(data);
 
         System.out.println("Завантажуємо кімнату: " + data.currentRoomId);
 
-        if (!LocationRegistry.switchTo(data.currentRoomId)) {
+        if (!context.getLocations().switchTo(data.currentRoomId)) {
             System.err.println("Error: Unknown room saved - " + data.currentRoomId);
         }
     }
