@@ -11,7 +11,8 @@ import ukma.fourgirls.core.GameContext;
 import ukma.fourgirls.logic.StoryRunner;
 import ukma.fourgirls.state.GameSession;
 import ukma.fourgirls.ui.CharacterView;
-import ukma.fourgirls.ui.puzzles.PendantPuzzle;
+import ukma.fourgirls.ui.puzzles.SeventhPuzzle;
+import ukma.fourgirls.ui.puzzles.SixthPuzzle;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -112,10 +113,10 @@ public class Lake extends Place {
             });
 
             actions.put("start_pendant_puzzle", () -> {
-                ((StackPane) this.getRoot()).getChildren().removeIf(node -> node instanceof PendantPuzzle);
+                ((StackPane) this.getRoot()).getChildren().removeIf(node -> node instanceof SixthPuzzle);
 
-                PendantPuzzle puzzle = new PendantPuzzle(context, (isWin) -> {
-                    ((StackPane) this.getRoot()).getChildren().removeIf(node -> node instanceof PendantPuzzle);
+                SixthPuzzle puzzle = new SixthPuzzle(context, (isWin) -> {
+                    ((StackPane) this.getRoot()).getChildren().removeIf(node -> node instanceof SixthPuzzle);
 
                     System.out.println("Головоломку кулона завершено! Результат успіху: " + isWin);
 
@@ -160,10 +161,10 @@ public class Lake extends Place {
             });
 
             actions.put("start_scale_puzzle", () -> {
-                ((StackPane) this.getRoot()).getChildren().removeIf(node -> node instanceof ukma.fourgirls.ui.puzzles.ScalePuzzle);
+                ((StackPane) this.getRoot()).getChildren().removeIf(node -> node instanceof SeventhPuzzle);
 
-                ukma.fourgirls.ui.puzzles.ScalePuzzle scalePuzzle = new ukma.fourgirls.ui.puzzles.ScalePuzzle(context, (karmaReward) -> {
-                    ((StackPane) this.getRoot()).getChildren().removeIf(node -> node instanceof ukma.fourgirls.ui.puzzles.ScalePuzzle);
+                SeventhPuzzle scalePuzzle = new SeventhPuzzle(context, (karmaReward) -> {
+                    ((StackPane) this.getRoot()).getChildren().removeIf(node -> node instanceof SeventhPuzzle);
                     System.out.println("Головоломку ваг завершено! Отримано карми: " + karmaReward);
 
                     int finalKarma = session.getKarmaBalance();

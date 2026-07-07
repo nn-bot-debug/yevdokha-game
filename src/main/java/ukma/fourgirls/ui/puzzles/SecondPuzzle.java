@@ -10,10 +10,11 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import ukma.fourgirls.core.GameContext;
 
 import java.util.Objects;
 
-public class SecondPuzzle extends StackPane {
+public class SecondPuzzle extends Puzzle {
 
     private Runnable onPuzzleSolved;
 
@@ -54,7 +55,8 @@ public class SecondPuzzle extends StackPane {
     private final Text line3 = new Text();
     private final Text line4 = new Text();
 
-    public SecondPuzzle() {
+    public SecondPuzzle(GameContext context) {
+        super(context);
         setupUI();
         updatePoemDisplay();
     }

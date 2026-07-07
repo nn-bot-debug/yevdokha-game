@@ -68,7 +68,7 @@ public class Yard extends Place {
                 actorView.hide();
         });
         actions.put("enable_papyrus_pickup", () -> {
-            var puzzleOverlay = new SecondPuzzle();
+            var puzzleOverlay = new SecondPuzzle(context);
 
             puzzleOverlay.setOnPuzzleSolved(() -> {
                 StoryRunner.playScene(context, "/story/chapter2.json", "yard_raven_scene_part2", (StackPane) this.getRoot(), actions, null);

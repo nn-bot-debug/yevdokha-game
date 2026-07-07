@@ -11,6 +11,7 @@ import ukma.fourgirls.core.*;
 import ukma.fourgirls.logic.StoryRunner;
 import ukma.fourgirls.state.GameSession;
 import ukma.fourgirls.ui.CharacterView;
+import ukma.fourgirls.ui.puzzles.FifthPuzzle;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -114,10 +115,10 @@ public class DeeperForest extends Place {
         });
       
         actions.put("start_maze_with_timer", () -> {
-            ((StackPane) this.getRoot()).getChildren().removeIf(node -> node instanceof ukma.fourgirls.ui.puzzles.MazePuzzle);
+            ((StackPane) this.getRoot()).getChildren().removeIf(node -> node instanceof FifthPuzzle);
 
-            ukma.fourgirls.ui.puzzles.MazePuzzle puzzle = new ukma.fourgirls.ui.puzzles.MazePuzzle(context, true, (result) -> {
-                ((StackPane) this.getRoot()).getChildren().removeIf(node -> node instanceof ukma.fourgirls.ui.puzzles.MazePuzzle);
+            FifthPuzzle puzzle = new FifthPuzzle(context, true, (result) -> {
+                ((StackPane) this.getRoot()).getChildren().removeIf(node -> node instanceof FifthPuzzle);
                 this.playFadeOutToLake();
             });
             ((StackPane) this.getRoot()).getChildren().add(puzzle);
@@ -125,10 +126,10 @@ public class DeeperForest extends Place {
         });
 
         actions.put("start_maze_no_timer", () -> {
-            ((StackPane) this.getRoot()).getChildren().removeIf(node -> node instanceof ukma.fourgirls.ui.puzzles.MazePuzzle);
+            ((StackPane) this.getRoot()).getChildren().removeIf(node -> node instanceof FifthPuzzle);
 
-            ukma.fourgirls.ui.puzzles.MazePuzzle puzzle = new ukma.fourgirls.ui.puzzles.MazePuzzle(context, false, (result) -> {
-                ((StackPane) this.getRoot()).getChildren().removeIf(node -> node instanceof ukma.fourgirls.ui.puzzles.MazePuzzle);
+            FifthPuzzle puzzle = new FifthPuzzle(context, false, (result) -> {
+                ((StackPane) this.getRoot()).getChildren().removeIf(node -> node instanceof FifthPuzzle);
                 this.playFadeOutToLake();
             });
             ((StackPane) this.getRoot()).getChildren().add(puzzle);

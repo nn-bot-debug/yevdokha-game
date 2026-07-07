@@ -10,6 +10,7 @@ import ukma.fourgirls.core.StatNotification;
 import ukma.fourgirls.logic.StoryRunner;
 import ukma.fourgirls.ui.CharacterView;
 import ukma.fourgirls.ui.puzzles.FourthPuzzle;
+import ukma.fourgirls.ui.puzzles.ThirdPuzzle;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -117,7 +118,7 @@ public class Tree extends Place{
         });
 
         actions.put("start_ant_rescue_puzzle", () -> {
-            var fourthPuzzle = new FourthPuzzle(session);
+            var fourthPuzzle = new ThirdPuzzle(context);
 
             fourthPuzzle.setOnPuzzleSolved((livesLeft) -> {
                 System.out.println("Мурашка врятована з " + livesLeft + " життями. Переходимо до фінальних діалогів.");
@@ -129,9 +130,9 @@ public class Tree extends Place{
         });
 
         actions.put("enable_resin_planning", () -> {
-            ukma.fourgirls.ui.puzzles.VentiliPuzzle logicPuzzle = new ukma.fourgirls.ui.puzzles.VentiliPuzzle(context, (puzzleResult) -> {
+            FourthPuzzle logicPuzzle = new FourthPuzzle(context, (puzzleResult) -> {
 
-                this.root.getChildren().removeIf(node -> node instanceof ukma.fourgirls.ui.puzzles.VentiliPuzzle);
+                this.root.getChildren().removeIf(node -> node instanceof FourthPuzzle);
                 StoryRunner.playScene(context, "/story/chapter2.json", "resin_collection_success", (StackPane) this.getRoot(), actions, null);
             });
             this.root.getChildren().add(logicPuzzle);

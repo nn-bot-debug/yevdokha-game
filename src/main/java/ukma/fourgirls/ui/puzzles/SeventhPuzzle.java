@@ -3,9 +3,7 @@ package ukma.fourgirls.ui.puzzles;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -17,7 +15,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import ukma.fourgirls.core.GameContext;
-import ukma.fourgirls.state.GameSession;
 import ukma.fourgirls.ui.roots.Inventory;
 
 import java.util.ArrayList;
@@ -25,10 +22,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class ScalePuzzle extends StackPane {
+public class SeventhPuzzle extends Puzzle {
 
-    private final GameContext context;
-    private final GameSession session;
     private final java.util.function.Consumer<Integer> onFinishCallback;
 
     private int weighingsLeft = 4;
@@ -39,9 +34,6 @@ public class ScalePuzzle extends StackPane {
     private final Text hintText;
 
     private final AnchorPane gamePane;
-    private final VBox resultBox;
-    private final Text resultTitle;
-    private final Button resultButton;
 
     private final Button btnWeigh = new Button("Зважити");
     private final Button btnSubmit = new Button("Перевірити");
@@ -59,9 +51,8 @@ public class ScalePuzzle extends StackPane {
     private final List<ImageView> trays = new ArrayList<>();
     private final List<DraggableItem> allItems = new ArrayList<>();
 
-    public ScalePuzzle(GameContext context, java.util.function.Consumer<Integer> onFinishCallback) {
-        this.context = context;
-        this.session = context.getSession();
+    public SeventhPuzzle(GameContext context, java.util.function.Consumer<Integer> onFinishCallback) {
+        super(context);
         this.onFinishCallback = onFinishCallback;
 
         this.getStylesheets().addAll(
@@ -69,17 +60,7 @@ public class ScalePuzzle extends StackPane {
                 Objects.requireNonNull(getClass().getResource("/css/settings.css")).toExternalForm()
         );
 
-        try {
-            Image bgImg = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/canvas/for_scale_puzzle.png")));
-            ImageView backgroundView = new ImageView(bgImg);
-            backgroundView.setFitWidth(1920);
-            backgroundView.setFitHeight(1080);
-            backgroundView.setPreserveRatio(false);
-            backgroundView.setEffect(new GaussianBlur(4));
-            this.getChildren().add(backgroundView);
-        } catch (Exception e) {
-            this.setStyle("-fx-background-color: #0b1310;");
-        }
+        setupBackground("/images/canvas/for_scale_puzzle.png",4);
 
         Pane dimOverlay = new Pane();
         dimOverlay.setStyle("-fx-background-color: rgba(10, 12, 15, 0.45);");
@@ -127,58 +108,20 @@ public class ScalePuzzle extends StackPane {
 
         mainLayout.getChildren().add(gamePane);
 
-        resultBox = new VBox(20);
-        resultBox.getStyleClass().add("puzzle-result-box");
-        resultBox.setAlignment(Pos.CENTER);
-        resultBox.setVisible(false);
-        resultBox.managedProperty().bind(resultBox.visibleProperty());
-
-        resultTitle = new Text();
-        resultTitle.setFont(Font.font("Verdana", 24));
-        resultButton = new Button();
-        resultButton.getStyleClass().add("puzzle-action-button");
-        resultBox.getChildren().addAll(resultTitle, resultButton);
-
-        mainLayout.getChildren().add(resultBox);
+        mainLayout.getChildren().add(createResultBox());
         this.getChildren().add(mainLayout);
 
-        showInstructionOverlay();
+        String title = "Головоломка: Золоті Ваги";
+        String description =
+                "Розмір обманливий. Знайдіть правильну вагу кожного предмета.\n\n" +
+                        "Використайте ваги (4 спроби), щоб визначити масу, а потім розставте предмети на підноси " +
+                        "від найлегшого (зліва) до найважчого (справа).";
+        showInstructionOverlay(title, description, this::onStart);
         Inventory inventory = new Inventory(session);
         inventory.attachTo(this);
     }
 
-    private void showInstructionOverlay() {
-        VBox tutorialBox = new VBox(20);
-        tutorialBox.setAlignment(Pos.CENTER);
-        tutorialBox.setMaxWidth(500);
-        tutorialBox.setMaxHeight(380);
-        tutorialBox.setPadding(new Insets(30, 40, 30, 40));
-        tutorialBox.getStyleClass().add("settings-dialog");
-
-        Label titleLabel = new Label("Головоломка: Золоті Ваги");
-        titleLabel.getStyleClass().add("settings-title");
-        titleLabel.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
-
-        Label descriptionLabel = new Label(
-                "Розмір обманливий. Знайдіть правильну вагу кожного предмета.\n\n" +
-                        "Використайте ваги (4 спроби), щоб визначити масу, а потім розставте предмети на підноси " +
-                        "від найлегшого (зліва) до найважчого (справа)."
-        );
-        descriptionLabel.getStyleClass().add("settings-label");
-        descriptionLabel.setWrapText(true);
-        descriptionLabel.setStyle("-fx-font-size: 15px; -fx-text-alignment: center; -fx-line-spacing: 5;");
-
-        Button acceptButton = new Button("ПОЧАТИ");
-        acceptButton.getStyleClass().add("settings-button");
-        acceptButton.setStyle("-fx-cursor: hand;");
-
-        acceptButton.setOnAction(e -> {
-            this.getChildren().remove(tutorialBox);
-        });
-
-        tutorialBox.getChildren().addAll(titleLabel, descriptionLabel, acceptButton);
-        this.getChildren().add(tutorialBox);
-    }
+    private void onStart() {}
 
     private void initScaleGraphics() {
         ImageView base = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/objects/scale.png"))));
@@ -347,32 +290,14 @@ public class ScalePuzzle extends StackPane {
 
     private void handleWin() {
         isGameActive = false;
-        if (session != null) {
-            session.setKarmaListener((currentKarma, addedPoints) -> {
-                ukma.fourgirls.core.StatNotification.show(this, currentKarma, addedPoints);
-
-                if (!this.getChildren().isEmpty()) {
-                    var notification = this.getChildren().get(this.getChildren().size() - 1);
-                    StackPane.setAlignment(notification, Pos.TOP_CENTER);
-                    StackPane.setMargin(notification, new Insets(80, 0, 0, 0));
-                    notification.toFront();
-                }
-            });
-        }
+        setupKarmaListener(80);
 
         int karmaReward = hasDrawing ? 2 : 1;
         if (session != null) {
             session.changeKarma(karmaReward);
         }
 
-        resultTitle.setText("Ідеальний баланс! Отримано карми: +" + karmaReward);
-        resultTitle.getStyleClass().add("puzzle-text-win");
-        resultTitle.setFill(Color.web("#34d399"));
-        resultButton.setText("Йти далі");
-        resultButton.setOnAction(e -> { if (onFinishCallback != null) onFinishCallback.accept(karmaReward); });
-
-        resultBox.setVisible(true);
-        resultBox.toFront();
+        showResultOverlay("Ідеальний баланс! Отримано карми: +" + karmaReward,true,"Йти далі",() -> onFinishCallback.accept(karmaReward));
     }
 
 

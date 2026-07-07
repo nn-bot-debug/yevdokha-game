@@ -20,10 +20,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Consumer;
 
-public class PendantPuzzle extends StackPane {
+public class SixthPuzzle extends Puzzle {
 
-    private final GameContext context;
-    private final GameSession session;
     private final Consumer<Boolean> onPositionFinished;
 
     private static final String[] SYMBOLS = {"ᚠ", "ᚢ", "ᚦ", "ᚨ", "ᚲ", "ᚷ", "ᚹ", "ᚺ"};
@@ -49,9 +47,6 @@ public class PendantPuzzle extends StackPane {
     // Індикатори цілі
     private Label timerLabel;
     private Label liveHintLabel;
-    private VBox resultBox;
-    private Label resultTitle;
-    private Button resultButton;
 
     private HBox controlsRow;
     private final VBox mainContainer;
@@ -61,9 +56,8 @@ public class PendantPuzzle extends StackPane {
     private int timeLeftSeconds = 120;
     private final List<Button> actionButtons = new ArrayList<>();
 
-    public PendantPuzzle(GameContext context, Consumer<Boolean> onPositionFinished) {
-        this.context = context;
-        this.session = context.getSession();
+    public SixthPuzzle(GameContext context, Consumer<Boolean> onPositionFinished) {
+        super(context);
         this.onPositionFinished = onPositionFinished;
 
         if (getClass().getResource("/css/puzzle.css") != null) {
@@ -84,7 +78,14 @@ public class PendantPuzzle extends StackPane {
 
         generateTargetCombination();
         initUI();
-        showInstructionOverlay();
+        String title = "Шифратор прикраси";
+        String description = "Віднови магічний кулон, виставивши правильну комбінацію рун.\n\n" +
+                "Пам'ятай про взаємозв'язок елементів браслета:\n" +
+                "• ЛІВЕ — зміщує Центральне на 2 кроки\n" +
+                "• ЦЕНТР — тягне за собою Праве на 1 крок\n" +
+                "• ПРАВЕ — штовхає Ліве назад та змінює полярність Центру\n\n" +
+                "Прорахуй алгоритм, поки діє магія часу!";
+        showInstructionOverlay(title, description, this::onStart);
     }
 
     private void generateTargetCombination() {
@@ -175,78 +176,16 @@ public class PendantPuzzle extends StackPane {
 
         controlsRow.getChildren().addAll(btnLeft, btnCenter, btnRight);
 
-        resultBox = new VBox(15);
-        resultBox.setAlignment(Pos.CENTER);
-        resultBox.setVisible(false);
-        resultBox.setManaged(false);
-
-        resultTitle = new Label();
-        resultTitle.setFont(Font.font("Verdana", FontWeight.BOLD, 18));
-
-        resultButton = new Button("Продовжити");
-        resultButton.getStyleClass().add("pendant-control-button");
-        resultBox.getChildren().addAll(resultTitle, resultButton);
-
-        mainContainer.getChildren().addAll(titleLabel, timerLabel, targetBox, slotsRow, liveHintLabel, controlsRow, resultBox);
+        mainContainer.getChildren().addAll(titleLabel, timerLabel, targetBox, slotsRow, liveHintLabel, controlsRow, createResultBox());
         this.getChildren().add(mainContainer);
     }
 
-    private void showInstructionOverlay() {
-        VBox tutorialBox = new VBox(20);
-        tutorialBox.setAlignment(Pos.CENTER);
-        tutorialBox.setMaxWidth(550);
-        tutorialBox.setMaxHeight(450);
-        tutorialBox.setPadding(new Insets(30, 40, 30, 40));
-        tutorialBox.getStyleClass().add("settings-dialog");
-
-        Label titleLabel = new Label("Шифратор прикраси");
-        titleLabel.getStyleClass().add("settings-title");
-        titleLabel.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
-        titleLabel.setTextFill(Color.web("#38bdf8"));
-        titleLabel.setEffect(new DropShadow(12, Color.web("#0284c7")));
-
-        Label descriptionLabel = new Label(
-                "Віднови магічний кулон, виставивши правильну комбінацію рун.\n\n" +
-                        "Пам'ятай про взаємозв'язок елементів браслета:\n" +
-                        "• ЛІВЕ — зміщує Центральне на 2 кроки\n" +
-                        "• ЦЕНТР — тягне за собою Праве на 1 крок\n" +
-                        "• ПРАВЕ — штовхає Ліве назад та змінює полярність Центру\n\n" +
-                        "Прорахуй алгоритм, поки діє магія часу!"
-        );
-        descriptionLabel.getStyleClass().add("settings-label");
-        descriptionLabel.setWrapText(true);
-        descriptionLabel.setFont(Font.font("Verdana", FontWeight.NORMAL, 14));
-        descriptionLabel.setTextFill(Color.web("#e2e8f0"));
-        descriptionLabel.setStyle("-fx-text-alignment: center; -fx-line-spacing: 5;");
-
-        Button acceptButton = new Button("ПОЧАТИ");
-        acceptButton.getStyleClass().add("settings-button");
-        acceptButton.setPrefWidth(160);
-        acceptButton.setStyle("-fx-cursor: hand;");
-
-        acceptButton.setOnAction(e -> {
-            context.getAudio().buttonSound("/music/button-click-sound.wav");
-            this.getChildren().remove(tutorialBox);
-
-            this.setMaxSize(850, 580);
-
-            mainContainer.setVisible(true);
-            updateDirectionHint();
-
-            session.setKarmaListener((currentKarma, addedPoints) -> {
-                ukma.fourgirls.core.StatNotification.show(this, currentKarma, addedPoints);
-                var notification = this.getChildren().get(this.getChildren().size() - 1);
-                StackPane.setAlignment(notification, Pos.TOP_CENTER);
-                StackPane.setMargin(notification, new Insets(60, 0, 0, 0));
-                notification.setTranslateX(0);
-                notification.toFront();
-            });
-
-            startTimer();
-        });
-
-        tutorialBox.getChildren().addAll(titleLabel, descriptionLabel, acceptButton);
-        this.getChildren().add(tutorialBox);
+    private void onStart() {
+        this.setMaxSize(850, 580);
+        mainContainer.setVisible(true);
+        updateDirectionHint();
+        setupKarmaListener(60);
+        startTimer();
     }
 
     private static void StackMargin(javafx.scene.Node n, Insets i) {
@@ -383,25 +322,12 @@ public class PendantPuzzle extends StackPane {
         }
 
         if (isWin) {
+            showResultOverlay("Шифратор піддався! Механізм прикраси полагоджено.", true,"Забрати прикрасу", ()->onPositionFinished.accept(isWin));
             session.changeKarma(1);
-            resultTitle.setText("Шифратор піддався! Механізм прикраси полагоджено.");
-            resultTitle.setTextFill(Color.web("#34d399"));
-            resultButton.setText("Забрати прикрасу");
         } else {
+            showResultOverlay("Час вичерпано. Механізм заклинило темною магією.", true,"Прийняти долю", ()->onPositionFinished.accept(isWin));
             session.changeKarma(-2);
-            resultTitle.setText("Час вичерпано. Механізм заклинило темною магією.");
-            resultTitle.setTextFill(Color.web("#ef4444"));
-            resultButton.setText("Прийняти долю");
         }
-
-        resultButton.setOnAction(e -> {
-            if (onPositionFinished != null) {
-                onPositionFinished.accept(isWin);
-            }
-        });
-
-        resultBox.setVisible(true);
-        resultBox.setManaged(true);
     }
 
     private String toHex(Color color) {

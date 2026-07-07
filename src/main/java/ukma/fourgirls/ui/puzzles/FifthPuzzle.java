@@ -23,10 +23,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class MazePuzzle extends StackPane{
+public class FifthPuzzle extends Puzzle{
 
-    private final GameContext context;
-    private final GameSession session;
     private final java.util.function.Consumer<Integer> onFinishCallback;
     private final boolean isTimed;
 
@@ -40,9 +38,6 @@ public class MazePuzzle extends StackPane{
     private final Text hintText;
 
     private final AnchorPane gamePane;
-    private final VBox resultBox;
-    private final Text resultTitle;
-    private final Button resultButton;
 
     private final Button btnLeft = new Button("Наліво");
     private final Button btnCenter = new Button("Прямо");
@@ -62,9 +57,8 @@ public class MazePuzzle extends StackPane{
         }
     }
 
-    public MazePuzzle(GameContext context, boolean isTimed, java.util.function.Consumer<Integer> onFinishCallback) {
-        this.context = context;
-        this.session = context.getSession();
+    public FifthPuzzle(GameContext context, boolean isTimed, java.util.function.Consumer<Integer> onFinishCallback) {
+        super(context);
         this.onFinishCallback = onFinishCallback;
         this.isTimed = isTimed;
 
@@ -73,17 +67,7 @@ public class MazePuzzle extends StackPane{
                 Objects.requireNonNull(getClass().getResource("/css/settings.css")).toExternalForm()
         );
 
-        try {
-            Image bgImg = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/canvas/mazes.png")));
-            ImageView backgroundView = new ImageView(bgImg);
-            backgroundView.setFitWidth(1920);
-            backgroundView.setFitHeight(1080);
-            backgroundView.setPreserveRatio(false);
-            backgroundView.setEffect(new GaussianBlur(4));
-            this.getChildren().add(backgroundView);
-        } catch (Exception e) {
-            this.setStyle("-fx-background-color: #0b1310;");
-        }
+        setupBackground("/images/canvas/mazes.png",4);
 
         Pane dimOverlay = new Pane();
         dimOverlay.setStyle("-fx-background-color: rgba(10, 12, 15, 0.45);");
@@ -164,63 +148,23 @@ public class MazePuzzle extends StackPane{
 
         generateRandomProceduralGraph();
 
-        resultBox = new VBox(20);
-        resultBox.getStyleClass().add("puzzle-result-box");
-        resultBox.setAlignment(Pos.CENTER);
-        resultBox.setVisible(false);
-        resultBox.managedProperty().bind(resultBox.visibleProperty());
-
-        resultTitle = new Text();
-        resultTitle.setFont(Font.font("Verdana", 24));
-        resultButton = new Button();
-        resultButton.getStyleClass().add("puzzle-action-button");
-        resultBox.getChildren().addAll(resultTitle, resultButton);
-
-        mainLayout.getChildren().add(resultBox);
+        mainLayout.getChildren().add(createResultBox());
         this.getChildren().add(mainLayout);
 
-        showInstructionOverlay();
-    }
-
-    private void showInstructionOverlay() {
-        VBox tutorialBox = new VBox(20);
-        tutorialBox.setAlignment(Pos.CENTER);
-        tutorialBox.setMaxWidth(500);
-        tutorialBox.setMaxHeight(380);
-        tutorialBox.setPadding(new Insets(30, 40, 30, 40));
-        tutorialBox.getStyleClass().add("settings-dialog");
-
-        Label titleLabel = new Label("Головоломка: Стежки Блуда");
-        titleLabel.getStyleClass().add("settings-title");
-        titleLabel.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
-
-        Label descriptionLabel = new Label(
+        String title = "Головоломка: Стежки Блуда";
+        String description =
                 "Ви потрапили в містичні тенета лісового духа.\n\n" +
                         "Перед тобою три стежки. Кожна з них приховано змінює твій магічний орієнтир. " +
                         "Блуд перетасовує математичні правила після кожного твого кроку!\n\n" +
-                        "Слідкуй за спливаючими плашками змін, прорахуй алгоритм і дійди до числа " + targetNumber + ", щоб вийти до Озера."
-        );
-        descriptionLabel.getStyleClass().add("settings-label");
-        descriptionLabel.setWrapText(true);
-        descriptionLabel.setStyle("-fx-font-size: 15px; -fx-text-alignment: center; -fx-line-spacing: 5;");
+                        "Слідкуй за спливаючими плашками змін, прорахуй алгоритм і дійди до числа " + targetNumber + ", щоб вийти до Озера.";
+        showInstructionOverlay(title, description, this::onStart);
+    }
 
-        Button acceptButton = new Button("ПОЧАТИ");
-        acceptButton.getStyleClass().add("settings-button");
-        acceptButton.setPrefWidth(160);
-        acceptButton.setStyle("-fx-cursor: hand;");
-
-        acceptButton.setOnAction(e -> {
-            context.getAudio().buttonSound("/music/button-click-sound.wav");
-            this.getChildren().remove(tutorialBox);
-            mainLayout.setVisible(true);
-
-            if (isTimed) {
-                startTimer();
-            }
-        });
-
-        tutorialBox.getChildren().addAll(titleLabel, descriptionLabel, acceptButton);
-        this.getChildren().add(tutorialBox);
+    private void onStart() {
+        mainLayout.setVisible(true);
+        if (isTimed) {
+            startTimer();
+        }
     }
 
     /**
@@ -342,15 +286,7 @@ public class MazePuzzle extends StackPane{
 
         session.changeKarma(1);
 
-        resultTitle.setText("Магічний лабіринт розступився! Попереду заблищало Озеро.");
-        resultTitle.getStyleClass().add("puzzle-text-win");
-        resultButton.setText("Вийти до озера");
-
-        resultButton.setOnAction(e -> {
-            if (onFinishCallback != null) onFinishCallback.accept(1);
-        });
-        resultBox.setVisible(true);
-        resultBox.toFront();
+        showResultOverlay("Магічний лабіринт розступився! Попереду заблищало Озеро.", true, "Вийти до озера", () -> onFinishCallback.accept(1));
     }
 
     private void handleLose() {
@@ -366,14 +302,6 @@ public class MazePuzzle extends StackPane{
 
         session.changeKarma(-1);
 
-        resultTitle.setText("Блуд повністю заплутав ваші думки. Ви втомилися блукати...");
-        resultTitle.getStyleClass().add("puzzle-text-lose");
-        resultButton.setText("Прийняти долю");
-
-        resultButton.setOnAction(e -> {
-            if (onFinishCallback != null) onFinishCallback.accept(0);
-        });
-        resultBox.setVisible(true);
-        resultBox.toFront();
+        showResultOverlay("Блуд повністю заплутав ваші думки. Ви втомилися блукати...", false,"Прийняти долю", () -> onFinishCallback.accept(0));
     }
 }

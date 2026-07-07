@@ -1,275 +1,280 @@
 package ukma.fourgirls.ui.puzzles;
 
-import javafx.animation.PauseTransition;
-import javafx.animation.TranslateTransition;
-import javafx.event.Event;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.GaussianBlur;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
-import ukma.fourgirls.core.NotificationManager;
-import ukma.fourgirls.core.StatNotification;
+import ukma.fourgirls.core.GameContext;
 import ukma.fourgirls.state.GameSession;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
-import java.util.function.Consumer;
 
-public class FourthPuzzle extends StackPane {
+public class FourthPuzzle extends Puzzle {
 
-    private static final int SIZE = 10;
-    private static final int MAX_LIVES = 3;
-    private final GameSession session;
+    private final java.util.function.Consumer<Integer> onFinishCallback;
 
-    private static final String CSS_PATH = Objects.requireNonNull(
-            FourthPuzzle.class.getResource("/css/grid_puzzle.css")
-    ).toExternalForm();
+    // Стан чотирьох вентилів
+    private boolean valveA = false;
+    private boolean valveB = false;
+    private boolean valveC = false;
+    private boolean valveD = false;
+    private boolean valveE = false;
 
-    private static final int[][] MAP = {
-            {1, 1, 1, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 1, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 1, 1, 1, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 1, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 1, 1, 1, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 1, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 1, 1, 1, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0, 1, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0, 1, 1},
-            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    };
+    private Line pipeA, pipeB, pipeC, pipeD, pipeE;
+    private Line pipeAnd1Out, pipeOrOut, pipeAnd2Out, pipeFinal;
 
-    private final boolean[][] solution = new boolean[SIZE][SIZE];
-    private final boolean[][] playerGrid = new boolean[SIZE][SIZE];
-    private final Button[][]  cells = new Button[SIZE][SIZE];
-    private int lives = MAX_LIVES;
-    private boolean gameOver = false;
+    private Circle gateAND1, gateOR, gateAND2, mainReceiver;
+    private Text textAND1, textOR, textAND2, textReceiver;
 
-    private Text titleText;
-    private HBox livesBox;
-    private GridPane gridPane;
+    private Timeline timeline;
+    private int secondsLeft;
+    private final Text timerText;
+    private final Text hintText;
 
-    private Consumer<Integer> onPuzzleSolved;
+    private final VBox mainLayout;
 
-    public FourthPuzzle(GameSession session) {
-        this.session = session;
-        buildSolution();
-        buildUI();
-    }
+    private boolean isGameActive = true;
 
-    private void buildSolution() {
-        for (int r = 0; r < SIZE; r++)
-            for (int c = 0; c < SIZE; c++)
-                solution[r][c] = (MAP[r][c] == 1);
-    }
+    // Налаштування кольорів для потоків смоли
+    private static final Color EMPTY_PIPE = Color.rgb(65, 55, 50);
+    private static final Color RESIN_FLOW = Color.rgb(245, 158, 11);
+    private static final Color RESIN_GLOW = Color.rgb(251, 191, 36);
 
-    private void buildUI() {
-        this.setOnMouseClicked(Event::consume);
-        this.setOnMousePressed(Event::consume);
-        this.setOnMouseReleased(Event::consume);
+    public FourthPuzzle(GameContext context, java.util.function.Consumer<Integer> onFinishCallback) {
+        super(context);
+        this.onFinishCallback = onFinishCallback;
 
-        this.getStylesheets().add(CSS_PATH);
-        this.getStyleClass().add("grid-puzzle-overlay");
-        this.setAlignment(Pos.CENTER);
-
-        String imgUrl = Objects.requireNonNull(
-                FourthPuzzle.class.getResource("/images/canvas/earth.png")
-        ).toExternalForm();
-        BackgroundImage bgImage = new BackgroundImage(
-                new javafx.scene.image.Image(imgUrl),
-                BackgroundRepeat.NO_REPEAT,
-                BackgroundRepeat.NO_REPEAT,
-                BackgroundPosition.CENTER,
-                new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, false, true)
+        this.getStylesheets().addAll(
+                Objects.requireNonNull(getClass().getResource("/css/puzzle.css")).toExternalForm(),
+                Objects.requireNonNull(getClass().getResource("/css/settings.css")).toExternalForm()
         );
-        this.setBackground(new Background(bgImage));
 
-        titleText = new Text("Японський кросворд\nЗафарбуйте клітинки, щоб намалювати ламану лінію");
-        titleText.getStyleClass().add("grid-title");
-        titleText.setTextAlignment(TextAlignment.CENTER);
+        setupBackground("/images/canvas/fon_ventili.png", 8);
 
-        HBox titleBox = new HBox(titleText);
-        titleBox.setAlignment(Pos.CENTER);
-        titleBox.getStyleClass().add("grid-title-container");
+        Pane dimOverlay = new Pane();
+        dimOverlay.setStyle("-fx-background-color: rgba(15, 12, 10, 0.45);");
+        this.getChildren().add(dimOverlay);
 
-        livesBox = new HBox(6);
-        livesBox.setAlignment(Pos.CENTER);
-        refreshLives();
+        // --- ГОЛОВНИЙ МАКЕТ ---
+        mainLayout = new VBox();
+        mainLayout.getStyleClass().add("gradient-puzzle-container");
+        mainLayout.setVisible(false);
 
-        gridPane = new GridPane();
-        gridPane.setAlignment(Pos.CENTER);
-        gridPane.setHgap(3);
-        gridPane.setVgap(3);
-        buildGrid();
+        // --- ВЕРХНЯ ПАНЕЛЬ ---
+        VBox topBox = new VBox(10);
+        topBox.setAlignment(Pos.CENTER);
+        VBox.setMargin(topBox, new Insets(25, 0, 0, 0));
 
-        VBox card = new VBox(18, titleBox, livesBox, gridPane);
-        card.setAlignment(Pos.CENTER);
-        card.getStyleClass().add("grid-card");
+        hintText = new Text("Налаштуйте вентилі так, щоб смола заповнила приймач...");
+        hintText.setFill(Color.web("#cbd5e1"));
+        try {
+            Font customFont = Font.loadFont(getClass().getResourceAsStream("/fonts/Epoch_YP_Demo.ttf"), 24);
+            hintText.setFont(customFont != null ? customFont : Font.font("Verdana", 22));
+        } catch (Exception e) { hintText.setFont(Font.font("Verdana", 22)); }
 
-        this.getChildren().add(card);
-    }
-
-    private void buildGrid() {
-        gridPane.getChildren().clear();
-        gridPane.add(new Region(), 0, 0);
-
-        for (int c = 0; c < SIZE; c++) {
-            Label hint = hintLabel(colHint(c));
-            hint.getStyleClass().add("grid-hint-col");
-            gridPane.add(hint, c + 1, 0);
+        timerText = new Text();
+        timerText.setFill(Color.web("#f87171"));
+        try {
+            Font timerFont = Font.loadFont(getClass().getResourceAsStream("/fonts/Creepster-Regular.ttf"), 42);
+            timerText.setFont(timerFont != null ? timerFont : Font.font("Verdana", 36));
+        } catch (Exception e) {
+            timerText.setFont(Font.font("Verdana", 36));
         }
 
-        for (int r = 0; r < SIZE; r++) {
-            Label hint = hintLabel(rowHint(r));
-            hint.getStyleClass().add("grid-hint-row");
-            gridPane.add(hint, 0, r + 1);
+        topBox.getChildren().addAll(hintText, timerText);
+        mainLayout.getChildren().add(topBox);
 
-            for (int c = 0; c < SIZE; c++) {
-                Button btn = new Button();
-                btn.getStyleClass().add("grid-cell");
-                final int fr = r, fc = c;
-                btn.setOnAction(e -> onCellClick(fr, fc, btn));
-                cells[r][c] = btn;
-                gridPane.add(btn, c + 1, r + 1);
-            }
-        }
+        secondsLeft = 15;
+        updateTimerDisplay();
+
+        AnchorPane circuitPane = new AnchorPane();
+        circuitPane.setPrefSize(920, 520);
+        circuitPane.getStyleClass().add("puzzle-ventili-frame");
+        circuitPane.setMaxSize(AnchorPane.USE_PREF_SIZE, AnchorPane.USE_PREF_SIZE);
+
+        // Крантики-вентилі
+        VBox valvesBox = new VBox(22);
+        valvesBox.setAlignment(Pos.CENTER);
+        ToggleButton tvA = createValveButton("Вентиль А");
+        ToggleButton tvB = createValveButton("Вентиль Б");
+        ToggleButton tvC = createValveButton("Вентиль В (NOT)");
+        ToggleButton tvD = createValveButton("Вентиль Г");
+        ToggleButton tvE = createValveButton("Вентиль Д");
+        valvesBox.getChildren().addAll(tvA, tvB, tvC, tvD, tvE);
+
+        AnchorPane.setLeftAnchor(valvesBox, 40.0);
+        AnchorPane.setTopAnchor(valvesBox, 40.0);
+
+        pipeA = createPipeLine(240, 82, 440, 120);
+        pipeB = createPipeLine(240, 145, 440, 120);
+
+        pipeC = createPipeLine(240, 210, 440, 280);
+        pipeD = createPipeLine(240, 272, 440, 280);
+
+        pipeAnd1Out = createPipeLine(440, 120, 828, 228);
+
+        pipeOrOut = createPipeLine(440, 280, 640, 380);
+        pipeE = createPipeLine(240, 338, 640, 380);
+
+        pipeAnd2Out = createPipeLine(640, 380, 828, 228);
+        pipeFinal = createPipeLine(828, 228, 910, 228);
+
+        StackPane nodeAND1 = createVisualGate("AND", gateAND1 = new Circle(20), textAND1 = new Text("AND"), 420, 100);
+        StackPane nodeOR = createVisualGate("OR", gateOR = new Circle(20), textOR = new Text("OR"), 420, 260);
+        StackPane nodeAND2 = createVisualGate("AND 2", gateAND2 = new Circle(20), textAND2 = new Text("AND"), 620, 360);
+
+        StackPane nodeReceiver = createVisualGate("REC", mainReceiver = new Circle(28), textReceiver = new Text("*"), 800, 200);
+
+        circuitPane.getChildren().addAll(pipeA, pipeB, pipeC, pipeD, pipeE, pipeAnd1Out, pipeOrOut, pipeAnd2Out, pipeFinal);
+        circuitPane.getChildren().addAll(valvesBox, nodeAND1, nodeOR, nodeAND2, nodeReceiver);
+        mainLayout.getChildren().add(circuitPane);
+
+        // Кліки
+        tvA.setOnAction(e -> { valveA = tvA.isSelected(); updateHydraulics(); });
+        tvB.setOnAction(e -> { valveB = tvB.isSelected(); updateHydraulics(); });
+        tvC.setOnAction(e -> { valveC = tvC.isSelected(); updateHydraulics(); });
+        tvD.setOnAction(e -> { valveD = tvD.isSelected(); updateHydraulics(); });
+        tvE.setOnAction(e -> { valveE = tvE.isSelected(); updateHydraulics(); });
+
+        mainLayout.getChildren().add(createResultBox());
+        this.getChildren().add(mainLayout);
+
+        updateHydraulics();
+        String title = "Вентилі дерева";
+        String description = "\"Направте гарячу смолу по каналах кори до головного приймача:\\n\\n\" +\n" +
+                "                        \"• Шлюз AND вимагає відкриття обох вентилів одночасно.\\n\" +\n" +
+                "                        \"• Шлюз OR пропустить потік, якщо хоча б один кран відкритий.\\n\" +\n" +
+                "                        \"Впорайтесь, поки є час!\"";
+        showInstructionOverlay(title, description, this::onStart);
     }
 
-    private static Label hintLabel(String text) {
-        Label l = new Label(text);
-        l.getStyleClass().add("grid-hint-label");
-        return l;
+    private ToggleButton createValveButton(String text) {
+        ToggleButton btn = new ToggleButton(text);
+        btn.getStyleClass().add("settings-button");
+        btn.setStyle("-fx-pref-width: 170px; -fx-pref-height: 40px; -fx-cursor: hand; -fx-font-size: 13px;");
+        return btn;
     }
 
-    private String rowHint(int r) {
-        return blocksToString(blocks(r, true), " ");
+    private Line createPipeLine(double startX, double startY, double endX, double endY) {
+        Line line = new Line(startX, startY, endX, endY);
+        line.setStrokeWidth(12);
+        line.setStrokeLineCap(javafx.scene.shape.StrokeLineCap.ROUND);
+        line.setStroke(EMPTY_PIPE);
+        return line;
     }
 
-    private String colHint(int c) {
-        return blocksToString(blocks(c, false), "\n");
+    private StackPane createVisualGate(String id, Circle circle, Text text, double x, double y) {
+        StackPane pane = new StackPane();
+        pane.setLayoutX(x);
+        pane.setLayoutY(y);
+
+        circle.setRadius(circle.getRadius());
+        circle.getStyleClass().add("puzzle-gate-node");
+
+        text.getStyleClass().add("puzzle-gate-text");
+
+        pane.getChildren().addAll(circle, text);
+        pane.setEffect(new DropShadow(15, Color.BLACK));
+        return pane;
     }
 
-    private List<Integer> blocks(int idx, boolean isRow) {
-        List<Integer> result = new ArrayList<>();
-        int count = 0;
-        for (int i = 0; i < SIZE; i++) {
-            boolean filled = isRow ? solution[idx][i] : solution[i][idx];
-            if (filled) {
-                count++;
-            } else if (count > 0) {
-                result.add(count);
-                count = 0;
-            }
-        }
-        if (count > 0) result.add(count);
-        if (result.isEmpty()) result.add(0);
-        return result;
-    }
+    /**
+     * Прорахунок булевої логіки та колір труб
+     */
+    private void updateHydraulics() {
+        if (!isGameActive) return;
 
-    private static String blocksToString(List<Integer> blocks, String sep) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < blocks.size(); i++) {
-            if (i > 0) sb.append(sep);
-            sb.append(blocks.get(i));
-        }
-        return sb.toString();
-    }
+        pipeA.setStroke(valveA ? RESIN_FLOW : EMPTY_PIPE);
+        pipeB.setStroke(valveB ? RESIN_FLOW : EMPTY_PIPE);
 
-    private void onCellClick(int r, int c, Button btn) {
-        if (gameOver) return;
-        if (playerGrid[r][c]) return;
+        boolean and1Open = valveA && valveB;
+        gateAND1.setFill(and1Open ? RESIN_GLOW : Color.rgb(160, 50, 50));
+        textAND1.setFill(and1Open ? Color.rgb(20, 40, 20) : Color.WHITE);
+        pipeAnd1Out.setStroke(and1Open ? RESIN_FLOW : EMPTY_PIPE);
 
-        playerGrid[r][c] = true;
+        boolean valveCFlow = !valveC;
+        pipeC.setStroke(valveCFlow ? RESIN_FLOW : EMPTY_PIPE);
+        pipeD.setStroke(valveD ? RESIN_FLOW : EMPTY_PIPE);
 
-        if (solution[r][c]) {
-            btn.getStyleClass().add("grid-cell-filled");
-            checkWin();
-        } else {
-            lives--;
-            refreshLives();
-            btn.getStyleClass().add("grid-cell-wrong");
-            btn.setDisable(true);
-            shakeAndMaybeEnd();
-        }
-    }
+        boolean orOpen = valveCFlow || valveD;
+        gateOR.setFill(orOpen ? RESIN_GLOW : Color.rgb(160, 50, 50));
+        textOR.setFill(orOpen ? Color.rgb(20, 40, 20) : Color.WHITE);
+        pipeOrOut.setStroke(orOpen ? RESIN_FLOW : EMPTY_PIPE);
 
-    private void checkWin() {
-        for (int r = 0; r < SIZE; r++)
-            for (int c = 0; c < SIZE; c++)
-                if (solution[r][c] && !playerGrid[r][c]) return;
+        pipeE.setStroke(valveE ? RESIN_FLOW : EMPTY_PIPE);
 
-        gameOver = true;
-        this.setMouseTransparent(true);
-        titleText.setText("Ламану лінію намальовано! Шлях відкрито!");
+        boolean and2Open = orOpen && valveE;
+        gateAND2.setFill(and2Open ? RESIN_GLOW : Color.rgb(160, 50, 50));
+        textAND2.setFill(and2Open ? Color.rgb(20, 40, 20) : Color.WHITE);
+        pipeAnd2Out.setStroke(and2Open ? RESIN_FLOW : EMPTY_PIPE);
 
-        PauseTransition pause = new PauseTransition(Duration.seconds(2));
-        pause.setOnFinished(e -> finish());
-        pause.play();
-    }
+        // Фінал
+        boolean puzzleSolved = and1Open && and2Open;
+        pipeFinal.setStroke(puzzleSolved ? RESIN_FLOW : EMPTY_PIPE);
+        mainReceiver.setFill(puzzleSolved ? Color.LIGHTGREEN : Color.rgb(130, 40, 40));
+        textReceiver.setFill(puzzleSolved ? Color.rgb(10, 30, 10) : Color.WHITE);
 
-    private void shakeAndMaybeEnd() {
-        this.setDisable(true);
-
-        boolean isGameOver = (lives <= 0);
-
-        if (isGameOver) {
-            gameOver = true;
-            titleText.setText("Життя вичерпано! Шлях залишається закритим…");
-        } else {
-            titleText.setText("Хибний вибір! Залишилось " + lives + (lives == 1 ? " життя." : " життів."));
-        }
-
-        TranslateTransition shake = new TranslateTransition(Duration.millis(45), gridPane);
-        shake.setFromX(0);
-        shake.setByX(10);
-        shake.setAutoReverse(true);
-        shake.setCycleCount(6);
-        shake.setOnFinished(e -> {
-            gridPane.setTranslateX(0);
-
-            if (isGameOver) {
-                PauseTransition wait = new PauseTransition(Duration.seconds(2));
-                wait.setOnFinished(ev -> finish());
-                wait.play();
-            } else {
-                this.setDisable(false);
-                titleText.setText("Японський кросворд\nЗафарбуйте клітинки, щоб намалювати ламану лінію");
-            }
-        });
-        shake.play();
-    }
-
-    private void finish() {
-        var parent = this.getParent();
-        if (parent instanceof StackPane sp) {
-            sp.getChildren().remove(this);
-        }
-
-        if (onPuzzleSolved != null) {
-            onPuzzleSolved.accept(this.lives);
-        }
-    }
-
-    private void refreshLives() {
-        livesBox.getChildren().clear();
-        for (int i = 0; i < lives; i++) {
-            var url = FourthPuzzle.class.getResource("/images/canvas/heart.png");
-            if (url != null) {
-                javafx.scene.image.ImageView iv = new javafx.scene.image.ImageView(
-                        new javafx.scene.image.Image(url.toExternalForm())
-                );
-                iv.setFitWidth(50);
-                iv.setFitHeight(50);
-                iv.setPreserveRatio(true);
-                livesBox.getChildren().add(iv);
-            }
+        if (puzzleSolved) {
+            handleWin();
         }
     }
 
-    public void setOnPuzzleSolved(Consumer<Integer> callback) {
-        this.onPuzzleSolved = callback;
+    private void onStart() {
+        mainLayout.setVisible(true);
+        setupKarmaListener(60);
+        startTimer();
+    }
+
+    private void startTimer() {
+        timeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
+            secondsLeft--;
+            updateTimerDisplay();
+            if (secondsLeft <= 0) handleLose();
+        }));
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
+    }
+
+    private void updateTimerDisplay() {
+        int minutes = secondsLeft / 60;
+        int seconds = secondsLeft % 60;
+        timerText.setText(String.format("%02d:%02d", minutes, seconds));
+    }
+
+    private void handleWin() {
+        isGameActive = false;
+        timeline.stop();
+        timerText.setFill(Color.LIGHTGREEN);
+        hintText.setFill(Color.LIGHTGREEN);
+
+        session.changeKarma(1);
+
+        showResultOverlay("Потік смоли успішно спрямовано!",true,"Продовжити шлях", () -> onFinishCallback.accept(1));
+    }
+
+    private void handleLose() {
+        isGameActive = false;
+        timeline.stop();
+        timerText.setText("00:00");
+        timerText.setFill(Color.RED);
+        hintText.setFill(Color.RED);
+
+        session.changeKarma(-1);
+
+        showResultOverlay("Час вийшов! Багато смоли пролилось.",false,"Прийняти долю", () -> onFinishCallback.accept(0));
     }
 }
