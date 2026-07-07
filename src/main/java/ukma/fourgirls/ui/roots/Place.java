@@ -9,7 +9,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
-import ukma.fourgirls.core.*;
+import ukma.fourgirls.GameContext;
+import ukma.fourgirls.application.LocationRegistry;
+import ukma.fourgirls.infrastructure.localization.LanguageManager;
+import ukma.fourgirls.infrastructure.persistence.SaveManager;
+import ukma.fourgirls.presentation.component.NotificationManager;
 import ukma.fourgirls.state.GameSession;
 import ukma.fourgirls.ui.NavigationPanel;
 

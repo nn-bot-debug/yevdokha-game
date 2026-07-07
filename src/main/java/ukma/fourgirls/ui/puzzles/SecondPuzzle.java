@@ -10,7 +10,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import ukma.fourgirls.core.GameContext;
+import ukma.fourgirls.GameContext;
 
 import java.util.Objects;
 

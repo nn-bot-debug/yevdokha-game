@@ -1,4 +1,4 @@
-package ukma.fourgirls.domain;
+package ukma.fourgirls.domain.model;
 
 public class Item {
     private final String name;

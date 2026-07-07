@@ -1,7 +1,8 @@
-package ukma.fourgirls.core;
+package ukma.fourgirls.presentation.controller;
 
 import javafx.scene.Parent;
 import javafx.stage.Stage;
+import ukma.fourgirls.GameContext;
 import ukma.fourgirls.state.GameSession;
 import ukma.fourgirls.state.SaveData;
 import ukma.fourgirls.ui.roots.Place;
@@ -10,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class SceneManager {
+public class GameFlowController {
 
     private final Stage primaryStage;
     private final GameContext context;
@@ -19,7 +20,7 @@ public class SceneManager {
 
     private final Map<String, Place> cachedRooms = new HashMap<>();
 
-    public SceneManager(Stage primaryStage, GameContext context) {
+    public GameFlowController(Stage primaryStage, GameContext context) {
         if (primaryStage == null) {
             System.err.println("Error: Stage cannot be null during SceneManager initialization!");
         }

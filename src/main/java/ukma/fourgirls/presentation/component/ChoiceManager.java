@@ -1,4 +1,4 @@
-package ukma.fourgirls.core;
+package ukma.fourgirls.presentation.component;
 
 import javafx.application.Platform;
 import javafx.geometry.Pos;

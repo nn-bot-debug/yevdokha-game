@@ -5,7 +5,7 @@ import javafx.animation.PauseTransition;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
-import ukma.fourgirls.core.GameContext;
+import ukma.fourgirls.GameContext;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -10,8 +10,7 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
-import ukma.fourgirls.core.GameContext;
-import ukma.fourgirls.state.GameSession;
+import ukma.fourgirls.GameContext;
 
 import java.util.ArrayList;
 import java.util.List;

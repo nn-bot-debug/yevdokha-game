@@ -6,9 +6,11 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import ukma.fourgirls.core.GameContext;
-import ukma.fourgirls.core.StatNotification;
+import ukma.fourgirls.GameContext;
+import ukma.fourgirls.presentation.component.NotificationManager;
+import ukma.fourgirls.presentation.component.StatNotification;
 import javafx.util.Duration;
+import ukma.fourgirls.domain.model.Item;
 import ukma.fourgirls.logic.StoryRunner;
 import ukma.fourgirls.ui.CharacterView;
 
@@ -70,11 +72,10 @@ public class Forest extends Place{
             StackPane.setAlignment(eyeButton, Pos.TOP_RIGHT);
             StackPane.setMargin(eyeButton, new javafx.geometry.Insets(20, 20, 0, 0));
 
-            var eyeTrack = context.getAudio().playEyeLoopSound("/music/eye-button.wav");
+            context.getAudio().playEyeLoopSound("/music/eye-button.wav");
 
             eyeButton.setOnAction(e -> {
-                if (eyeTrack != null)
-                    context.getAudio().fadeOutAndStop(eyeTrack, 1.5);
+                context.getAudio().stopEyeLoopSound(1.5);
 
                 ((StackPane) this.getRoot()).getChildren().remove(eyeButton);
                 this.setBackground(MAGIC_FOREST);
@@ -101,9 +102,9 @@ public class Forest extends Place{
         });
 
         actions.put("give_empty_pot", () -> {
-            ukma.fourgirls.domain.Item pot = new ukma.fourgirls.domain.Item("Порожній горщик", "/images/objects/empty_pot.png");
+            Item pot = new Item("Порожній горщик", "/images/objects/empty_pot.png");
             session.addItem(pot);
-            ukma.fourgirls.core.NotificationManager.showNotification(this.root, "Ви отримали предмет: Порожній горщик");
+            NotificationManager.showNotification(this.root, "Ви отримали предмет: Порожній горщик");
 
             blackOverlay.toFront();
             FadeTransition fadeOut = new FadeTransition(Duration.seconds(1.2), blackOverlay);
@@ -125,7 +126,7 @@ public class Forest extends Place{
 
         actions.put("finish_lisovuk_quest_line", () -> {
             session.removeItem("Горщик зі смолою");
-            ukma.fourgirls.core.NotificationManager.showNotification(this.root, "Смолу використано. Шлях углиб лісу відкрито!");
+            NotificationManager.showNotification(this.root, "Смолу використано. Шлях углиб лісу відкрито!");
             this.enableNavigation();
 
             blackOverlay.toFront();

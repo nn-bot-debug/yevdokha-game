@@ -1,5 +1,6 @@
-package ukma.fourgirls.core;
+package ukma.fourgirls.application;
 
+import ukma.fourgirls.GameContext;
 import ukma.fourgirls.ui.roots.*;
 
 import java.util.Collection;

@@ -12,8 +12,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.util.Duration;
-import ukma.fourgirls.core.GameContext;
-import ukma.fourgirls.state.GameSession;
+import ukma.fourgirls.GameContext;
 
 import java.util.ArrayList;
 import java.util.List;

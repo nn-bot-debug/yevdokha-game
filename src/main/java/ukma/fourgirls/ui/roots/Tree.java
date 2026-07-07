@@ -5,8 +5,9 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import ukma.fourgirls.core.GameContext;
-import ukma.fourgirls.core.StatNotification;
+import ukma.fourgirls.GameContext;
+import ukma.fourgirls.presentation.component.StatNotification;
+import ukma.fourgirls.domain.model.Item;
 import ukma.fourgirls.logic.StoryRunner;
 import ukma.fourgirls.ui.CharacterView;
 import ukma.fourgirls.ui.puzzles.FourthPuzzle;
@@ -100,11 +101,10 @@ public class Tree extends Place{
             StackPane.setAlignment(eyeButton, Pos.TOP_RIGHT);
             StackPane.setMargin(eyeButton, new javafx.geometry.Insets(20, 20, 0, 0));
 
-            var eyeTrack = context.getAudio().playEyeLoopSound("/music/eye-button.wav");
+            context.getAudio().playEyeLoopSound("/music/eye-button.wav");
 
             eyeButton.setOnAction(e -> {
-                if (eyeTrack != null)
-                    context.getAudio().fadeOutAndStop(eyeTrack, 1.5);
+                context.getAudio().stopEyeLoopSound(1.5);
                 ((StackPane) this.getRoot()).getChildren().remove(eyeButton);
                 this.setBackground(MAGIC_TREE);
                 StoryRunner.playScene(context, "/story/chapter2.json", "ant_colony_dialogue", (StackPane) this.getRoot(), actions, null);
@@ -146,7 +146,7 @@ public class Tree extends Place{
             fadeOut.setToValue(1.0);
             fadeOut.setOnFinished(e -> {
                 session.removeItem("Порожній горщик");
-                session.addItem(new ukma.fourgirls.domain.Item("Горщик зі смолою", "/images/objects/full_pot.png"));
+                session.addItem(new Item("Горщик зі смолою", "/images/objects/full_pot.png"));
 
                 context.getLocations().switchTo("Forest");
             });

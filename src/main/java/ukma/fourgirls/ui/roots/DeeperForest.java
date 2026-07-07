@@ -7,8 +7,9 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
-import ukma.fourgirls.core.*;
+import ukma.fourgirls.GameContext;
 import ukma.fourgirls.logic.StoryRunner;
+import ukma.fourgirls.presentation.component.StatNotification;
 import ukma.fourgirls.state.GameSession;
 import ukma.fourgirls.ui.CharacterView;
 import ukma.fourgirls.ui.puzzles.FifthPuzzle;
@@ -95,7 +96,7 @@ public class DeeperForest extends Place {
 
         actions.put("setupKarmaListener", () -> {
             session.setKarmaListener((currentKarma, addedPoints) ->
-                    ukma.fourgirls.core.StatNotification.show((StackPane) this.getRoot(), currentKarma, addedPoints));
+                    StatNotification.show((StackPane) this.getRoot(), currentKarma, addedPoints));
         });
 
         actions.put("choice_refuse_game", () -> {

@@ -5,7 +5,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
-import ukma.fourgirls.core.GameContext;
+import ukma.fourgirls.GameContext;
 import ukma.fourgirls.logic.StoryRunner;
 import ukma.fourgirls.ui.CharacterView;
 import ukma.fourgirls.ui.puzzles.SecondPuzzle;

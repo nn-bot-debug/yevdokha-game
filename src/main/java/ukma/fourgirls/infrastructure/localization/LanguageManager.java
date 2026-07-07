@@ -1,4 +1,4 @@
-package ukma.fourgirls.core;
+package ukma.fourgirls.infrastructure.localization;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -17,7 +17,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import ukma.fourgirls.core.*;
+import ukma.fourgirls.GameContext;
+import ukma.fourgirls.infrastructure.localization.LanguageManager;
+import ukma.fourgirls.infrastructure.persistence.SaveManager;
 import ukma.fourgirls.ui.animation.MenuAnimationCanvas;
 
 
@@ -189,7 +191,7 @@ public class MainMenuWindow extends Application {
     }
 
     private void continueGame() {
-        ukma.fourgirls.state.SaveData data = ukma.fourgirls.core.SaveManager.loadGame();
+        ukma.fourgirls.state.SaveData data = SaveManager.loadGame();
 
         if (data == null) {
             // Тут можна додати виклик віконця (Alert), яке скаже гравцеві, що збережень немає

@@ -6,7 +6,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import ukma.fourgirls.core.GameContext;
+import ukma.fourgirls.GameContext;
 
 import java.util.Objects;
 

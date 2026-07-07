@@ -12,7 +12,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import ukma.fourgirls.core.GameContext;
+import ukma.fourgirls.GameContext;
+import ukma.fourgirls.presentation.component.StatNotification;
 import ukma.fourgirls.state.GameSession;
 
 import java.util.Objects;
@@ -125,7 +126,7 @@ public abstract class Puzzle extends StackPane {
     protected void setupKarmaListener(double topMargin) {
         if (session != null) {
             session.setKarmaListener((currentKarma, addedPoints) -> {
-                ukma.fourgirls.core.StatNotification.show(this, currentKarma, addedPoints);
+                StatNotification.show(this, currentKarma, addedPoints);
 
                 if (!this.getChildren().isEmpty()) {
                     var notification = this.getChildren().getLast();

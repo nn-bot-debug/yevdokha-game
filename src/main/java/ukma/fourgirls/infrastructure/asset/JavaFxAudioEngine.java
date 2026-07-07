@@ -1,4 +1,4 @@
-package ukma.fourgirls.core;
+package ukma.fourgirls.infrastructure.asset;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -6,9 +6,11 @@ import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
+import ukma.fourgirls.application.service.AudioEngine;
+
 import java.util.Objects;
 
-public class AudioManager {
+public class JavaFxAudioEngine implements AudioEngine {
 
     private MediaPlayer backgroundMusicPlayer;
     private MediaPlayer activeEyePlayer;
@@ -23,12 +25,13 @@ public class AudioManager {
     private double sfxVolume = 0.7;
     private double vfxVolume = 0.4;
 
-    public AudioManager() {}
+    public JavaFxAudioEngine() {}
 
     /**
      * Запускає фонову музику по колу
      * @param resourcePath Шлях до файлу в ресурсах
      */
+    @Override
     public void playBackgroundMusic(String resourcePath) {
         try {
             if (backgroundMusicPlayer != null) {
@@ -49,29 +52,31 @@ public class AudioManager {
         }
     }
 
-    public MediaPlayer playEyeLoopSound(String resourcePath) {
-        if (isSFXMuted) return null;
+    @Override
+    public void playEyeLoopSound(String resourcePath) {
+        if (isSFXMuted) return;
         try {
             if (activeEyePlayer != null) {
                 activeEyePlayer.stop();
             }
-
             var resource = Objects.requireNonNull(getClass().getResource(resourcePath));
             Media media = new Media(resource.toExternalForm());
             activeEyePlayer = new MediaPlayer(media);
-
             activeEyePlayer.setCycleCount(MediaPlayer.INDEFINITE);
             activeEyePlayer.setVolume(sfxVolume);
             activeEyePlayer.play();
-
-            return activeEyePlayer;
         } catch (Exception e) {
             System.err.println("Failed to play eye loop sound: " + e.getMessage());
-            return null;
         }
     }
 
-    public void fadeOutAndStop(MediaPlayer player, double durationSeconds) {
+    @Override
+    public void stopEyeLoopSound(double fadeDurationSeconds) {
+        if (activeEyePlayer == null) return;
+        fadeOutAndStop(activeEyePlayer, fadeDurationSeconds);
+    }
+
+    private void fadeOutAndStop(MediaPlayer player, double durationSeconds) {
         if (player == null) return;
 
         double startVolume = player.getVolume();
@@ -101,6 +106,7 @@ public class AudioManager {
         fadeTimeline.play();
     }
 
+    @Override
     public void fadeOutBackgroundMusic(double durationSeconds) {
         if (backgroundMusicPlayer == null) return;
 
@@ -133,6 +139,7 @@ public class AudioManager {
 
     // --- Управління музикою (Music) ---
 
+    @Override
     public boolean toggleMusic() {
         isMusicMuted = !isMusicMuted;
         if (backgroundMusicPlayer != null) {
@@ -140,55 +147,59 @@ public class AudioManager {
         }
         return isMusicMuted;
     }
-
+    @Override
     public boolean isMusicMuted() { return isMusicMuted; }
-
+    @Override
     public void setVolume(double volume) {
         this.musicVolume = volume;
         if (backgroundMusicPlayer != null) {
             backgroundMusicPlayer.setVolume(volume);
         }
     }
-
+    @Override
     public double getVolume() { return musicVolume; }
 
     // --- Управління ефектами інтерфейсу (SFX) ---
 
+    @Override
     public boolean toggleSFX() {
         isSFXMuted = !isSFXMuted;
         return isSFXMuted;
     }
-
+    @Override
     public boolean isSFXMuted() { return isSFXMuted; }
-
+    @Override
     public void setSFXVolume(double volume) {
         this.sfxVolume = volume;
         if (activeEyePlayer != null) {
             activeEyePlayer.setVolume(volume);
         }
     }
-
+    @Override
     public double getSFXVolume() { return sfxVolume; }
 
     // --- Управління візуальними ефектами (VFX) ---
 
+    @Override
     public boolean toggleVFX() {
         isVFXMuted = !isVFXMuted;
         return isVFXMuted;
     }
-
+    @Override
     public boolean isVFXMuted() { return isVFXMuted; }
-
+    @Override
     public void setVFXVolume(double volume) { this.vfxVolume = volume; }
-
+    @Override
     public double getVFXVolume() { return vfxVolume; }
 
     // --- Відтворення коротких звуків ---
 
+    @Override
     public void buttonSound(String resourcePath) {
         playSoundEffect(resourcePath, isSFXMuted, sfxVolume);
     }
 
+    @Override
     public void vfxSound(String resourcePath) {
         playSoundEffect(resourcePath, isVFXMuted, vfxVolume);
     }

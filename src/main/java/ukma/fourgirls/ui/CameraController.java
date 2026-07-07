@@ -2,7 +2,7 @@ package ukma.fourgirls.ui;
 
 import javafx.scene.Parent;
 import javafx.scene.control.ScrollPane;
-import ukma.fourgirls.core.GameContext;
+import ukma.fourgirls.GameContext;
 
 public class CameraController {
 

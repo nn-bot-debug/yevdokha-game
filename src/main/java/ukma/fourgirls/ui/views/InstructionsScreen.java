@@ -8,8 +8,8 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
-import ukma.fourgirls.core.GameContext;
-import ukma.fourgirls.core.LanguageManager;
+import ukma.fourgirls.GameContext;
+import ukma.fourgirls.infrastructure.localization.LanguageManager;
 import ukma.fourgirls.ui.animation.AnimationCanvas;
 
 import java.util.Objects;

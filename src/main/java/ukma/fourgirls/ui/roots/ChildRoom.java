@@ -5,10 +5,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.transform.Rotate;
-import ukma.fourgirls.core.GameContext;
-import ukma.fourgirls.core.InventoryManager;
-import ukma.fourgirls.core.NotificationManager;
-import ukma.fourgirls.domain.Item;
+import ukma.fourgirls.GameContext;
+import ukma.fourgirls.presentation.component.NotificationManager;
+import ukma.fourgirls.domain.model.Item;
 import ukma.fourgirls.logic.StoryRunner;
 
 import java.util.HashMap;
@@ -38,15 +37,13 @@ public class ChildRoom extends Place {
                     this.roomContentLayer.getChildren().add(interactiveDrawing);
                 }
 
-                Item yevdokhaDrawing = new Item("Малюнок", "/images/objects/drawing.png");
-                InventoryManager.setupPickupAction(
-                        session,
-                        this.interactiveDrawing,
-                        yevdokhaDrawing,
-                        (StackPane) this.getRoot(),
-                        "Ви підняли малюнок! Підібрані речі ви можете побачити в інвентарі.",
-                        this::onDrawingPickedUp
-                );
+                interactiveDrawing.setOnMouseClicked(e -> {
+                    interactiveDrawing.setVisible(false);
+                    Item yevdokhaDrawing = new Item("Малюнок", "/images/objects/drawing.png");
+                    context.getInventory().pickUpItem(yevdokhaDrawing);
+                    NotificationManager.showNotification((StackPane) this.getRoot(), "Ви підняли малюнок! Підібрані речі ви можете побачити в інвентарі.");
+                    onDrawingPickedUp();
+                });
             }
 
             this.enableNavigation();
@@ -66,15 +63,13 @@ public class ChildRoom extends Place {
                     "Завдання: Підніміть малюнок зі столу\nПідказка: щоб підняти річ, натисніть на неї ЛКМ)"
             );
 
-            Item yevdokhaDrawing = new Item("Малюнок", "/images/objects/drawing.png");
-            InventoryManager.setupPickupAction(
-                    session,
-                    this.getInteractiveDrawing(),
-                    yevdokhaDrawing,
-                    (StackPane) this.getRoot(),
-                    "Ви підняли малюнок! Підібрані речі ви можете побачити в інвентарі.",
-                    this::onDrawingPickedUp
-            );
+            interactiveDrawing.setOnMouseClicked(e -> {
+                interactiveDrawing.setVisible(false);
+                Item yevdokhaDrawing = new Item("Малюнок", "/images/objects/drawing.png");
+                context.getInventory().pickUpItem(yevdokhaDrawing);
+                NotificationManager.showNotification((StackPane) this.getRoot(), "Ви підняли малюнок! Підібрані речі ви можете побачити в інвентарі.");
+                onDrawingPickedUp();
+            });
         });
 
         StoryRunner.playScene(context, "/story/chapter1.json", "child_room_intro", (StackPane) this.getRoot(), actions, null);

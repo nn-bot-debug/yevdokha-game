@@ -1,8 +1,8 @@
-package ukma.fourgirls.core;
+package ukma.fourgirls.infrastructure.persistence;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import ukma.fourgirls.domain.Item;
+import ukma.fourgirls.domain.model.Item;
 import ukma.fourgirls.state.GameSession;
 import ukma.fourgirls.state.SaveData;
 

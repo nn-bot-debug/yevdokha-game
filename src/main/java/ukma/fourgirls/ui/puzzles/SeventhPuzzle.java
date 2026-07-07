@@ -8,13 +8,13 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
-import ukma.fourgirls.core.GameContext;
+import ukma.fourgirls.GameContext;
+import ukma.fourgirls.presentation.component.NotificationManager;
 import ukma.fourgirls.ui.roots.Inventory;
 
 import java.util.ArrayList;
@@ -210,7 +210,7 @@ public class SeventhPuzzle extends Puzzle {
         if (!isGameActive || weighingsLeft <= 0) return;
 
         if (leftPanItems.isEmpty() || rightPanItems.isEmpty()) {
-            ukma.fourgirls.core.NotificationManager.showNotification(this, "Покладіть предмети на обидві чаші для порівняння!");
+            NotificationManager.showNotification(this, "Покладіть предмети на обидві чаші для порівняння!");
             return;
         }
 
@@ -267,7 +267,7 @@ public class SeventhPuzzle extends Puzzle {
             }
 
             if (itemsCountOnTray != 1) {
-                ukma.fourgirls.core.NotificationManager.showNotification(this, "Помилка: На кожному підносі має лежати рівно 1 предмет!");
+                NotificationManager.showNotification(this, "Помилка: На кожному підносі має лежати рівно 1 предмет!");
                 return;
             }
 
@@ -284,7 +284,7 @@ public class SeventhPuzzle extends Puzzle {
         if (isSortedCorrectly) {
             handleWin();
         } else {
-            ukma.fourgirls.core.NotificationManager.showNotification(this, "Послідовність неправильна. Спробуйте змінити порядок!");
+            NotificationManager.showNotification(this, "Послідовність неправильна. Спробуйте змінити порядок!");
         }
     }
 

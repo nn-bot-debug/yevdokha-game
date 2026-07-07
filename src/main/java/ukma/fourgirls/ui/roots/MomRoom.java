@@ -7,8 +7,11 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
-import ukma.fourgirls.core.*;
+import ukma.fourgirls.GameContext;
+import ukma.fourgirls.domain.model.Item;
 import ukma.fourgirls.logic.StoryRunner;
+import ukma.fourgirls.presentation.component.NotificationManager;
+import ukma.fourgirls.presentation.component.StatNotification;
 import ukma.fourgirls.ui.CharacterView;
 
 import java.util.HashMap;
@@ -146,25 +149,23 @@ public class MomRoom extends Place {
             broochView.setStyle("-fx-cursor: hand;");
             broochView.setPickOnBounds(true);
 
-            ukma.fourgirls.domain.Item broochItem = new ukma.fourgirls.domain.Item("Брошка", BROOCH_PATH);
-            InventoryManager.setupPickupAction(
-                    session,
-                    broochView,
-                    broochItem,
-                    (StackPane) this.getRoot(),
-                    "Ви підняли брошку! Тепер вона у вашому інвентарі.",
-                    this::onBroochPickedUp
-            );
+            broochView.setOnMouseClicked(e -> {
+                broochView.setVisible(false);
+                Item broochItem = new Item("Брошка", BROOCH_PATH);
+                context.getInventory().pickUpItem(broochItem);
+                NotificationManager.showNotification((StackPane) this.getRoot(), "Ви підняли брошку! Тепер вона у вашому інвентарі.");
+                onBroochPickedUp();
+            });
         });
 
         actions.put("give_brooch", () -> {
-            session.addItem(new ukma.fourgirls.domain.Item("Брошка", BROOCH_PATH));
+            session.addItem(new Item("Брошка", BROOCH_PATH));
             NotificationManager.showNotification(this.root, "Ви отримали нову річ: Брошка");
         });
 
         actions.put("give_key", () -> {
             this.setBackground(IMAGE_PATH);
-            session.addItem(new ukma.fourgirls.domain.Item("Ключ від дверей", "/images/objects/key.png"));
+            session.addItem(new Item("Ключ від дверей", "/images/objects/key.png"));
             NotificationManager.showNotification(this.root, "Ви отримали ключ від дверей");
 
             session.unlockLocation("Corridor");

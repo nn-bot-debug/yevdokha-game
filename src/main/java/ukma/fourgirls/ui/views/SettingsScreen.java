@@ -8,9 +8,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.*;
-import ukma.fourgirls.core.AudioManager;
-import ukma.fourgirls.core.GameContext;
-import ukma.fourgirls.core.LanguageManager;
+import ukma.fourgirls.GameContext;
+import ukma.fourgirls.infrastructure.localization.LanguageManager;
 
 import java.util.Objects;
 

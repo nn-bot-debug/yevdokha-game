@@ -5,18 +5,14 @@ import javafx.animation.Timeline;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.effect.GaussianBlur;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-import ukma.fourgirls.core.GameContext;
-import ukma.fourgirls.state.GameSession;
+import ukma.fourgirls.GameContext;
+import ukma.fourgirls.presentation.component.NotificationManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -219,7 +215,7 @@ public class FifthPuzzle extends Puzzle{
                 hintText.setText("Морок згустився, і Блуд вивів вас на початок лабіринту!");
                 hintText.setFill(Color.web("#f87171"));
 
-                ukma.fourgirls.core.NotificationManager.showNotification(this, "Ви вилетіли за межі лісу! Повернення на 0.");
+                NotificationManager.showNotification(this, "Ви вилетіли за межі лісу! Повернення на 0.");
 
                 if (!this.getChildren().isEmpty()) {
                     var lastNode = this.getChildren().get(this.getChildren().size() - 1);
@@ -233,7 +229,7 @@ public class FifthPuzzle extends Puzzle{
             }
 
             counterText.setText(String.valueOf(currentNumber));
-            ukma.fourgirls.core.NotificationManager.showNotification(this, operationText);
+            NotificationManager.showNotification(this, operationText);
 
             if (!this.getChildren().isEmpty()) {
                 var lastNode = this.getChildren().get(this.getChildren().size() - 1);

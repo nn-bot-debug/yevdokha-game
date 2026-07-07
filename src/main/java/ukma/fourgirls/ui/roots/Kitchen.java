@@ -11,10 +11,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
-import ukma.fourgirls.core.GameContext;
-import ukma.fourgirls.core.InventoryManager;
-import ukma.fourgirls.core.NotificationManager;
-import ukma.fourgirls.domain.Item;
+import ukma.fourgirls.GameContext;
+import ukma.fourgirls.presentation.component.NotificationManager;
+import ukma.fourgirls.domain.model.Item;
 import ukma.fourgirls.logic.StoryRunner;
 import ukma.fourgirls.ui.CharacterView;
 import ukma.fourgirls.ui.animation.AnimationCanvas;
@@ -66,17 +65,15 @@ public class Kitchen extends Place {
                 "Завдання: Знайдіть щось поїсти на кухні."
         );
 
-        Item bread = new Item("Зацвілий хліб", "/images/objects/bread.png");
         Node breadNode = this.getInteractiveBread();
 
-        InventoryManager.setupPickupAction(
-                session,
-                breadNode,
-                bread,
-                (StackPane) this.getRoot(),
-                "Ви знайшли зацвілий хліб.",
-                this::onBreadPickedUp
-        );
+        interactiveBread.setOnMouseClicked(e -> {
+            interactiveBread.setVisible(false);
+            Item bread = new Item("Зацвілий хліб", "/images/objects/bread.png");
+            context.getInventory().pickUpItem(bread);
+            NotificationManager.showNotification((StackPane) this.getRoot(), "Ви знайшли зацвілий хліб.");
+            onBreadPickedUp();
+        });
     }
 
     private void onBreadPickedUp() {

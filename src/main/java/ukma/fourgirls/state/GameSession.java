@@ -2,7 +2,7 @@ package ukma.fourgirls.state;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import ukma.fourgirls.domain.Item;
+import ukma.fourgirls.domain.model.Item;
 
 import java.util.HashSet;
 import java.util.Set;

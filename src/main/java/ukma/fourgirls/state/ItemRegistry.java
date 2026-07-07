@@ -1,6 +1,6 @@
 package ukma.fourgirls.state;
 
-import ukma.fourgirls.domain.Item;
+import ukma.fourgirls.domain.model.Item;
 
 import java.util.HashMap;
 import java.util.Map;

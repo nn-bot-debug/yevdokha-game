@@ -10,7 +10,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
-import ukma.fourgirls.domain.Item;
+import ukma.fourgirls.domain.model.Item;
 import ukma.fourgirls.state.GameSession;
 
 import java.util.List;
