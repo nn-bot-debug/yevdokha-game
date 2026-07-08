@@ -2,9 +2,9 @@ package ukma.fourgirls.infrastructure.persistence;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import ukma.fourgirls.domain.model.GameSession;
 import ukma.fourgirls.domain.model.Item;
-import ukma.fourgirls.state.GameSession;
-import ukma.fourgirls.state.SaveData;
+import ukma.fourgirls.application.dto.SaveData;
 
 import java.io.FileReader;
 import java.io.FileWriter;

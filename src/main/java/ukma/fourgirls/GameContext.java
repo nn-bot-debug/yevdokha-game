@@ -4,11 +4,11 @@ import javafx.stage.Stage;
 import ukma.fourgirls.application.LocationRegistry;
 import ukma.fourgirls.application.service.AudioEngine;
 import ukma.fourgirls.application.service.InventoryService;
+import ukma.fourgirls.domain.model.GameSession;
 import ukma.fourgirls.infrastructure.asset.JavaFxAudioEngine;
 import ukma.fourgirls.presentation.component.DialogueManager;
 import ukma.fourgirls.presentation.controller.GameFlowController;
-import ukma.fourgirls.state.GameSession;
-import ukma.fourgirls.ui.CameraController;
+import ukma.fourgirls.presentation.controller.CameraController;
 
 public class GameContext {
     private final AudioEngine audioEngine;

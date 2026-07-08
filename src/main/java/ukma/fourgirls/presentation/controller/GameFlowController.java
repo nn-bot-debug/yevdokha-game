@@ -3,9 +3,9 @@ package ukma.fourgirls.presentation.controller;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
 import ukma.fourgirls.GameContext;
-import ukma.fourgirls.state.GameSession;
-import ukma.fourgirls.state.SaveData;
-import ukma.fourgirls.ui.roots.Place;
+import ukma.fourgirls.application.dto.SaveData;
+import ukma.fourgirls.domain.model.GameSession;
+import ukma.fourgirls.presentation.view.game.room.Place;
 
 import java.util.HashMap;
 import java.util.Map;

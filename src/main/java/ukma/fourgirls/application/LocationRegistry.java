@@ -1,7 +1,7 @@
 package ukma.fourgirls.application;
 
 import ukma.fourgirls.GameContext;
-import ukma.fourgirls.ui.roots.*;
+import ukma.fourgirls.presentation.view.game.room.*;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;

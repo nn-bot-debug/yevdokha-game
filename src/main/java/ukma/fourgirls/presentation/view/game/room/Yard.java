@@ -1,0 +1,104 @@
+package ukma.fourgirls.presentation.view.game.room;
+
+import javafx.animation.FadeTransition;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
+import ukma.fourgirls.GameContext;
+import ukma.fourgirls.application.service.StoryService;
+import ukma.fourgirls.presentation.component.CharacterView;
+import ukma.fourgirls.presentation.view.game.puzzle.SecondPuzzle;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class Yard extends Place {
+    private static final String IMAGE_PATH = "/images/canvas/yard.png";
+    private final Rectangle blackOverlay;
+    private CharacterView actorView;
+
+    public Yard(GameContext context) {
+        super(IMAGE_PATH, context);
+
+        blackOverlay = new Rectangle();
+        blackOverlay.widthProperty().bind(this.root.widthProperty());
+        blackOverlay.heightProperty().bind(this.root.heightProperty());
+        blackOverlay.setFill(Color.BLACK);
+        blackOverlay.setOpacity(1.0);
+        blackOverlay.setMouseTransparent(true);
+
+        this.root.getChildren().add(blackOverlay);
+    }
+
+    @Override
+    public void onEnter() {
+        context.getCamera().setPanningEnabled(false);
+        this.startYardRavenCutscene();
+        context.getAudio().playBackgroundMusic("/music/Beneath_the_Ancient_Boughs.mp3");
+    }
+
+    private void startYardRavenCutscene() {
+        actorView = new CharacterView((StackPane) this.getRoot());
+        Map<String, Runnable> actions = new HashMap<>();
+
+        actions.put("show_yard_view", () -> {
+            FadeTransition fadeInYard = new FadeTransition(Duration.seconds(1.5), blackOverlay);
+            fadeInYard.setFromValue(1.0);
+            fadeInYard.setToValue(0.0);
+            fadeInYard.play();
+        });
+
+        actions.put("showSadYevdokha", () -> {
+            if (actorView != null) {
+                actorView.setPositionSide(true);
+                actorView.setCharacterSprite("/images/characters/Zasmuchena_evdoha.png");
+            }
+        });
+
+        actions.put("showHappyYevdokha", () -> {
+            if (actorView != null) {
+                actorView.setPositionSide(true);
+                actorView.setCharacterSprite("/images/characters/happy_Yevdokha.png");
+            }
+        });
+
+        actions.put("hideActor", () -> {
+            if (actorView != null)
+                actorView.hide();
+        });
+        actions.put("enable_papyrus_pickup", () -> {
+            var puzzleOverlay = new SecondPuzzle(context);
+
+            puzzleOverlay.setOnPuzzleSolved(() -> {
+                StoryService.playScene(context, "/story/chapter2.json", "yard_raven_scene_part2", (StackPane) this.getRoot(), actions, null);
+            });
+
+            StackPane rootPane = (StackPane) this.getRoot();
+            rootPane.getChildren().add(puzzleOverlay);
+        });
+
+        actions.put("go_to_forest_automatically", () -> {
+            session.lockLocation("ChildRoom");
+            session.lockLocation("Kitchen");
+            session.lockLocation("MomRoom");
+            session.lockLocation("Corridor");
+            session.lockLocation("Yard");
+            blackOverlay.toFront();
+            FadeTransition fadeToBlack = new FadeTransition(Duration.seconds(1.2), blackOverlay);
+            fadeToBlack.setFromValue(0.0);
+            fadeToBlack.setToValue(1.0);
+            fadeToBlack.setOnFinished(e ->
+                    context.getLocations().switchTo("Forest")
+            );
+            fadeToBlack.play();
+        });
+
+        StoryService.playScene(context, "/story/chapter2.json", "yard_raven_scene_part1", (StackPane) this.getRoot(), actions, null);
+    }
+
+    public void enableNavigation() {
+        context.getCamera().setPanningEnabled(true);
+        this.setupNavigation("Yard");
+    }
+}
