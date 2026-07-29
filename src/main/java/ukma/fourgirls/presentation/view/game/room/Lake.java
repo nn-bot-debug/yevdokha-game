@@ -33,8 +33,8 @@ public class Lake extends Place {
         public Lake(GameContext context) {
             super(LAKE, context);
             this.session = context.getSession();
-            if (getClass().getResource("/css/settings.css") != null) {
-                this.getRoot().getStylesheets().add(getClass().getResource("/css/settings.css").toExternalForm());
+            if (getClass().getResource("/css/menu/settings.css") != null) {
+                this.getRoot().getStylesheets().add(getClass().getResource("/css/menu/settings.css").toExternalForm());
             }
             blackOverlay = new Rectangle();
             blackOverlay.widthProperty().bind(this.root.widthProperty());

@@ -21,7 +21,7 @@ public class TutorialOverlay {
         this.overlayRoot = new StackPane();
         this.overlayRoot.getStyleClass().add("settings-overlay");
 
-        this.overlayRoot.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/settings.css")).toExternalForm());
+        this.overlayRoot.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/menu/settings.css")).toExternalForm());
 
         VBox tutorialBox = new VBox(20);
         tutorialBox.setAlignment(Pos.CENTER);

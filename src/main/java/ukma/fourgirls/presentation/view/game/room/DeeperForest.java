@@ -31,8 +31,8 @@ public class DeeperForest extends Place {
     public DeeperForest(GameContext context) {
         super(DEEPER_FOREST, context);
         this.session = context.getSession();
-        if (getClass().getResource("/css/settings.css") != null) {
-            this.getRoot().getStylesheets().add(getClass().getResource("/css/settings.css").toExternalForm());
+        if (getClass().getResource("/css/menu/settings.css") != null) {
+            this.getRoot().getStylesheets().add(getClass().getResource("/css/menu/settings.css").toExternalForm());
         }
         blackOverlay = new Rectangle();
         blackOverlay.widthProperty().bind(this.root.widthProperty());

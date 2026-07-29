@@ -11,6 +11,16 @@
     -fx-background-radius: 8px;
     -fx-border-radius: 8px;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.9), 30, 0.0, 0, 0);
+    -fx-alignment: center;
+    -fx-max-width: 450;
+    -fx-max-height: 520;
+    -fx-padding: 30 40 30 40;
+}
+
+.settings-grid {
+    -fx-hgap: 40;
+    -fx-vgap: 12;
+    -fx-alignment: center;
 }
 
 .settings-title {
@@ -94,7 +104,7 @@
     -fx-max-width: 95px;
     -fx-max-height: 65px;
 
-    -fx-background-image: url("../images/objects/eye_icon.png");
+    -fx-background-image: url("../../images/objects/eye_icon.png");
     -fx-background-position: center;
     -fx-background-repeat: no-repeat;
 

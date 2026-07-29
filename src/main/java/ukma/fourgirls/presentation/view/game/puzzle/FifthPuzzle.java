@@ -60,7 +60,7 @@ public class FifthPuzzle extends Puzzle {
 
         this.getStylesheets().addAll(
                 Objects.requireNonNull(getClass().getResource("/css/puzzle.css")).toExternalForm(),
-                Objects.requireNonNull(getClass().getResource("/css/settings.css")).toExternalForm()
+                Objects.requireNonNull(getClass().getResource("/css/menu/settings.css")).toExternalForm()
         );
 
         setupBackground("/images/canvas/mazes.png",4);

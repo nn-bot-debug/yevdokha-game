@@ -19,6 +19,9 @@ import ukma.fourgirls.application.dto.SaveData;
 import ukma.fourgirls.infrastructure.localization.LanguageManager;
 import ukma.fourgirls.infrastructure.persistence.SaveManager;
 import ukma.fourgirls.presentation.animation.MenuAnimationCanvas;
+import ukma.fourgirls.application.service.Settings;
+import ukma.fourgirls.application.service.SettingsImpl;
+import ukma.fourgirls.presentation.view.menu.settings.SettingsView;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -30,10 +33,12 @@ public class MainMenuScreen {
     private final GameContext context;
     private Font uaFont;
     private Font enFont;
+    private final Settings settings;
 
     public MainMenuScreen(GameContext context) {
         this.context = context;
         this.root = new StackPane();
+        settings = new SettingsImpl(context.getAudio());
 
         initFonts();
         initBackground();
@@ -110,8 +115,9 @@ public class MainMenuScreen {
         buttonActions.put("menu.continue", this::continueGame);
         buttonActions.put("menu.instruction", () -> context.getScene().switchToRoot(new InstructionsScreen(context).getRoot()));
         buttonActions.put("menu.settings", () -> {
-            SettingsScreen settings = new SettingsScreen(context, root);
-            root.getChildren().add(settings.getRoot());
+            SettingsView settingsView = new SettingsView(settings,
+                    () -> context.getAudio().buttonSound("/music/button-click-sound.wav"), root);
+            root.getChildren().add(settingsView.getRoot());
         });
         buttonActions.put("menu.quit", Platform::exit);
 

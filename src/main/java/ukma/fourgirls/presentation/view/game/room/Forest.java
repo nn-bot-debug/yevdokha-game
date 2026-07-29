@@ -28,7 +28,7 @@ public class Forest extends Place {
 
     public Forest(GameContext context) {
         super(NORMAL_FOREST, context);
-        this.getRoot().getStylesheets().add(getClass().getResource("/css/settings.css").toExternalForm());
+        this.getRoot().getStylesheets().add(getClass().getResource("/css/menu/settings.css").toExternalForm());
 
         blackOverlay = new Rectangle();
         blackOverlay.widthProperty().bind(this.root.widthProperty());

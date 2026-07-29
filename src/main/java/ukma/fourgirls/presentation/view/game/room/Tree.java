@@ -27,7 +27,7 @@ public class Tree extends Place {
 
     public Tree(GameContext context) {
         super(NORMAL_TREE, context);
-        this.getRoot().getStylesheets().add(getClass().getResource("/css/settings.css").toExternalForm());
+        this.getRoot().getStylesheets().add(getClass().getResource("/css/menu/settings.css").toExternalForm());
 
         blackOverlay = new Rectangle();
         blackOverlay.widthProperty().bind(this.root.widthProperty());
