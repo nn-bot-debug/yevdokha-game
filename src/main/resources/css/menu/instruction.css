@@ -1,0 +1,20 @@
+@font-face {
+    src: url('../../fonts/Epoch_YP_Demo.ttf');
+}
+
+.instruction-title-left, .instruction-title-right,
+.instruction-text-left, .instruction-text-right {
+    -fx-text-fill: #022e01;
+    -fx-font-weight: bold;
+    -fx-font-family: "Epoch_YP_Demo";
+}
+
+.instruction-title-left, .instruction-title-right {
+    -fx-font-size: 26px;
+    -fx-alignment: center;
+}
+
+.instruction-text-left {
+    -fx-font-size: 18px;
+    -fx-wrap-text: true;
+}

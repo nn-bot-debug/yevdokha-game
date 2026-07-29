@@ -1,4 +1,4 @@
-package ukma.fourgirls.presentation.view.menu.settings;
+package ukma.fourgirls.presentation.view.menu;
 
 import javafx.geometry.Insets;
 import javafx.scene.Parent;

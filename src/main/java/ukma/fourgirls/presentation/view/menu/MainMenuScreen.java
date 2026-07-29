@@ -21,7 +21,6 @@ import ukma.fourgirls.infrastructure.persistence.SaveManager;
 import ukma.fourgirls.presentation.animation.MenuAnimationCanvas;
 import ukma.fourgirls.application.service.Settings;
 import ukma.fourgirls.application.service.SettingsImpl;
-import ukma.fourgirls.presentation.view.menu.settings.SettingsView;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -113,7 +112,10 @@ public class MainMenuScreen {
             context.getLocations().switchTo("ChildRoom");
         });
         buttonActions.put("menu.continue", this::continueGame);
-        buttonActions.put("menu.instruction", () -> context.getScene().switchToRoot(new InstructionsScreen(context).getRoot()));
+        buttonActions.put("menu.instruction", () -> context.getScene().switchToRoot(new InstructionsView(
+                () -> context.getAudio().buttonSound("/music/button-click-sound.wav"),
+                context.getScene()
+        ).getRoot()));
         buttonActions.put("menu.settings", () -> {
             SettingsView settingsView = new SettingsView(settings,
                     () -> context.getAudio().buttonSound("/music/button-click-sound.wav"), root);
